@@ -1,0 +1,27 @@
+{
+  "name": "transpiler",
+  "version": "0.0.1",
+  "type": "module",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "scripts": {
+    "start": "pnpm build && node dist/index.js",
+    "client-type": "dts-bundle-generator src/client.ts -o client.d.ts --external-inlines runtypes --inline-declare-global",
+    "build": "rollup -c && pnpm client-type"
+  },
+  "dependencies": {
+    "acorn": "^8.8.1",
+    "runtypes": "^6.6.0",
+    "tmp-promise": "^3.0.3"
+  },
+  "devDependencies": {
+    "@rollup/plugin-typescript": "^10.0.1",
+    "@types/estree": "^1.0.0",
+    "@types/node": "^18.11.18",
+    "dts-bundle-generator": "^7.1.0",
+    "rollup": "^3.9.1",
+    "tslib": "^2.4.1",
+    "tsx": "^3.12.1",
+    "typescript": "^4.9.4"
+  }
+}
