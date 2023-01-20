@@ -1,4 +1,4 @@
-import { WebAssertTarget, WebControl } from "./webcheck_types";
+import { WebAssertTarget, WebControl } from "./webcheck-types";
 
 export type Category = "web";
 
@@ -29,6 +29,9 @@ interface Production {
   control: ControlBase,
   assert: TargetBase<string>
 }
+
+export type AssertTarget<C extends Category> = AllProduction[C]["assert"] | ConstantTarget<unknown>;
+export type Control<C extends Category> = AllProduction[C]["control"];
 
 // https://github.com/Microsoft/TypeScript/issues/24274#issuecomment-471435068
 export type Implements<T, U extends T> = {}

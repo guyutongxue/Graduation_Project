@@ -8,25 +8,16 @@ import {
   BinaryExpression,
   Identifier,
 } from "estree";
+import { RuleSyntaxError } from "./errors";
 import { checkIdentifier, parseIdentifier } from "./ident";
 import {
   Action,
   Assertion,
+  AssertTarget,
   Category,
   Operator,
 } from "./types";
-export * from "./types";
-
-export interface IPosition {
-  start: number;
-  end: number;
-}
-
-export class RuleSyntaxError extends SyntaxError {
-  constructor(message: string, public position: IPosition) {
-    super(message);
-  }
-}
+import { WebAssertTarget, WebControl } from "./webcheck-types";
 
 const TEST_SRC = `
 "use web";
@@ -143,8 +134,9 @@ function checkTarget(
   }
 }
 
-function checkControl(expr: Expression): Control {
-  checkIdentifier("web", parseIdentifier(expr));
+function checkControl(expr: Expression): WebControl {
+  return checkIdentifier("web.control", parseIdentifier(expr));
+  /*
   if (expr.type !== "CallExpression") {
     throw new RuleSyntaxError("Expect a call here", expr);
   }
@@ -155,17 +147,18 @@ function checkControl(expr: Expression): Control {
   return {
     type: "control",
     ...target,
-  };
+  };*/
 }
 
-function checkExpression(expr: Expression): AssertExpression {
+function checkExpression(expr: Expression): AssertTarget<"web"> {
   if (expr.type === "Literal") {
     return {
       target: "constant",
       value: expr.value,
     };
   }
-  console.log(checkIdentifier("web", parseIdentifier(expr)));
+  return checkIdentifier("web.assert", parseIdentifier(expr));
+  /*
   if (expr.type !== "MemberExpression") {
     throw new RuleSyntaxError(
       `Only MemberExpression here, got ${expr.type}`,
@@ -203,7 +196,7 @@ function checkExpression(expr: Expression): AssertExpression {
     };
   } else {
     throw new RuleSyntaxError("Unknown target", expr);
-  }
+  }*/
 }
 
 function checkAssert(expr: BinaryExpression): Assertion {
@@ -287,8 +280,11 @@ export function transpile(src: string) {
     throw new Error("no impl");
   }
   const actions = blocks.map(checkStatements);
-  // console.log(JSON.stringify(actions, undefined, 2));
+  console.log(JSON.stringify(actions, undefined, 2));
   return actions;
 }
 
 transpile(TEST_SRC);
+
+export * from "./types";
+export * from "./errors";

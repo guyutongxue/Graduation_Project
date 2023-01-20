@@ -8,14 +8,15 @@ import {
   Literal,
   Record,
   Unknown,
+  Undefined,
 } from "runtypes";
 import { AllProduction, Category } from "./types";
 
 export type { Static, Runtype } from "runtypes";
+export { Null as RNull, Undefined as RUndefined } from "runtypes";
 
 export const Call: unique symbol = Symbol();
 export const Produced: unique symbol = Symbol();
-export const CallParam: unique symbol = Symbol();
 
 export type CallSig = {
   parameters?: readonly Runtype[];
@@ -94,5 +95,6 @@ export const RUnknown = patch(Unknown);
 export const RFunction = patch(Function);
 export const RNumber = patch(Number);
 export const RString = patch(String);
+export const RVoid = patch(Undefined);
 export const RLiteral = patch(Literal);
 export const RUnion = patch(Union);

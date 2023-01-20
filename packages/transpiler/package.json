@@ -6,7 +6,7 @@
   "types": "dist/index.d.ts",
   "scripts": {
     "start": "pnpm build && node dist/index.js",
-    "client-type": "dts-bundle-generator src/client.ts -o client.d.ts --external-inlines runtypes --inline-declare-global",
+    "client-type": "dts-bundle-generator src/client.ts -o dist/client.d.ts --external-inlines runtypes --inline-declare-global",
     "build": "rollup -c && pnpm client-type"
   },
   "dependencies": {

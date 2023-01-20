@@ -1,9 +1,5 @@
 import { ControlBase, TargetBase } from "./types";
 
-function unreachable(): never {
-  throw new Error("internal: unreachable");
-}
-
 interface ClickControl extends ControlBase {
   how: "click";
   selector: string;

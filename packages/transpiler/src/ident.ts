@@ -1,38 +1,26 @@
 import { Expression, SpreadElement } from "estree";
-import { Category, IPosition, RuleSyntaxError } from ".";
-import { globals } from "./new_types";
-import { Call } from "./runtypes-patch";
-import {
-  Runtype,
-  Record as RRecord,
-  Undefined,
-  ValidationError,
-} from "runtypes";
-import { isRuntype } from "runtypes/lib/runtype.js";
+import { AllProduction, Category } from "./types";
+import { IPosition, RuleSyntaxError } from "./errors";
+import { globals } from "./definitions";
+import { Call, Runtype, RUndefined, Produced } from "./runtypes-patch";
 
-type IdElement = (
-  | {
-      type: "identifier";
-      name: string;
-    }
-  | {
-      type: "call";
-      args: (Expression | SpreadElement)[];
-    }
-) &
-  IPosition;
+interface IdentifierElement {
+  type: "identifier";
+  name: string;
+}
 
-export type PathElement = (
-  | {
-      type: "identifier";
-      name: string;
-    }
-  | {
-      type: "call";
-      args: unknown[];
-    }
-) &
-  IPosition;
+interface RawCallElement {
+  type: "call";
+  args: (Expression | SpreadElement)[];
+}
+
+interface DeducedCallElement {
+  type: "call";
+  args: unknown[];
+}
+
+type IdElement = (IdentifierElement | RawCallElement) & IPosition;
+export type PathElement = (IdentifierElement | DeducedCallElement) & IPosition;
 
 export function parseIdentifier(expr: Expression): IdElement[] {
   switch (expr.type) {
@@ -90,7 +78,10 @@ export function parseIdentifier(expr: Expression): IdElement[] {
   }
 }
 
-export function checkIdentifier(category: Category, ids: IdElement[]) {
+export function checkIdentifier<
+  C extends Category,
+  T extends "control" | "assert"
+>(type: `${C}.${T}`, ids: IdElement[]): AllProduction[C][T] {
   ids = [...ids]; // do not modify original
   const top = ids.shift();
   if (typeof top === "undefined") {
@@ -137,7 +128,7 @@ export function checkIdentifier(category: Category, ids: IdElement[]) {
           ...cur,
           args: argValues,
         });
-        rt = rt[Call].returns ?? Undefined;
+        rt = rt[Call].returns ?? RUndefined;
       } else {
         throw new RuleSyntaxError(`Not a callable`, cur);
       }
@@ -158,5 +149,20 @@ export function checkIdentifier(category: Category, ids: IdElement[]) {
       path.push(cur);
     }
   }
-  return path;
+  console.log("path: ", path);
+  const args = path
+    .filter((e): e is DeducedCallElement & IPosition => e.type === "call")
+    .map((e) => e.args);
+  const production = rt[Produced];
+  console.log(production);
+  if (typeof production === "undefined") {
+    throw new RuleSyntaxError(
+      `An invalid target, or the definition is missing (internal error).`,
+      {
+        start: path[0].start,
+        end: path[path.length - 1].end,
+      }
+    );
+  }
+  return production.result(...args) as any;
 }

@@ -1,9 +1,12 @@
-import { Runtype, RRecord,
+import {
+  Runtype,
+  RRecord,
   RNumber,
   RString,
   RUnion,
   RLiteral,
-  RFunction
+  RFunction,
+  RVoid,
 } from "./runtypes-patch";
 
 const KEYS = RUnion(
@@ -264,59 +267,62 @@ const KEYS = RUnion(
   RLiteral("VolumeUp")
 );
 
-export const globals = <const>{
+export const globals = (<const>{
   $: RRecord({
-      title: RString.produces("web.assert", () => ({
-        target: "page",
-        component: "title"
-      })),
-      html: RString.produces("web.assert", () => ({
-        target: "page",
-        component: "html"
-      })),
-      text: RString.produces("web.assert", () => ({
-        target: "page",
-        component: "text"
-      })),
-      key: RFunction(<const>{
-        parameters: [KEYS],
-      }).produces("web.control", ([key]) => ({
+    title: RString.produces("web.assert", () => ({
+      target: "page",
+      component: "title",
+    })),
+    html: RString.produces("web.assert", () => ({
+      target: "page",
+      component: "html",
+    })),
+    text: RString.produces("web.assert", () => ({
+      target: "page",
+      component: "text",
+    })),
+    key: RFunction(<const>{
+      parameters: [KEYS],
+      returns: RVoid.produces("web.control", ([key]) => ({
         type: "control",
         how: "key",
-        key
+        key,
       })),
-    }).withCall(<const>{
-      parameters: [RString],
-      returns: RRecord({
-        html: RString.produces("web.assert", ([selector]) => ({
-          target: "selector",
-          selector,
-          component: "text"
-        })),
-        text: RString.produces("web.assert", ([selector]) => ({
-          target: "page",
-          selector,
-          component: "text"
-        })),
-        count: RNumber.produces("web.assert", ([selector]) => ({
-          target: "page",
-          selector,
-          component: "text"
-        })),
-        click: RFunction(<const>{}).produces("web.control", ([selector]) => ({
+    }),
+  }).withCall(<const>{
+    parameters: [RString],
+    returns: RRecord({
+      html: RString.produces("web.assert", ([selector]) => ({
+        target: "selector",
+        selector,
+        component: "text",
+      })),
+      text: RString.produces("web.assert", ([selector]) => ({
+        target: "page",
+        selector,
+        component: "text",
+      })),
+      count: RNumber.produces("web.assert", ([selector]) => ({
+        target: "page",
+        selector,
+        component: "text",
+      })),
+      click: RFunction(<const>{
+        returns: RVoid.produces("web.control", ([selector]) => ({
           type: "control",
           how: "click",
           selector,
         })),
-        input: RFunction(<const>{
-          parameters: [RString],
-        }).produces("web.control", ([selector], [value]) => ({
+      }),
+      input: RFunction(<const>{
+        parameters: [RString],
+        returns: RVoid.produces("web.control", ([selector], [value]) => ({
           type: "control",
           how: "value",
           selector,
-          value
+          value,
         })),
       }),
-    }
-  ),
-} satisfies Record<string, Runtype>;
+    }),
+  }),
+}) satisfies Record<string, Runtype>;

@@ -1,4 +1,4 @@
-import { globals } from "./new_types";
+import { globals } from "./definitions";
 import type { Static } from "runtypes";
 
 export type Globals = {
