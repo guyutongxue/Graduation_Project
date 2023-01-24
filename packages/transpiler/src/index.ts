@@ -1,23 +1,16 @@
-import * as acorn from "acorn";
-import {
+import { transform } from "@babel/standalone";
+import { parse } from "@babel/parser";
+import type {
   Program,
   Statement,
   Expression,
-  MemberExpression,
-  SpreadElement,
   BinaryExpression,
-  Identifier,
-} from "estree";
+} from "@babel/types";
 import { RuleSyntaxError } from "./errors";
 import { checkIdentifier, parseIdentifier } from "./ident";
-import {
-  Action,
-  Assertion,
-  AssertTarget,
-  Category,
-  Operator,
-} from "./types";
+import { Action, Assertion, AssertTarget, Category, Operator } from "./types";
 import { WebAssertTarget, WebControl } from "./webcheck-types";
+import plg from "./plugin";
 
 const TEST_SRC = `
 "use web";
@@ -26,30 +19,33 @@ const TEST_SRC = `
   $("#hello").click();
   assert: "Hello, JavaScript" in $("body").html;
 }
+{
+  assert: $.title == "Hello, World";
+  $("#hello").click();
+  assert: "Hello, JavaScript" in $("body").html;
+}
+{
+  assert: $.title == "Hello, World";
+  $("#hello").click();
+  assert: "Hello, JavaScript" in $("body").html;
+}
 `;
 
 function checkCategory(ast: Program) {
-  const [node, ...blocks] = ast.body;
-  if (typeof node === "undefined") {
-    throw new RuleSyntaxError("Empty rule", ast);
-  }
-  let category: Category;
-  if (
-    node.type !== "ExpressionStatement" ||
-    node.expression.type !== "Literal" ||
-    typeof node.expression.value !== "string"
-  ) {
+  const blocks = ast.body;
+  if (ast.directives.length !== 1) {
     throw new RuleSyntaxError(
       'The first statement of rules must be "use ..."',
-      node
+      ast
     );
   }
-  if (node.expression.value === "use web") {
+  let category: Category;
+  if (ast.directives[0].value.value === "use web") {
     category = "web";
   } else {
     throw new RuleSyntaxError(
-      `Unknown rule header ${node.expression.raw}`,
-      node
+      `Unknown rule header ${ast.directives[0].value.value}`,
+      ast.directives[0]
     );
   }
   if (blocks.length === 0) {
@@ -71,140 +67,23 @@ function checkCategory(ast: Program) {
   };
 }
 
-function checkAction(prop: Identifier, args: (Expression | SpreadElement)[]) {
-  const how = prop.name;
-  if (how === "click") {
-    return {
-      how: "click" as const,
-    };
-  } else if (how === "key") {
-    if (args.length !== 1)
-      throw new RuleSyntaxError(`value accept 1 arg`, prop);
-    const arg = args[0];
-    if (arg.type !== "Literal" || typeof arg.value !== "string") {
-      throw new RuleSyntaxError(`value should be string`, arg);
-    }
-    return {
-      how: "key" as const,
-      key: arg.value,
-    };
-  } else if (how === "value") {
-    if (args.length !== 1)
-      throw new RuleSyntaxError(`value accept 1 arg`, prop);
-    const arg = args[0];
-    if (arg.type !== "Literal" || typeof arg.value !== "string") {
-      throw new RuleSyntaxError(`value should be string`, arg);
-    }
-    return {
-      how: "value" as const,
-      value: arg.value,
-    };
-  } else {
-    throw new RuleSyntaxError(`Action ${how} not supported`, prop);
-  }
-}
-
-function checkTarget(
-  expr: MemberExpression,
-  args: (Expression | SpreadElement)[]
-) {
-  const { object, property } = expr;
-  if (property.type !== "Identifier") {
-    throw new RuleSyntaxError("Unsupported syntax", property);
-  }
-  const action = checkAction(property, args);
-  if (object.type === "Identifier" && object.name === "$") {
-    throw new RuleSyntaxError("$ is not supported now", object);
-  } else if (
-    object.type === "CallExpression" &&
-    object.callee.type === "Identifier" &&
-    object.callee.name === "$"
-  ) {
-    if (object.arguments.length !== 1)
-      throw new RuleSyntaxError("1 argument expected", object);
-    const arg = object.arguments[0];
-    if (arg.type !== "Literal" || typeof arg.value !== "string")
-      throw new RuleSyntaxError(`Only string literal here`, arg);
-    return {
-      selector: arg.value,
-      ...action,
-    };
-  } else {
-    throw new RuleSyntaxError("Unknown target", expr);
-  }
-}
-
 function checkControl(expr: Expression): WebControl {
   return checkIdentifier("web.control", parseIdentifier(expr));
-  /*
-  if (expr.type !== "CallExpression") {
-    throw new RuleSyntaxError("Expect a call here", expr);
-  }
-  if (expr.callee.type !== "MemberExpression") {
-    throw new RuleSyntaxError("Expect a member expression here", expr);
-  }
-  const target = checkTarget(expr.callee, expr.arguments);
-  return {
-    type: "control",
-    ...target,
-  };*/
 }
 
 function checkExpression(expr: Expression): AssertTarget<"web"> {
-  if (expr.type === "Literal") {
+  if (expr.type === "StringLiteral" || expr.type === "NumericLiteral") {
     return {
       target: "constant",
       value: expr.value,
     };
   }
   return checkIdentifier("web.assert", parseIdentifier(expr));
-  /*
-  if (expr.type !== "MemberExpression") {
-    throw new RuleSyntaxError(
-      `Only MemberExpression here, got ${expr.type}`,
-      expr
-    );
-  }
-  const { object, property } = expr;
-  if (property.type !== "Identifier") {
-    throw new RuleSyntaxError("Unsupported syntax", property);
-  }
-  if (
-    object.type === "Identifier" &&
-    object.name === "$" &&
-    property.name === "title"
-  ) {
-    return {
-      target: "page",
-      component: "title",
-    };
-  } else if (
-    object.type === "CallExpression" &&
-    object.callee.type === "Identifier" &&
-    object.callee.name === "$" &&
-    ["text", "html", "count"].includes(property.name)
-  ) {
-    if (object.arguments.length !== 1)
-      throw new RuleSyntaxError("1 argument expected", object);
-    const arg = object.arguments[0];
-    if (arg.type !== "Literal" || typeof arg.value !== "string")
-      throw new RuleSyntaxError(`Only string literal here`, arg);
-    return {
-      target: "selector",
-      selector: arg.value,
-      component: property.name as any,
-    };
-  } else {
-    throw new RuleSyntaxError("Unknown target", expr);
-  }*/
 }
 
 function checkAssert(expr: BinaryExpression): Assertion {
-  const lhs = expr.left;
+  const lhs = expr.left as Expression; // fix me
   const rhs = expr.right;
-  if (lhs.type === "Literal" && rhs.type === "Literal") {
-    throw new RuleSyntaxError(`Asserting constants??`, expr);
-  }
   let op: Operator;
   switch (expr.operator) {
     case "==":
@@ -274,8 +153,12 @@ function checkStatements(statements: Statement[]) {
 }
 
 export function transpile(src: string) {
-  const ast = acorn.parse(src, { ecmaVersion: "latest" });
-  const { category, blocks } = checkCategory(ast);
+  const ast = parse(src, {
+    sourceType: "script",
+
+    strictMode: true,
+  });
+  const { category, blocks } = checkCategory(ast.program);
   if (category !== "web") {
     throw new Error("no impl");
   }
@@ -283,8 +166,22 @@ export function transpile(src: string) {
   console.log(JSON.stringify(actions, undefined, 2));
   return actions;
 }
+try {
+  const r = transform(TEST_SRC, {
+    filename: "test.rule.js",
+    sourceType: "module",
+    plugins: [plg],
+  });
+  console.log(r.code);
+} catch (e) {
+  if (e instanceof RuleSyntaxError) {
+    console.log(e.position);
+  } else {
+    console.error(e);
+  }
+}
 
-transpile(TEST_SRC);
+// transpile(TEST_SRC);
 
 export * from "./types";
 export * from "./errors";

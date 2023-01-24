@@ -1,5 +1,8 @@
 // @ts-check
 import typescript from "@rollup/plugin-typescript";
+import nodeResolve from "@rollup/plugin-node-resolve";
+import commonJs from "@rollup/plugin-commonjs";
+import json from "@rollup/plugin-json";
 import { defineConfig } from "rollup";
 
 export default defineConfig([
@@ -9,7 +12,26 @@ export default defineConfig([
       dir: "dist",
       format: "es",
     },
-    external: [/^node:/],
-    plugins: [typescript({ tsconfig: "tsconfig.json" })],
+    // external: ["@babel/code-frame"],
+    plugins: [
+      nodeResolve(),
+      commonJs(),
+      json(),
+      typescript()
+    ],
   },
+  // {
+  //   input: ["src/plugin.ts"],
+  //   output: {
+  //     dir: "dist",
+  //     format: "es",
+  //   },
+  //   external: [/^@babel\/.*$/],
+  //   plugins: [
+  //     nodeResolve(),
+  //     commonJs(),
+  //     json(),
+  //     typescript()
+  //   ],
+  // },
 ]);

@@ -8,10 +8,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Buildalyzer" Version="5.0.0" />
     <PackageReference Include="FlaUI.UIA3" Version="4.0.0" />
-    <PackageReference Include="Microsoft.Build" Version="17.4.0" />
-    <PackageReference Include="Microsoft.Build.Runtime" Version="17.4.0" />
   </ItemGroup>
 
 </Project>

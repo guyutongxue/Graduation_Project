@@ -1,4 +1,4 @@
-import { Expression, SpreadElement } from "estree";
+import { Expression } from "@babel/types";
 import { AllProduction, Category } from "./types";
 import { IPosition, RuleSyntaxError } from "./errors";
 import { globals } from "./definitions";
@@ -11,7 +11,7 @@ interface IdentifierElement {
 
 interface RawCallElement {
   type: "call";
-  args: (Expression | SpreadElement)[];
+  args: Expression[];
 }
 
 interface DeducedCallElement {
@@ -19,21 +19,21 @@ interface DeducedCallElement {
   args: unknown[];
 }
 
-type IdElement = (IdentifierElement | RawCallElement) & IPosition;
+export type IdElement = (IdentifierElement | RawCallElement) & IPosition;
 export type PathElement = (IdentifierElement | DeducedCallElement) & IPosition;
 
 export function parseIdentifier(expr: Expression): IdElement[] {
   switch (expr.type) {
     case "CallExpression": {
       const lhs = expr.callee;
-      if (lhs.type === "Super") {
+      if (lhs.type === "Super" || lhs.type === "V8IntrinsicIdentifier") {
         throw new RuleSyntaxError(`Unexpected super keyword`, lhs);
       }
       return [
         ...parseIdentifier(lhs),
         {
           type: "call",
-          args: expr.arguments,
+          args: expr.arguments.filter((e): e is Expression => !e.type.endsWith("Expression") ),
           start: expr.start,
           end: expr.end,
         },
@@ -112,7 +112,7 @@ export function checkIdentifier<
         for (let i = 0; i < params.length; i++) {
           const arg = cur.args[i];
           const param = params[i];
-          if (arg.type !== "Literal") {
+          if (arg.type !== "StringLiteral" && arg.type !== "NumericLiteral") {
             throw new RuleSyntaxError(
               `Argument should be literal, got ${arg.type}`,
               arg
@@ -149,12 +149,12 @@ export function checkIdentifier<
       path.push(cur);
     }
   }
-  console.log("path: ", path);
+  // console.log("path: ", path);
   const args = path
     .filter((e): e is DeducedCallElement & IPosition => e.type === "call")
     .map((e) => e.args);
   const production = rt[Produced];
-  console.log(production);
+  // console.log(production);
   if (typeof production === "undefined") {
     throw new RuleSyntaxError(
       `An invalid target, or the definition is missing (internal error).`,

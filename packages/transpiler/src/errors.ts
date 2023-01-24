@@ -1,6 +1,6 @@
 export interface IPosition {
-  start: number;
-  end: number;
+  start?: number | null;
+  end?: number | null;
 }
 
 export class RuleSyntaxError extends SyntaxError {
