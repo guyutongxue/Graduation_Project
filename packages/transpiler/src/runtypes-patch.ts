@@ -10,7 +10,7 @@ import {
   Unknown,
   Undefined,
 } from "runtypes";
-import { AllProduction, Category } from "./types";
+import { AllCommand, Category } from "./types";
 
 export type { Static, Runtype } from "runtypes";
 export { Null as RNull, Undefined as RUndefined } from "runtypes";
@@ -41,15 +41,15 @@ export function withCall<A, C extends CallSig>(
   } as any;
 }
 
-export interface IProduction<C extends Category, T extends "assert" | "control"> {
-  type: `${C}.${T}`;
-  result: (...args: any[]) => AllProduction[C][T]
+export interface IProduction<C extends Category> {
+  type: C;
+  result: (...args: any[]) => AllCommand[C]
 }
 
-export function produces<A, C extends Category, T extends "assert" | "control">(
+export function produces<A, C extends Category>(
   this: Runtype<A>,
-  type: `${C}.${T}`,
-  result: (...args: any[][]) => AllProduction[C][T]
+  type: C,
+  result: (...args: any[][]) => AllCommand[C]
 ): Runtype<A> {
   return {
     ...this,

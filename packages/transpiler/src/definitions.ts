@@ -269,56 +269,53 @@ const KEYS = RUnion(
 
 export const globals = (<const>{
   $: RRecord({
-    title: RString.produces("web.assert", () => ({
-      target: "page",
+    title: RString.produces("web", () => ({
+      type: "page",
       component: "title",
     })),
-    html: RString.produces("web.assert", () => ({
-      target: "page",
+    html: RString.produces("web", () => ({
+      type: "page",
       component: "html",
     })),
-    text: RString.produces("web.assert", () => ({
-      target: "page",
+    text: RString.produces("web", () => ({
+      type: "page",
       component: "text",
     })),
     key: RFunction(<const>{
       parameters: [KEYS],
-      returns: RVoid.produces("web.control", ([key]) => ({
-        type: "control",
-        how: "key",
+      returns: RVoid.produces("web", ([key]) => ({
+        type: "key",
         key,
       })),
     }),
   }).withCall(<const>{
     parameters: [RString],
     returns: RRecord({
-      html: RString.produces("web.assert", ([selector]) => ({
-        target: "selector",
+      html: RString.produces("web", ([selector]) => ({
+        type: "selector",
+        selector,
+        component: "html",
+      })),
+      text: RString.produces("web", ([selector]) => ({
+        type: "selector",
         selector,
         component: "text",
       })),
-      text: RString.produces("web.assert", ([selector]) => ({
-        target: "page",
+      count: RNumber.produces("web", ([selector]) => ({
+        type: "selector",
         selector,
-        component: "text",
-      })),
-      count: RNumber.produces("web.assert", ([selector]) => ({
-        target: "page",
-        selector,
-        component: "text",
+        component: "count",
       })),
       click: RFunction(<const>{
-        returns: RVoid.produces("web.control", ([selector]) => ({
-          type: "control",
-          how: "click",
+        returns: RVoid.produces("web", ([selector]) => ({
+          type: "click",
           selector,
         })),
       }),
       input: RFunction(<const>{
         parameters: [RString],
-        returns: RVoid.produces("web.control", ([selector], [value]) => ({
-          type: "control",
-          how: "value",
+        returns: RVoid.produces("web", ([selector], [value]) => ({
+          type: "value",
           selector,
           value,
         })),

@@ -6,8 +6,10 @@ import type {
   FunctionDeclaration,
   Identifier,
   MemberExpression,
+  Node,
   ObjectExpression,
   ObjectProperty,
+  Program,
   StringLiteral,
 } from "@babel/types";
 import { RuleSyntaxError } from "./errors";
@@ -15,96 +17,98 @@ import { checkIdentifier, IdElement } from "./ident";
 import { Category } from "./types";
 
 type BabelExport = typeof import("@babel/core");
-type IdVisitorState = {
-  target: IdElement[] | null;
-  sendId: Identifier;
-};
-type TopVisitorState = {
-  assertId: Identifier;
-  sendId: Identifier;
-  addCaseId: Identifier;
-};
 
 export default function (babel: BabelExport): PluginObj {
-  const { types } = babel;
-
-  /**
-   * Map Record<string, Expression> to AST.
-   * @param obj
-   * @returns
-   */
-  function objAst(obj: Record<string, Expression>): ObjectExpression {
-    return types.objectExpression(
-      Object.entries(obj).map(([k, v]) =>
-        types.objectProperty(
-          types.isValidIdentifier(k)
-            ? types.identifier(k)
-            : types.stringLiteral(k),
-          v
-        )
-      )
-    );
-  }
+  const { types: t } = babel;
 
   /**
    * Transform a JS object to Babel AST, in literal form.
    * @param literal
+   * @param preserveAst Preserve AST Node in any component
    * @returns
    */
-  function astify(literal: unknown): Expression {
+  function astify(literal: unknown, preserveAst = false): Expression {
+    // Dirty hack here
+    function isNode(l: any): l is Expression {
+      if (l?.constructor?.name === "Node") return true;
+      return (
+        typeof l?.type === "string" &&
+        (l.type.endsWith("Expression") || l.type.endsWith("Literal"))
+      );
+    }
+    if (preserveAst && isNode(literal)) {
+      return literal;
+    }
     if (literal === null) {
-      return types.nullLiteral();
+      return t.nullLiteral();
     }
     switch (typeof literal) {
       case "number":
-        return types.numericLiteral(literal);
+        return t.numericLiteral(literal);
       case "string":
-        return types.stringLiteral(literal);
+        return t.stringLiteral(literal);
       case "boolean":
-        return types.booleanLiteral(literal);
+        return t.booleanLiteral(literal);
       case "undefined":
-        return types.unaryExpression("void", types.numericLiteral(0), true);
+        return t.unaryExpression("void", t.numericLiteral(0), true);
       case "bigint":
-        return types.bigIntLiteral(literal.toString());
+        return t.bigIntLiteral(literal.toString());
       case "function":
       case "symbol":
         throw new Error(`${typeof literal} not supported`);
       default:
         if (Array.isArray(literal)) {
-          return types.arrayExpression(literal.map(astify));
+          return t.arrayExpression(literal.map((l) => astify(l, preserveAst)));
         }
         if (literal instanceof RegExp) {
-          return types.regExpLiteral(literal.source, literal.flags);
+          return t.regExpLiteral(literal.source, literal.flags);
         }
+
         const lit = literal as Record<string, unknown>;
-        return types.objectExpression(
-          Object.keys(lit)
-            .filter((k) => typeof k === "string")
-            .map((k): ObjectProperty => {
-              return types.objectProperty(
-                types.isValidIdentifier(k)
-                  ? types.identifier(k)
-                  : types.stringLiteral(k),
-                astify(lit[k])
+        return t.objectExpression(
+          Object.entries(lit)
+            .filter(([k]) => typeof k === "string")
+            .map(([k, v]): ObjectProperty => {
+              return t.objectProperty(
+                t.isValidIdentifier(k) ? t.identifier(k) : t.stringLiteral(k),
+                astify(v, preserveAst)
               );
             })
         );
     }
   }
 
-  function importIdentifiers(ids: string[], path: NodePath) {
-    const localIds = ids.map((id) => path.scope.generateUidIdentifier(id));
+  type IdVisitorState = {
+    readonly controller: RuleController;
+    target: IdElement[] | null;
+  };
+  type TopVisitorState = {
+    readonly controller: RuleController;
+  };
+  class RuleController {
+    #controllerId: Identifier;
 
-    const importDecl = types.importDeclaration(
-      localIds.map((local, i) =>
-        types.importSpecifier(local, types.identifier(ids[i]))
-      ),
-      types.stringLiteral("graduate")
-    );
-    return {
-      localIds,
-      importDecl,
-    };
+    constructor(public readonly category: Category, path: NodePath<Program>) {
+      const controllerClassId = path.scope.generateUidIdentifier("Controller");
+      this.#controllerId = path.scope.generateUidIdentifier("controller");
+      const importDecl = t.importDeclaration(
+        [t.importSpecifier(controllerClassId, t.identifier("Controller"))],
+        t.stringLiteral("graduate")
+      );
+      const initDecl = t.variableDeclaration("const", [
+        t.variableDeclarator(
+          this.#controllerId,
+          t.newExpression(controllerClassId, [t.stringLiteral(category)])
+        ),
+      ]);
+      path.node.body.splice(0, 0, importDecl, initDecl);
+    }
+    private method(name: string) {
+      return t.memberExpression(this.#controllerId, t.identifier(name));
+    }
+    readonly assert = () => this.method("assert");
+    readonly send = () => this.method("send");
+    readonly addCase = () => this.method("addCase");
   }
 
   function transformId<T extends MemberExpression | CallExpression>(
@@ -126,7 +130,7 @@ export default function (babel: BabelExport): PluginObj {
         this.target.push({
           type: "call",
           args: node.arguments.filter((n): n is Expression =>
-            types.isExpression(n)
+            t.isExpression(n)
           ),
         });
       }
@@ -135,14 +139,20 @@ export default function (babel: BabelExport): PluginObj {
         path.parent.type !== "CallExpression"
       ) {
         console.log(this.target);
-        const production = checkIdentifier("web.assert", this.target);
+        const production = checkIdentifier(
+          this.controller.category,
+          this.target
+        );
         this.target = null;
 
         if (path.parent.type !== "AwaitExpression") {
-          path.replaceWith({
-            type: "AwaitExpression",
-            argument: types.callExpression(this.sendId, [astify(production)]),
-          });
+          path.replaceWith(
+            t.awaitExpression(
+              t.callExpression(this.controller.send(), [
+                astify(production, true),
+              ])
+            )
+          );
         }
       }
     }
@@ -177,13 +187,13 @@ export default function (babel: BabelExport): PluginObj {
       if (path.parent.type !== "Program") return;
       path.traverse(idVisitor, {
         target: null,
-        sendId: this.sendId,
+        controller: this.controller,
       });
       const caseId = path.scope.generateUidIdentifier();
-      path.replaceWith(types.functionDeclaration(caseId, [], path.node));
+      path.replaceWith(t.functionDeclaration(caseId, [], path.node));
       path.insertAfter(
-        types.expressionStatement(
-          types.callExpression(this.addCaseId, [caseId])
+        t.expressionStatement(
+          t.callExpression(this.controller.addCase(), [caseId])
         )
       );
     },
@@ -200,27 +210,33 @@ export default function (babel: BabelExport): PluginObj {
         const length = (expression.end ?? 1) - (expression.start ?? 0);
         const src = path.getSource().substring(offset, offset + length);
 
-        let arg: ObjectExpression;
+        let arg: Expression;
         if (expression.type === "BinaryExpression") {
           const { left, right } = expression;
           if (left.type === "PrivateName") {
             throw new SyntaxError("private here?");
           }
-          arg = objAst({
-            type: types.stringLiteral("binary"),
-            src: types.stringLiteral(src),
-            op: types.stringLiteral(expression.operator),
-            lhs: left,
-            rhs: right,
-          });
+          arg = astify(
+            {
+              type: t.stringLiteral("binary"),
+              src: t.stringLiteral(src),
+              op: t.stringLiteral(expression.operator),
+              lhs: left,
+              rhs: right,
+            },
+            true
+          );
         } else {
-          arg = objAst({
-            type: types.stringLiteral("other"),
-            src: types.stringLiteral(src),
-            expr: expression,
-          });
+          arg = astify(
+            {
+              type: t.stringLiteral("other"),
+              src: t.stringLiteral(src),
+              expr: expression,
+            },
+            true
+          );
         }
-        path.replaceWith(types.callExpression(this.assertId, [arg]));
+        path.replaceWith(t.callExpression(this.controller.assert(), [arg]));
       },
     },
   };
@@ -255,26 +271,9 @@ export default function (babel: BabelExport): PluginObj {
           }
         }
         path.node.directives = [];
-        const {
-          importDecl,
-          localIds: [setCategoryId, assertId, sendId, addCaseId],
-        } = importIdentifiers(
-          ["setCategory", "assert", "send", "addCase"],
-          path
-        );
-        body.splice(
-          0,
-          0,
-          importDecl,
-          types.expressionStatement(
-            types.callExpression(setCategoryId, [types.stringLiteral(category)])
-          )
-        );
-
+        const controller = new RuleController(category, path);
         path.traverse(topVisitor, {
-          assertId,
-          sendId,
-          addCaseId,
+          controller,
         });
       },
     },

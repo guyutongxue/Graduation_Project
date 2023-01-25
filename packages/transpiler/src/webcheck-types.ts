@@ -1,38 +1,30 @@
-import { ControlBase, TargetBase } from "./types";
 
-interface ClickControl extends ControlBase {
-  how: "click";
+interface ClickControl  {
+  type: "click";
   selector: string;
 }
 
-interface ValueControl extends ControlBase {
-  how: "value";
+interface ValueControl {
+  type: "value";
   selector: string;
   value: string;
 }
 
-interface KeyControl extends ControlBase {
-  how: "key";
+interface KeyControl {
+  type: "key";
   key: string;
 }
 
-export type WebControl = ClickControl | ValueControl | KeyControl;
-
-interface PageTarget extends TargetBase<"page"> {
+interface PageTarget {
+  type: "page";
   component: "title" | "text" | "html"
 }
 
-type SelectorType = {
-  text: string;
-  html: string;
-  count: number;
-};
 
-export type SelectorProp = keyof SelectorType;
-
-interface SelectorTarget<K extends SelectorProp> extends TargetBase<"selector">  {
+interface SelectorTarget {
+  type: "selector";
   selector: string;
-  component: K;
+  component: "text" | "html" | "count";
 }
 
-export type WebAssertTarget = PageTarget | SelectorTarget<SelectorProp>;
+export type WebCommand = ClickControl | KeyControl | ValueControl | PageTarget | SelectorTarget;
