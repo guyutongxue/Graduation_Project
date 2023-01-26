@@ -8,9 +8,12 @@
   </head>
   <body>
     <div id="app">
-      <div id="editor"></div>
-      <button id="generate">Generate</button>
-      <div id="blocklyArea"></div>
+      <div style="height: 100%; display: flex; flex-direction: row;">
+        <div id="editor"></div>
+        <div style="font-family: monospace; white-space: pre;" id="result"></div>
+      </div>
+      <!-- <button id="generate">Generate</button>
+      <div id="blocklyArea"></div> -->
     </div>
     <div id="blocklyDiv" style="position: absolute"></div>
     <script type="module" src="/src/main.ts"></script>

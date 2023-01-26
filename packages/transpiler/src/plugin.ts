@@ -101,7 +101,9 @@ export default function (babel: BabelExport): PluginObj {
           t.newExpression(controllerClassId, [t.stringLiteral(category)])
         ),
       ]);
+      const exportDecl = t.exportDefaultDeclaration(this.#controllerId);
       path.node.body.splice(0, 0, importDecl, initDecl);
+      path.node.body.push(exportDecl);
     }
     private method(name: string) {
       return t.memberExpression(this.#controllerId, t.identifier(name));
@@ -111,7 +113,7 @@ export default function (babel: BabelExport): PluginObj {
     readonly addCase = () => this.method("addCase");
   }
 
-  function transformId<T extends MemberExpression | CallExpression>(
+  function transformId<T extends Identifier | MemberExpression | CallExpression>(
     this: IdVisitorState,
     path: NodePath<T>
   ) {
@@ -120,23 +122,27 @@ export default function (babel: BabelExport): PluginObj {
       if (node.type === "MemberExpression") {
         const prop = node.property;
         if (prop.type !== "Identifier") {
-          throw new SyntaxError("nah");
+          throw new RuleSyntaxError(`Non-identifier member '${prop.type}' not supported.`, prop);
         }
         this.target.push({
           type: "identifier",
           name: prop.name,
+          start: prop.start,
+          end: prop.end
         });
-      } else {
+      } else if (node.type === "CallExpression") {
         this.target.push({
           type: "call",
           args: node.arguments.filter((n): n is Expression =>
             t.isExpression(n)
           ),
+          start: node.start,
+          end: node.end
         });
       }
       if (
         path.parent.type !== "MemberExpression" &&
-        path.parent.type !== "CallExpression"
+        !(path.parent.type === "CallExpression" && path.parent.callee === node)
       ) {
         console.log(this.target);
         const production = checkIdentifier(
@@ -160,15 +166,20 @@ export default function (babel: BabelExport): PluginObj {
   const idVisitor: Visitor<IdVisitorState> = {
     Identifier: {
       enter(path) {
-        const name = path.node.name;
+        const { start, end, name } = path.node;
         if (path.isReferencedIdentifier() && !path.scope.hasBinding(name)) {
           this.target = [
             {
               type: "identifier",
-              name: name,
+              name,
+              start,
+              end
             },
           ];
         }
+      },
+      exit(path) {
+        transformId.call(this, path);
       },
     },
     MemberExpression: {
@@ -190,7 +201,7 @@ export default function (babel: BabelExport): PluginObj {
         controller: this.controller,
       });
       const caseId = path.scope.generateUidIdentifier();
-      path.replaceWith(t.functionDeclaration(caseId, [], path.node));
+      path.replaceWith(t.functionDeclaration(caseId, [], path.node, false, true));
       path.insertAfter(
         t.expressionStatement(
           t.callExpression(this.controller.addCase(), [caseId])
@@ -203,7 +214,7 @@ export default function (babel: BabelExport): PluginObj {
         if (node.label.name !== "assert") return;
         const statement = node.body;
         if (statement.type !== "ExpressionStatement") {
-          throw new SyntaxError("Assert not an expression");
+          throw new RuleSyntaxError("Assertion not an expression", statement);
         }
         const { expression } = statement;
         const offset = (expression.start ?? 0) - (node.start ?? 0);
@@ -214,7 +225,7 @@ export default function (babel: BabelExport): PluginObj {
         if (expression.type === "BinaryExpression") {
           const { left, right } = expression;
           if (left.type === "PrivateName") {
-            throw new SyntaxError("private here?");
+            throw new RuleSyntaxError("Why private name here?", left);
           }
           arg = astify(
             {
@@ -245,17 +256,17 @@ export default function (babel: BabelExport): PluginObj {
       Program(path) {
         const { body, directives } = path.node;
         if (directives.length === 0) {
-          throw new SyntaxError("no directive");
+          throw new RuleSyntaxError(`No "use ..." directive found.`, path.node);
         }
         if (directives.length > 1) {
-          throw new SyntaxError("multiple directives");
+          throw new RuleSyntaxError(`Multiple directives. The first directive is "${directives[0].value.value}"`, directives[1]);
         }
         let category: Category;
         if (directives[0].value.value === "use web") {
           category = "web";
         } else {
           throw new RuleSyntaxError(
-            `Unknown rule header ${directives[0].value.value}`,
+            `Unknown rule directive ${directives[0].value.value}`,
             directives[0]
           );
         }

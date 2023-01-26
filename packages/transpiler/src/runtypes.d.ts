@@ -5,7 +5,7 @@ declare module "runtypes/lib/runtype" {
 
   interface RuntypeBase<A = unknown> {
     [Call]?: CallSig;
-    [Produced]?: IProduction<Category, "assert" | "control">;
+    [Produced]?: IProduction<Category>;
     withCall: typeof withCall;
     produces: typeof produces;
   }

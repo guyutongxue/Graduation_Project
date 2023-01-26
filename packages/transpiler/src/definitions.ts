@@ -270,21 +270,21 @@ const KEYS = RUnion(
 export const globals = (<const>{
   $: RRecord({
     title: RString.produces("web", () => ({
-      type: "page",
+      method: "page",
       component: "title",
     })),
     html: RString.produces("web", () => ({
-      type: "page",
+      method: "page",
       component: "html",
     })),
     text: RString.produces("web", () => ({
-      type: "page",
+      method: "page",
       component: "text",
     })),
     key: RFunction(<const>{
       parameters: [KEYS],
       returns: RVoid.produces("web", ([key]) => ({
-        type: "key",
+        method: "key",
         key,
       })),
     }),
@@ -292,30 +292,30 @@ export const globals = (<const>{
     parameters: [RString],
     returns: RRecord({
       html: RString.produces("web", ([selector]) => ({
-        type: "selector",
+        method: "selector",
         selector,
         component: "html",
       })),
       text: RString.produces("web", ([selector]) => ({
-        type: "selector",
+        method: "selector",
         selector,
         component: "text",
       })),
       count: RNumber.produces("web", ([selector]) => ({
-        type: "selector",
+        method: "selector",
         selector,
         component: "count",
       })),
       click: RFunction(<const>{
         returns: RVoid.produces("web", ([selector]) => ({
-          type: "click",
+          method: "click",
           selector,
         })),
       }),
       input: RFunction(<const>{
         parameters: [RString],
         returns: RVoid.produces("web", ([selector], [value]) => ({
-          type: "value",
+          method: "value",
           selector,
           value,
         })),

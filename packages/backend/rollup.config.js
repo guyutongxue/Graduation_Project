@@ -7,12 +7,14 @@ import { defineConfig } from "rollup";
 
 export default defineConfig([
   {
-    input: ["src/index.ts"],
+    input: ["src/index.ts", "src/client.ts"],
     output: {
       dir: "dist",
       format: "es",
     },
-    // external: ["@babel/code-frame"],
+    // Rollup works bad with chalk.
+    // https://github.com/chalk/supports-color/issues/113
+    external: ["chalk"],
     plugins: [
       nodeResolve(),
       commonJs(),

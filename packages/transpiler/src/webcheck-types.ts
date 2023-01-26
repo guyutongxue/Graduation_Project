@@ -1,28 +1,28 @@
 
 interface ClickControl  {
-  type: "click";
+  method: "click";
   selector: string;
 }
 
 interface ValueControl {
-  type: "value";
+  method: "value";
   selector: string;
   value: string;
 }
 
 interface KeyControl {
-  type: "key";
+  method: "key";
   key: string;
 }
 
 interface PageTarget {
-  type: "page";
+  method: "page";
   component: "title" | "text" | "html"
 }
 
 
 interface SelectorTarget {
-  type: "selector";
+  method: "selector";
   selector: string;
   component: "text" | "html" | "count";
 }
