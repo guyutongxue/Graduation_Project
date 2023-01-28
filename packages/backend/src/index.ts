@@ -41,10 +41,12 @@ if (typeof code === "undefined" || code === null) {
 
 tmp.setGracefulCleanup();
 
-await tmp.withFile(async ({ path }) => {
+const controller = await tmp.withFile(async ({ path }) => {
   fs.writeFile(path, code);
   const controller: Controller = (await import(pathToFileURL(path).href)).default;
-  await controller.run();
-}, {
-  postfix: ".mjs"
+  return controller;
+}, { postfix: ".mjs" });
+
+await (controller.useDirectorySource ? tmp.withDir : tmp.withFile)(async ({ path }) => {
+  controller.run(path);
 });

@@ -1,4 +1,3 @@
-import { type } from "os";
 import type { Category, Command } from "transpiler";
 
 type Case = () => Promise<void>;
@@ -31,7 +30,13 @@ type Assertion = (
 export class Controller<C extends Category = Category> {
   #cases: Case[] = [];
 
-  constructor(category: C) {}
+  get useDirectorySource() {
+    return this.category === "web";
+  }
+
+  constructor(private category: C) {
+
+  }
   async addCase(case_: Case) {
     this.#cases.push(case_);
   }
@@ -42,7 +47,8 @@ export class Controller<C extends Category = Category> {
     console.log(assertion);
   }
 
-  async run() {
+  async run(source: string) {
+
     for (const case_ of this.#cases) {
       await case_();
     }

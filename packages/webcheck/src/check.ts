@@ -1,5 +1,4 @@
 import type { Browser, KeyInput, Page } from "puppeteer-core";
-import type { Action, Operator, AssertExpression } from "transpiler";
 
 export class AssertionError extends Error {
   constructor() {
