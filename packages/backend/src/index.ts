@@ -48,5 +48,5 @@ const controller = await tmp.withFile(async ({ path }) => {
 }, { postfix: ".mjs" });
 
 await (controller.useDirectorySource ? tmp.withDir : tmp.withFile)(async ({ path }) => {
-  controller.run(path);
+  await controller.run(path);
 });

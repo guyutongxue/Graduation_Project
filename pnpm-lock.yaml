@@ -102,6 +102,7 @@ importers:
       '@rollup/plugin-json': ^6.0.0
       '@rollup/plugin-node-resolve': ^15.0.1
       '@rollup/plugin-typescript': ^10.0.1
+      '@types/node': ^18.11.18
       chalk: ^5.2.0
       fastify: ^4.11.0
       get-port: ^6.1.2
@@ -123,6 +124,7 @@ importers:
       '@rollup/plugin-json': 6.0.0_rollup@3.9.1
       '@rollup/plugin-node-resolve': 15.0.1_rollup@3.9.1
       '@rollup/plugin-typescript': 10.0.1_hqjvco2e22ojmon3nhwchufpre
+      '@types/node': 18.11.18
       rollup: 3.9.1
       tslib: 2.4.1
       tsx: 3.12.1

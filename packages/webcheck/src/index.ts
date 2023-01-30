@@ -1,26 +1,41 @@
-// import { launch } from "./browser";
-// import { Server } from "./server";
+import { launch } from "./browser";
+import { Server } from "./server";
 import getPort from "get-port";
 import jayson from "jayson/promise";
 import os from "node:os";
+import { Browser } from "puppeteer-core";
 
-const server = new jayson.Server({
-  initialize() {
-    return { initialized: true };
+let htmlServer: Server | null = null;
+let browser: Browser | null = null;
+
+const rpcServer = new jayson.Server({
+  async initialize(path: string) {
+    if (htmlServer) {
+      return rpcServer.error(501, "HTML server already started");
+    }
+    htmlServer = new Server(path);
+    const address = await htmlServer.listen();
+    if (browser) {
+      return rpcServer.error(502, "Puppeteer browser already started");
+    }
+    ({ browser } = await launch(address));
+    return true;
   },
+  async dispose() {
+    if (browser) {
+      await browser.close();
+      browser = null;
+    }
+    if (htmlServer) {
+      await htmlServer.dispose();
+      htmlServer = null;
+    }
+    return true;
+  }
 });
 
-// async function startServer() {
-//   const server = new Server(path);
-//   await server.listen();
-//   return {
-//     address: server.address()!,
-//     dispose: () => server.dispose(true),
-//   };
-// }
-
 const port = await getPort();
-server.http().listen(port, () => process.stdout.write(`${port}${os.EOL}`));
+rpcServer.http().listen(port, () => process.stdout.write(`${port}${os.EOL}`));
 
 // const { address, dispose } = await startServer();
 // const { browser, page } = await launch(address);

@@ -30,11 +30,8 @@ export class Server {
     return this.#address;
   }
 
-  async dispose(removeProject?: boolean) {
+  async dispose() {
     this.#address = undefined;
     await this.#app.close();
-    if (removeProject) {
-      await rm(this.#projectPath, { recursive: true });
-    }
   }
 }

@@ -11,6 +11,7 @@ export default defineConfig([
     output: {
       dir: "dist",
       format: "es",
+      sourcemap: true
     },
     // Rollup works bad with chalk.
     // https://github.com/chalk/supports-color/issues/113

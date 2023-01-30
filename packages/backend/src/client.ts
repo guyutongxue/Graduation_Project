@@ -1,4 +1,5 @@
 import type { Category, Command } from "transpiler";
+import { Checker, createChecker } from "./checkers";
 
 type Case = () => Promise<void>;
 
@@ -29,28 +30,41 @@ type Assertion = (
 
 export class Controller<C extends Category = Category> {
   #cases: Case[] = [];
+  #checker: Checker | null = null;
 
   get useDirectorySource() {
     return this.category === "web";
   }
 
-  constructor(private category: C) {
+  constructor(private category: C) {}
 
-  }
   async addCase(case_: Case) {
     this.#cases.push(case_);
   }
+
   async send(command: Command<C>) {
     console.log(command);
+    if (!this.#checker) {
+      throw new Error(`empty checker`);
+    }
+    return this.#checker.send(command);
   }
+
   async assert(assertion: Assertion) {
     console.log(assertion);
   }
 
   async run(source: string) {
-
-    for (const case_ of this.#cases) {
-      await case_();
+    this.#checker = await createChecker(this.category);
+    console.log(this.#checker);
+    try {
+      this.#checker.initialize(source);
+      for (const case_ of this.#cases) {
+        await case_();
+      }
+    } finally {
+      this.#checker.dispose();
+      this.#checker = null;
     }
   }
 }
