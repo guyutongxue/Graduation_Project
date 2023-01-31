@@ -10,7 +10,7 @@ import {
   Unknown,
   Undefined,
 } from "runtypes";
-import { AllCommand, Category } from "./types";
+import { AllCommand, Category } from "./types.js";
 
 export type { Static, Runtype } from "runtypes";
 export { Null as RNull, Undefined as RUndefined } from "runtypes";

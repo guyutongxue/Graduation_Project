@@ -1,5 +1,5 @@
 import type { Category, Command } from "transpiler";
-import { Checker, createChecker } from "./checkers";
+import { Checker, createChecker } from "./checkers.js";
 
 type Case = () => Promise<void>;
 
@@ -58,12 +58,12 @@ export class Controller<C extends Category = Category> {
     this.#checker = await createChecker(this.category);
     console.log(this.#checker);
     try {
-      this.#checker.initialize(source);
+      await this.#checker.initialize(source);
       for (const case_ of this.#cases) {
         await case_();
       }
     } finally {
-      this.#checker.dispose();
+      await this.#checker.dispose();
       this.#checker = null;
     }
   }

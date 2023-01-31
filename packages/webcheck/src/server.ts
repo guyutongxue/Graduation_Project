@@ -1,29 +1,28 @@
 import { FastifyInstance } from "fastify";
-import fastify from "fastify";
+import { fastify } from "fastify";
 import fastifyStatic from "@fastify/static";
 import getPort from "get-port";
 import { rm } from "node:fs/promises";
 
 export class Server {
-  #projectPath: string;
   #app: FastifyInstance;
-  #address: string | undefined;
+  #address: string;
 
-  constructor(projectPath: string) {
-    this.#projectPath = projectPath;
-    this.#app = fastify({
-      // logger: true
-    });
-    this.#app.register(fastifyStatic, {
-      root: projectPath,
-    });
+  private constructor(app: FastifyInstance, address: string) {
+    this.#app = app;
+    this.#address = address;
   }
 
-  async listen() {
-    this.#address = await this.#app.listen({
+  static async create(projectPath: string) {
+    const app = fastify({
+      logger: true
+    });
+    const address = await app.register(fastifyStatic, {
+      root: projectPath,
+    }).listen({
       port: await getPort(),
     });
-    return this.#address;
+    return new Server(app, address);
   }
 
   address() {
@@ -31,7 +30,6 @@ export class Server {
   }
 
   async dispose() {
-    this.#address = undefined;
     await this.#app.close();
   }
 }

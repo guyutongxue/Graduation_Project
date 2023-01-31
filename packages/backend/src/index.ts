@@ -3,7 +3,7 @@ import { PluginObj, transformAsync } from "@babel/core";
 import tmp from "tmp-promise";
 import fs from "node:fs/promises";
 import { pathToFileURL } from "node:url";
-import { Controller } from "./client";
+import { Controller } from "./client.js";
 
 const TEST_SRC = `
 "use web";

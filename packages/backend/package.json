@@ -4,15 +4,17 @@
   "type": "module",
   "scripts": {
     "start": "pnpm build && node dist/index.js",
-    "build": "rollup -c"
+    "build": "tsc"
   },
   "//": "chalk (dep of babel) included here because it is not bundled by Rollup, while Pnpm do not flat inner dependencies unless specified here.",
   "dependencies": {
     "@babel/core": "^7.20.12",
     "chalk": "^5.2.0",
+    "get-port": "^6.1.2",
     "jayson": "^4.0.0",
     "tmp-promise": "^3.0.3",
-    "transpiler": "workspace:*"
+    "transpiler": "workspace:*",
+    "wait-port": "^1.0.4"
   },
   "devDependencies": {
     "@rollup/plugin-commonjs": "^24.0.1",

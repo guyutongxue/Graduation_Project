@@ -1,4 +1,4 @@
-import { WebCommand } from "./webcheck-types";
+import { WebCommand } from "./webcheck-types.js";
 
 export type Category = "web";
 
@@ -15,4 +15,4 @@ export interface AllCommand extends Implements<Record<Category, CommandBase>, Al
 
 export type Command<C extends Category> = AllCommand[C];
 
-export { type WebCommand } from "./webcheck-types";
+export { type WebCommand } from "./webcheck-types.js";

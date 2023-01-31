@@ -1,6 +1,6 @@
 import { transform } from "@babel/standalone";
-import { RuleSyntaxError } from "./errors";
-import babelPlugin from "./plugin";
+import { RuleSyntaxError } from "./errors.js";
+import babelPlugin from "./plugin.js";
 
 const TEST_SRC = `
 "use web";
@@ -23,5 +23,5 @@ export { babelPlugin };
 
 // console.log(transpile(TEST_SRC).code);
 
-export * from "./types";
-export * from "./errors";
+export * from "./types.js";
+export * from "./errors.js";

@@ -5,7 +5,7 @@
   "compilerOptions": {
     "target": "ES2022",
     "module": "ES2022",
-    "moduleResolution": "Node",
+    "moduleResolution": "Node16",
     "declaration": true,
     "allowSyntheticDefaultImports": true,
     "outDir": "dist",

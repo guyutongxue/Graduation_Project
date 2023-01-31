@@ -7,7 +7,7 @@ import {
   RLiteral,
   RFunction,
   RVoid,
-} from "./runtypes-patch";
+} from "./runtypes-patch.js";
 
 const KEYS = RUnion(
   RLiteral("0"),

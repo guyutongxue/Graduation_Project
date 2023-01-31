@@ -13,6 +13,7 @@ importers:
       '@types/node': ^18.11.18
       '@types/tmp': ^0.2.3
       chalk: ^5.2.0
+      get-port: ^6.1.2
       jayson: ^4.0.0
       rollup: ^3.9.1
       tmp-promise: ^3.0.3
@@ -20,12 +21,15 @@ importers:
       tslib: ^2.4.1
       tsx: ^3.12.1
       typescript: ^4.9.4
+      wait-port: ^1.0.4
     dependencies:
       '@babel/core': 7.20.12
       chalk: 5.2.0
+      get-port: 6.1.2
       jayson: 4.0.0
       tmp-promise: 3.0.3
       transpiler: link:../transpiler
+      wait-port: 1.0.4
     devDependencies:
       '@rollup/plugin-commonjs': 24.0.1_rollup@3.9.1
       '@rollup/plugin-json': 6.0.0_rollup@3.9.1
@@ -98,17 +102,12 @@ importers:
   packages/webcheck:
     specifiers:
       '@fastify/static': ^6.6.0
-      '@rollup/plugin-commonjs': ^24.0.1
-      '@rollup/plugin-json': ^6.0.0
-      '@rollup/plugin-node-resolve': ^15.0.1
-      '@rollup/plugin-typescript': ^10.0.1
       '@types/node': ^18.11.18
       chalk: ^5.2.0
       fastify: ^4.11.0
       get-port: ^6.1.2
       jayson: ^4.0.0
       puppeteer-core: ^19.4.1
-      rollup: ^3.9.1
       tslib: ^2.4.1
       tsx: ^3.12.1
       typescript: ^4.9.4
@@ -120,12 +119,7 @@ importers:
       jayson: 4.0.0
       puppeteer-core: 19.4.1
     devDependencies:
-      '@rollup/plugin-commonjs': 24.0.1_rollup@3.9.1
-      '@rollup/plugin-json': 6.0.0_rollup@3.9.1
-      '@rollup/plugin-node-resolve': 15.0.1_rollup@3.9.1
-      '@rollup/plugin-typescript': 10.0.1_hqjvco2e22ojmon3nhwchufpre
       '@types/node': 18.11.18
-      rollup: 3.9.1
       tslib: 2.4.1
       tsx: 3.12.1
       typescript: 4.9.4
@@ -876,7 +870,6 @@ packages:
     engines: {node: '>=8'}
     dependencies:
       color-convert: 2.0.1
-    dev: true
 
   /archy/1.0.0:
     resolution: {integrity: sha512-Xg+9RwCg/0p32teKdGMPTPnVXKD0w3DfHnFTficozsAgsvq2XenPJq/MYpzzQ/v8zrOyJn6Ds39VA4JIDwFfqw==}
@@ -987,6 +980,14 @@ packages:
       escape-string-regexp: 1.0.5
       supports-color: 5.5.0
 
+  /chalk/4.1.2:
+    resolution: {integrity: sha512-oKnbhFyRIXpUuez8iBMmyEa4nbj4IOQyuhc/wy9kY7/WVPcwIO9VA668Pu8RkO7+0G76SLROeyw9CpQ061i4mA==}
+    engines: {node: '>=10'}
+    dependencies:
+      ansi-styles: 4.3.0
+      supports-color: 7.2.0
+    dev: false
+
   /chalk/5.2.0:
     resolution: {integrity: sha512-ree3Gqw/nazQAPuJJEy+avdl7QfZMcUvmHIKgEZkGL+xOBzRvup5Hxo6LHuMceSxOabuJLJm5Yp/92R9eMmMvA==}
     engines: {node: ^12.17.0 || ^14.13 || >=16.0.0}
@@ -1015,14 +1016,12 @@ packages:
     engines: {node: '>=7.0.0'}
     dependencies:
       color-name: 1.1.4
-    dev: true
 
   /color-name/1.1.3:
     resolution: {integrity: sha512-72fSenhMw2HZMTVHeCA9KCmpEIbzWiQsjN+BHcBbS9vr1mtt+vJjPdksIBNUmKAW8TFUDPJK5SUU3QhE9NEXDw==}
 
   /color-name/1.1.4:
     resolution: {integrity: sha512-dOy+3AuW3a2wNbZHIuMZpTcgjGuLU/uBL/ubcZF9OXbDo8ff4O8yVp5Bf0efS8uEoYo5q4Fx7dY9OgQGXgAsQA==}
-    dev: true
 
   /combined-stream/1.0.8:
     resolution: {integrity: sha512-FQN4MRfuJeHf7cBbBMJFXhKSDq+2kAArBlmRBvcvFE5BB1HZKXtSFASDhdlz9zOYwxh8lDdnvmMOe/+5cdoEdg==}
@@ -1033,6 +1032,11 @@ packages:
 
   /commander/2.20.3:
     resolution: {integrity: sha512-GpVkmM8vF2vQUkj2LvZmD35JxeJOLCwJ9cUkugyk2nuhbv3+mJvpLYYt+0+USMxE+oj+ey/lJEnhZw75x/OMcQ==}
+    dev: false
+
+  /commander/9.5.0:
+    resolution: {integrity: sha512-KRs7WVDKg86PWiuAqhDrAQnTXZKraVcCc6vFdL14qrZ/DcWwuRo7VoiYXalXO7S5GKpqYiVEwCbgFDfxNHKJBQ==}
+    engines: {node: ^12.20.0 || >=14}
     dev: false
 
   /commondir/1.0.1:
@@ -1702,6 +1706,11 @@ packages:
   /has-flag/3.0.0:
     resolution: {integrity: sha512-sKJf1+ceQBr4SMkvQnBDNDtf4TXpVhVGateu0t918bl30FnbE2m4vNLX+VWe/dpjlb+HugGYzW7uQXH98HPEYw==}
     engines: {node: '>=4'}
+
+  /has-flag/4.0.0:
+    resolution: {integrity: sha512-EykJT/Q1KjTWctppgIAgfSO0tKVuZUjhgMr17kqTumMl6Afv3EISleU7qZUzoXDFTAHTDC4NOoG/ZxU3EvlMPQ==}
+    engines: {node: '>=8'}
+    dev: false
 
   /has/1.0.3:
     resolution: {integrity: sha512-f2dvO0VU6Oej7RkWJGrehjbzMAjFp5/VKPp5tTpWIV4JHHZK1/BxbFRtf/siA2SWTe09caDmVtYYzWEIbBS4zw==}
@@ -2411,6 +2420,13 @@ packages:
     dependencies:
       has-flag: 3.0.0
 
+  /supports-color/7.2.0:
+    resolution: {integrity: sha512-qpCAvRl9stuOHveKsn7HncJRvv501qIacKzQlO/+Lwxc9+0q2wLyv4Dfvt80/DPn2pqOBsJdDiogXGR9+OvwRw==}
+    engines: {node: '>=8'}
+    dependencies:
+      has-flag: 4.0.0
+    dev: false
+
   /supports-preserve-symlinks-flag/1.0.0:
     resolution: {integrity: sha512-ot0WnXS9fgdkgIcePe6RHNk1WA8+muPa6cSjeR3V8K27q9BB1rTE3R1p7Hv0z1ZyAc8s6Vvv8DIyWf681MAt0w==}
     engines: {node: '>= 0.4'}
@@ -2607,6 +2623,18 @@ packages:
     engines: {node: '>=14'}
     dependencies:
       xml-name-validator: 4.0.0
+    dev: false
+
+  /wait-port/1.0.4:
+    resolution: {integrity: sha512-w8Ftna3h6XSFWWc2JC5gZEgp64nz8bnaTp5cvzbJSZ53j+omktWTDdwXxEF0jM8YveviLgFWvNGrSvRHnkyHyw==}
+    engines: {node: '>=10'}
+    hasBin: true
+    dependencies:
+      chalk: 4.1.2
+      commander: 9.5.0
+      debug: 4.3.4
+    transitivePeerDependencies:
+      - supports-color
     dev: false
 
   /webidl-conversions/3.0.1:

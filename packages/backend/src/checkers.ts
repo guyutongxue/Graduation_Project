@@ -1,11 +1,13 @@
 import { ChildProcess, fork } from "node:child_process";
-import jayson from "jayson/promise";
-import { AllCommand, Category } from "transpiler";
+import jayson from "jayson/promise/index.js";
+import type { AllCommand, Category } from "transpiler";
 import { fileURLToPath } from "node:url";
+import waitPort from "wait-port";
+import getPort from "get-port";
 
 type RawRequest = {
   method: string;
-} & any;
+} & unknown;
 
 export class Checker {
   #process: ChildProcess;
@@ -15,18 +17,11 @@ export class Checker {
     this.#client = client;
   }
 
-  static async fromProcess(cp: ChildProcess) {
-    const port = await new Promise<number>((resolve, reject) =>
-      cp.stdout?.once("data", (buf) => {
-        const port = Number(buf.toString());
-        console.log(port);
-        if (!Number.isNaN(port)) {
-          resolve(port);
-        } else {
-          reject("First data chunk not a number");
-        }
-      })
-    );
+  static async fromProcess(cp: ChildProcess, port: number) {
+    await waitPort({ 
+      port, 
+      // output: "silent" 
+    });
     const client = jayson.Client.http({
       port,
       timeout: 10000,
@@ -36,6 +31,7 @@ export class Checker {
 
   async #sendImpl(method: string, param: any) {
     const response = await this.#client.request(method, [param]);
+    console.log(response);
     if ("result" in response) {
       return response.result;
     } else {
@@ -62,15 +58,14 @@ export class Checker {
 }
 
 async function createWebChecker() {
+  const port = await getPort();
   const process = fork(
     fileURLToPath(
       new URL("../../webcheck/dist/index.js", import.meta.url).href
     ),
-    {
-      stdio: "pipe",
-    }
+    [port.toString()]
   );
-  return Checker.fromProcess(process);
+  return Checker.fromProcess(process, port);
 }
 
 export async function createChecker(category: Category) {

@@ -6,91 +6,68 @@ export class AssertionError extends Error {
   }
 }
 
-function failIfFalse(expr: boolean) {
+export function qAssert(expr: boolean, message?: string) {
   if (!expr) {
-    throw new AssertionError;
+    throw new Error(message);
   }
 }
 
-function assert(lhs: any, rhs: any, op: Operator) {
-  console.log({ lhs, rhs, op});
-  switch (op) {
-    case "eq":
-      failIfFalse(lhs === rhs);
-      break;
-    case "neq":
-      failIfFalse(lhs !== rhs);
-      break;
-    case "lt":
-      failIfFalse(
-        typeof lhs === "number" && typeof rhs === "number" && lhs < rhs
-      );
-      break;
-    case "gt":
-      failIfFalse(
-        typeof lhs === "number" && typeof rhs === "number" && lhs > rhs
-      );
-      break;
-    case "lteq":
-      failIfFalse(
-        typeof lhs === "number" && typeof rhs === "number" && lhs <= rhs
-      );
-      break;
-    case "gteq":
-      failIfFalse(
-        typeof lhs === "number" && typeof rhs === "number" && lhs >= rhs
-      );
-      break;
-    case "in":
-      failIfFalse(
-        typeof lhs === "string" && typeof rhs === "string" && rhs.includes(lhs)
-      );
-      break;
-  }
-}
+// function __assert(lhs: any, rhs: any, op: Operator) {
+//   console.log({ lhs, rhs, op});
+//   switch (op) {
+//     case "eq":
+//       qAssert(lhs === rhs);
+//       break;
+//     case "neq":
+//       qAssert(lhs !== rhs);
+//       break;
+//     case "lt":
+//       qAssert(
+//         typeof lhs === "number" && typeof rhs === "number" && lhs < rhs
+//       );
+//       break;
+//     case "gt":
+//       qAssert(
+//         typeof lhs === "number" && typeof rhs === "number" && lhs > rhs
+//       );
+//       break;
+//     case "lteq":
+//       qAssert(
+//         typeof lhs === "number" && typeof rhs === "number" && lhs <= rhs
+//       );
+//       break;
+//     case "gteq":
+//       qAssert(
+//         typeof lhs === "number" && typeof rhs === "number" && lhs >= rhs
+//       );
+//       break;
+//     case "in":
+//       qAssert(
+//         typeof lhs === "string" && typeof rhs === "string" && rhs.includes(lhs)
+//       );
+//       break;
+//   }
+// }
 
-async function eval_(page: Page, expr: AssertExpression) {
-  switch (expr.target) {
-    case "constant": return expr.value;
-    case "page": return page.title();
-    case "selector":
-      const selector = await page.$$(expr.selector);
-      switch (expr.component) {
-        case "html":
-          failIfFalse(selector.length === 1);
-          return selector[0].evaluate(e => e.textContent);
-        case "text":
-          failIfFalse(selector.length === 1);
-          return selector[0].evaluate(e => e.innerHTML);
-        case "count":
-          return selector.length;
-        default:
-          throw new Error("Unknown component");
-      }
-    default:
-      throw new Error("Unknown target");
-  }
-}
-
-export async function check(page: Page, actions: Action[]) {
-  for (const action of actions) {
-    if (action.type === "assert") {
-      const lhs = await eval_(page, action.lhs);
-      const rhs = await eval_(page, action.rhs);
-      assert(lhs, rhs, action.operator);
-    } else if (action.type === "control") {
-      if (action.selector) {
-        const selector = await page.$(action.selector);
-        if (action.how === "click") {
-          await selector.click();
-        } else if (action.how === "value") {
-          failIfFalse(await selector.evaluate(e => e.tagName) === "input");
-          await selector.evaluate((e, v) => (<HTMLInputElement>e).value = v, action.value);
-        } else if (action.how === "key") {
-          page.keyboard.press(action.key as KeyInput); // TODO
-        }
-      }
-      await new Promise(r => setTimeout(r, 100));
-    }
-  }
-}
+// async function check(page: Page, actions: Action[]) {
+//   for (const action of actions) {
+//     if (action.type === "assert") {
+//       const lhs = await eval_(page, action.lhs);
+//       const rhs = await eval_(page, action.rhs);
+//       assert(lhs, rhs, action.operator);
+//     } else if (action.type === "control") {
+//       if (action.selector) {
+//         const selector = await page.$(action.selector);
+//         if (action.how === "click") {
+//           await selector.click();
+//         } else if (action.how === "value") {
+//           failIfFalse(await selector.evaluate(e => e.tagName) === "input");
+//           await selector.evaluate((e, v) => (<HTMLInputElement>e).value = v, action.value);
+//         } else if (action.how === "key") {
+//           page.keyboard.press(action.key as KeyInput); // TODO
+//         }
+//       }
+//       await new Promise(r => setTimeout(r, 100));
+//     }
+//   }
+// }

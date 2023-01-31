@@ -1,4 +1,4 @@
-import { globals } from "./definitions";
+import { globals } from "./definitions.js";
 import type { Static } from "runtypes";
 
 export type Globals = {

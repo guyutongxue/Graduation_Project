@@ -12,9 +12,9 @@ import type {
   Program,
   StringLiteral,
 } from "@babel/types";
-import { RuleSyntaxError } from "./errors";
-import { checkIdentifier, IdElement } from "./ident";
-import { Category } from "./types";
+import { RuleSyntaxError } from "./errors.js";
+import { checkIdentifier, IdElement } from "./ident.js";
+import { Category } from "./types.js";
 
 type BabelExport = typeof import("@babel/core");
 

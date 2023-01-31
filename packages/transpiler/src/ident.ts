@@ -1,8 +1,8 @@
 import { Expression } from "@babel/types";
-import { AllCommand, Category } from "./types";
-import { IPosition, RuleSyntaxError } from "./errors";
-import { globals } from "./definitions";
-import { Call, Runtype, RUndefined, Produced } from "./runtypes-patch";
+import { AllCommand, Category } from "./types.js";
+import { IPosition, RuleSyntaxError } from "./errors.js";
+import { globals } from "./definitions.js";
+import { Call, Runtype, RUndefined, Produced } from "./runtypes-patch.js";
 
 interface IdentifierElement {
   type: "identifier";
