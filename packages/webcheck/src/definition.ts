@@ -4,13 +4,12 @@ import { Browser, Page } from "puppeteer-core";
 import jayson from "jayson/promise/index.js";
 import type { MethodLike } from "jayson/promise";
 
-function assert(cond: boolean, message?: string) {
+function assert(cond: boolean, message?: string): asserts cond {
   if (!cond) {
     rpcServer.error(510, message);
     throw new Error(message);
   }
 }
-
 
 export class Handler {
   #htmlServer: Server | null = null;
@@ -20,13 +19,9 @@ export class Handler {
   } | null = null;
 
   async initialize(path: string) {
-    if (this.#htmlServer) {
-      return rpcServer.error(501, "HTML server already started");
-    }
+    assert(!this.#htmlServer, "HTML server already started");
     this.#htmlServer = await Server.create(path);
-    if (this.#browserContext) {
-      return rpcServer.error(502, "Puppeteer browser already started");
-    }
+    assert(!this.#browserContext, "Puppeteer browser already started");
     this.#browserContext = await launch(this.#htmlServer.address());
     return true;
   }
@@ -44,7 +39,7 @@ export class Handler {
   }
 
   async page({ component }: any) {
-    if (!this.#browserContext) { throw new Error("browser not loaded"); }
+    assert(!!this.#browserContext, "browser not loaded");
     switch (component) {
       case "html":
         return this.#browserContext.page.evaluate(() => document.documentElement.outerHTML);
@@ -58,7 +53,7 @@ export class Handler {
   }
 
   async selector({ selector, component }: any) {
-    if (!this.#browserContext) { throw new Error("browser not loaded"); }
+    assert(!!this.#browserContext, "browser not loaded");
     const target = await this.#browserContext.page.$$(selector);
       switch (component) {
         case "html":
@@ -74,7 +69,7 @@ export class Handler {
       }
   }
   async click({ selector }: any) {
-    if (!this.#browserContext) { throw new Error("browser not loaded"); }
+    assert(!!this.#browserContext, "browser not loaded");
     const target = await this.#browserContext.page.$$(selector);
     assert(target.length === 1, `Selector target ${selector} not exists or not unique`);
     await target[0].click();
