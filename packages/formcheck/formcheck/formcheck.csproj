@@ -8,8 +8,8 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="AustinHarris.JsonRpc" Version="1.2.3" />
     <PackageReference Include="FlaUI.UIA3" Version="4.0.0" />
-    <PackageReference Include="HttpJsonRpc" Version="2.0.1.4" />
   </ItemGroup>
 
 </Project>

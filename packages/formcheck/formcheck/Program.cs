@@ -1,65 +1,69 @@
-﻿// See https://aka.ms/new-console-template for more information
-using FlaUI.UIA3;
-using FlaUI.Core;
-using System.Diagnostics;
-using FlaUI.Core.AutomationElements;
-using HttpJsonRpc;
+﻿using System.Diagnostics;
 using System.Net;
+using AustinHarris.JsonRpc;
+using System.Text;
 
 namespace formcheck
 {
-  [JsonRpcClass("formcheck")]
-  class Handler
-  {
-    [JsonRpcMethod]
-    void Add()
+  class Program { 
+    static void Listen(int port)
     {
-      var TEST_EXE = @"C:\Users\guyutongxue\Documents\MyFiles\Code\Csharp\WeiboFishHack\WeiboFishHack\bin\Debug\net7.0-windows\WeiboFishHack.exe";
+      using var obj = new Handler();
+      var listener = new HttpListener();
+      listener.Prefixes.Add($"http://localhost:{port}/");
+      listener.Start();
 
-      Program.Check(TEST_EXE);
-    }
-  }
-
-  class Program
-  {
-    static public void Check(string exePath)
-    {
-      Application? app = null;
-      try
-      {
-        Console.WriteLine("Hello, World!");
-        app = Application.Launch(exePath);
-        using var automation = new UIA3Automation();
-        var window = app.GetMainWindow(automation);
-        var elements = window.FindAllDescendants();
-        var button = window.FindFirstDescendant(cf => cf.ByText("发送"));
-        if (button is null)
+      var httpRequestHandle = (HttpListenerRequest request) => {
+        if (request.HttpMethod == "POST")
         {
-          throw new Exception("null button1");
+          using var sr = new StreamReader(request.InputStream, Encoding.UTF8);
+          var task = JsonRpcProcessor.Process(sr.ReadToEnd());
+          return task.Result;
         }
-        button.Click();
-        Thread.Sleep(1000);
-        var textarea = window.FindFirstDescendant(cf => cf.ByAutomationId("textBox1"));
-        Console.WriteLine(textarea.AsTextBox().Text);
-        Console.WriteLine(window.Title);
-      }
-      finally
+        else
+        {
+          return "Method not supported";
+        }
+      };
+
+      while (true)
       {
-        app?.Close();
+        ThreadPool.QueueUserWorkItem(
+            (c) => {
+              var context = c as HttpListenerContext;
+              var request = context.Request;
+              var response = context.Response;
+
+              try
+              {
+                string responseText = httpRequestHandle(request);
+                byte[] buf = Encoding.UTF8.GetBytes(responseText);
+                response.ContentLength64 = buf.Length;
+                response.OutputStream.Write(buf, 0, buf.Length);
+              }
+              catch (Exception ex)
+              {
+                Console.WriteLine(ex.Message);
+              }
+              finally
+              {
+                response.OutputStream.Close();
+              }
+
+            }
+            , listener.GetContext());
       }
+
     }
+
     static void Main(String[] args)
     {
-      if (args.Length < 1 || !int.TryParse(args[1], out var port)) {
-        throw new Exception("Port not number");
-      }
-      JsonRpc.ServerOptions = (o) =>
-      {
-        o.Listen(new IPEndPoint(IPAddress.Loopback, port));
-      };
-      JsonRpc.Start();
-
+      //if (args.Length < 1 || !int.TryParse(args[1], out var port)) {
+      //  throw new Exception("Port not number");
+      //}
+      Listen(9876);
     }
+  
   }
 }
 
