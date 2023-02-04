@@ -323,16 +323,28 @@ export const globals = (<const>{
     }),
   }),
   buttonWithText: RFunction(<const>{
-    parameters: [
-      RString
-    ],
+    parameters: [RString],
     returns: RRecord(<const>{
       click: RFunction(<const>{
         returns: RVoid.produces("form", ([text]) => ({
           method: "byText",
-          action: "clickButton"
-        }))
-      })
-    })
-  })
+          text,
+          action: "clickButton",
+        })),
+      }),
+    }),
+  }),
+  textBoxWithName: RFunction(<const>{
+    parameters: [RString],
+    returns: RRecord(<const>{
+      input: RFunction(<const>{
+        returns: RVoid.produces("form", ([name], [value]) => ({
+          method: "byName",
+          name,
+          value,
+          action: "inputTextBox",
+        })),
+      }),
+    }),
+  }),
 }) satisfies Record<string, Runtype>;

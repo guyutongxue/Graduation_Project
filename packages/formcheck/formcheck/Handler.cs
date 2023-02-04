@@ -10,6 +10,19 @@ using System.Threading.Tasks;
 
 namespace formcheck
 {
+  struct ByTextArg
+  {
+    public string text;
+    public string action;
+    public string? value;
+  }
+  struct ByNameArg
+  {
+    public string name;
+    public string action;
+    public string? value;
+  }
+
   class Handler : JsonRpcService, IDisposable
   {
     public Handler()
@@ -42,31 +55,73 @@ namespace formcheck
     }
 
     [JsonRpcMethod]
-    void clickButtonByText(string text)
-    {
-      var window = app.GetMainWindow(automation);
-      var buttons = window.FindAllDescendants(cf => cf.ByText(text));
-      if (buttons.Length != 1)
-      {
-        throw new Exception("Multiple button or no button");
-      }
-      buttons[0].Click();
-    }
-
-    [JsonRpcMethod]
-    void clickButtonByName(string name)
+    object? byText(ByTextArg arg)
     {
       if (app is null || automation is null)
       {
         throw new NullReferenceException();
       }
       var window = app.GetMainWindow(automation);
-      var buttons = window.FindAllDescendants(cf => cf.ByAutomationId(name));
-      if (buttons.Length != 1)
+      var eles = window.FindAllDescendants(cf => cf.ByText(arg.text));
+      if (eles.Length != 1)
       {
         throw new Exception("Multiple button or no button");
       }
-      buttons[0].Click();
+      return ActionOnElement(eles[0], arg.action, arg.value);
+    }
+
+    object? ActionOnElement(AutomationElement e, string action, string? value)
+    {
+      switch (action)
+      {
+        case "clickButton": e.Click(); return null;
+        case "inputTextBox":
+          {
+            if (e.AsTextBox() is TextBox textBox && value is not null)
+            {
+              if (textBox.IsReadOnly)
+              {
+                throw new InvalidOperationException("Try to input to a readonly textbox.");
+              }
+              textBox.Text = value;
+              return null;
+            }
+            else
+            {
+              throw new NullReferenceException("Element is not a textbox");
+            }
+          }
+        case "enabled": return e.IsEnabled;
+        case "text":
+          {
+            if (e.AsLabel() is Label l)
+            {
+              return l.Text;
+            }
+            if (e.AsTextBox() is TextBox tb)
+            {
+              return tb.Text;
+            }
+            return e.Name;
+          }
+        default: return null;
+      }
+    }
+
+    [JsonRpcMethod]
+    object? byName(ByNameArg arg)
+    {
+      if (app is null || automation is null)
+      {
+        throw new NullReferenceException();
+      }
+      var window = app.GetMainWindow(automation);
+      var eles = window.FindAllDescendants(cf => cf.ByAutomationId(arg.name));
+      if (eles.Length != 1)
+      {
+        throw new Exception("Multiple button or no button");
+      }
+      return ActionOnElement(eles[0], arg.action, arg.value);
     }
 
     [JsonRpcMethod]

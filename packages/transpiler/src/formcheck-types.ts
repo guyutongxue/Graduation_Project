@@ -1,13 +1,23 @@
-type Action = "clickButton" | "inputTextBox" | "text" | "enabled";
+type NoParamAction = "clickButton" | "text" | "enabled";
 
-interface ByName {
+type ByName = {
   method: "byName",
-  action: Action
-}
+  name: string,
+} & ({
+  action: NoParamAction
+} | {
+  action: "inputTextBox",
+  value: string
+})
 
-interface ByText {
+type ByText = {
   method: "byText",
-  action: Exclude<Action, "text">,
-}
+  text: string,
+} & ({
+  action: Exclude<NoParamAction, "text">
+} | {
+  action: "inputTextBox",
+  value: string
+})
 
 export type FormCommand = ByName | ByText;
