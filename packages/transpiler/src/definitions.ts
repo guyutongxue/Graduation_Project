@@ -347,4 +347,11 @@ export const globals = (<const>{
       }),
     }),
   }),
+  sendKey:RFunction(<const> {
+    parameters: [RString],
+    returns: RVoid.produces("form", ([keys]) => ({
+      method: "key",
+      keys
+    }))
+  })
 }) satisfies Record<string, Runtype>;

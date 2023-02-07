@@ -7,6 +7,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.IO;
+using FlaUI.Core.Input;
 
 namespace formcheck
 {
@@ -21,6 +23,11 @@ namespace formcheck
     public string name;
     public string action;
     public string? value;
+  }
+
+  struct KeyArg
+  {
+    public string keys;
   }
 
   class Handler : JsonRpcService, IDisposable
@@ -122,6 +129,17 @@ namespace formcheck
         throw new Exception("Multiple button or no button");
       }
       return ActionOnElement(eles[0], arg.action, arg.value);
+    }
+
+    [JsonRpcMethod]
+    void key(KeyArg arg)
+    {
+      if (app is null || automation is null)
+      {
+        throw new NullReferenceException();
+      }
+      var window = app.GetMainWindow(automation);
+      window.Focus();
     }
 
     [JsonRpcMethod]

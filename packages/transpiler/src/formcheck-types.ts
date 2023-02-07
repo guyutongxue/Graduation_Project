@@ -20,4 +20,9 @@ type ByText = {
   value: string
 })
 
-export type FormCommand = ByName | ByText;
+type SendKey = {
+  method: "key",
+  keys: string,
+}
+
+export type FormCommand = ByName | ByText | SendKey;

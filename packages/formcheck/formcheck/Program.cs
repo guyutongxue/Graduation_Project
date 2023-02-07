@@ -61,7 +61,8 @@ namespace formcheck
       //if (args.Length < 1 || !int.TryParse(args[1], out var port)) {
       //  throw new Exception("Port not number");
       //}
-      Listen(9876);
+      // Listen(9876);
+      Test.Do();
     }
   
   }
