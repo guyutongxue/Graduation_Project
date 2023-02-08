@@ -144,7 +144,7 @@ export default function (babel: BabelExport): PluginObj {
         path.parent.type !== "MemberExpression" &&
         !(path.parent.type === "CallExpression" && path.parent.callee === node)
       ) {
-        console.log(this.target);
+        // console.log(this.target);
         const production = checkIdentifier(
           this.controller.category,
           this.target
