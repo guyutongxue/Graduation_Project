@@ -58,11 +58,11 @@ namespace formcheck
 
     static void Main(String[] args)
     {
-      //if (args.Length < 1 || !int.TryParse(args[1], out var port)) {
-      //  throw new Exception("Port not number");
-      //}
-      // Listen(9876);
-      Test.Do();
+      if (args.Length < 1 || !int.TryParse(args[1], out var port)) {
+        throw new Exception("Port not number");
+      }
+      Listen(port);
+      //Test.Do();
     }
   
   }

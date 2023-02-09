@@ -322,36 +322,38 @@ export const globals = (<const>{
       }),
     }),
   }),
-  buttonWithText: RFunction(<const>{
-    parameters: [RString],
-    returns: RRecord(<const>{
-      click: RFunction(<const>{
-        returns: RVoid.produces("form", ([text]) => ({
-          method: "byText",
-          text,
-          action: "clickButton",
-        })),
+  win: RRecord({
+    buttonWithText: RFunction(<const>{
+      parameters: [RString],
+      returns: RRecord(<const>{
+        click: RFunction(<const>{
+          returns: RVoid.produces("form", ([text]) => ({
+            method: "byText",
+            text,
+            action: "clickButton",
+          })),
+        }),
       }),
     }),
-  }),
-  textBoxWithName: RFunction(<const>{
-    parameters: [RString],
-    returns: RRecord(<const>{
-      input: RFunction(<const>{
-        returns: RVoid.produces("form", ([name], [value]) => ({
-          method: "byName",
-          name,
-          value,
-          action: "inputTextBox",
-        })),
+    textBoxWithName: RFunction(<const>{
+      parameters: [RString],
+      returns: RRecord(<const>{
+        input: RFunction(<const>{
+          returns: RVoid.produces("form", ([name], [value]) => ({
+            method: "byName",
+            name,
+            value,
+            action: "inputTextBox",
+          })),
+        }),
       }),
     }),
+    sendKey: RFunction(<const>{
+      parameters: [RString],
+      returns: RVoid.produces("form", ([keys]) => ({
+        method: "key",
+        keys,
+      })),
+    }),
   }),
-  sendKey:RFunction(<const> {
-    parameters: [RString],
-    returns: RVoid.produces("form", ([keys]) => ({
-      method: "key",
-      keys
-    }))
-  })
 }) satisfies Record<string, Runtype>;

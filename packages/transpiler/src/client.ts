@@ -7,4 +7,5 @@ export type Globals = {
 
 declare global {
   const $: Globals["$"];
+  const win: Globals["win"];
 }

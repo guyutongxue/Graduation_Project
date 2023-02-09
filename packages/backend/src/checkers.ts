@@ -1,4 +1,4 @@
-import { ChildProcess, fork } from "node:child_process";
+import { ChildProcess, execFile, fork } from "node:child_process";
 import jayson from "jayson/promise/index.js";
 import type { AllCommand, Category } from "transpiler";
 import { fileURLToPath } from "node:url";
@@ -68,10 +68,24 @@ async function createWebChecker() {
   return Checker.fromProcess(process, port);
 }
 
+async function createFormChecker() {
+  const port = await getPort();
+  const process = execFile(
+    fileURLToPath(
+      new URL("../../formcheck/formcheck/bin/Debug/net7.0-windows/formcheck.exe", import.meta.url).href
+    ),
+    [port.toString()]
+  );
+  return Checker.fromProcess(process, port);
+}
+
+
 export async function createChecker(category: Category) {
   switch (category) {
     case "web":
       return createWebChecker();
+    case "form":
+      return createFormChecker();
     default:
       const _: never = category;
       throw new Error();

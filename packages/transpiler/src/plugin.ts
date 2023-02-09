@@ -264,6 +264,8 @@ export default function (babel: BabelExport): PluginObj {
         let category: Category;
         if (directives[0].value.value === "use web") {
           category = "web";
+        } else if (directives[0].value.value === "use form") {
+          category = "form";
         } else {
           throw new RuleSyntaxError(
             `Unknown rule directive ${directives[0].value.value}`,
