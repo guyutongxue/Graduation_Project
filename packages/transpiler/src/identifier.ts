@@ -16,7 +16,7 @@ interface RawCallElement {
 
 export type IdElement = (IdentifierElement | RawCallElement) & IPosition;
 
-export function checkIdentifier<C extends Category>(type: C, ids: IdElement[]) {
+export function checkIdentifier(category: Category, ids: IdElement[]) {
   const newIds = [...ids]; // do not modify original
   const top = newIds.shift();
   if (typeof top === "undefined") {
@@ -65,12 +65,16 @@ export function checkIdentifier<C extends Category>(type: C, ids: IdElement[]) {
     .filter((e): e is RawCallElement & IPosition => e.type === "call")
     .map((e) => e.args);
   const production = rt[Produced];
+  const pos = {
+    start: ids[0].start,
+    end: ids[ids.length - 1].end,
+  };
   // console.log(production);
   if (typeof production === "undefined") {
-    throw new RuleSyntaxError(`An invalid target`, {
-      start: ids[0].start,
-      end: ids[ids.length - 1].end,
-    });
+    throw new RuleSyntaxError(`An invalid target`, pos);
+  }
+  if (production.category !== category) {
+    throw new RuleSyntaxError(`This target is configured to category ${production.category}`, pos);
   }
   return production.result(...args) as unknown;
 }

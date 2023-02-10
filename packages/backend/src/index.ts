@@ -1,52 +1,47 @@
-import { babelPlugin } from "transpiler";
-import { PluginObj, transformAsync } from "@babel/core";
+import { fastify } from "fastify";
+import fastifyCors from "@fastify/cors";
+import fastifyMultipart, { Multipart } from "@fastify/multipart";
+import { judge } from "./judge.js";
+import { parseBuffer } from "./preparations.js";
+import { pipeline } from "node:stream/promises";
 import tmp from "tmp-promise";
-import fs from "node:fs/promises";
-import { pathToFileURL } from "node:url";
-import { Controller } from "./client.js";
 
-const TEST_SRC = `
-"use web";
-{
-  assert: $.title == "Hello, World";
-  $("#hello").click();
-  assert: "Hello, JavaScript" in $("body").html;
-}`;
+const app = fastify({
+  logger: true
+});
 
-const clientUrl = new URL("./client.js", import.meta.url);
+await app.register(fastifyCors, {
+  origin: "*",
+});
+await app.register(fastifyMultipart);
 
-const result = await transformAsync(TEST_SRC, {
-  plugins: [
-    babelPlugin,
-    (): PluginObj => {
-      return {
-        visitor: {
-          ImportDeclaration(path) {
-            if (path.node.source.value === "graduate") {
-              path.node.source.value = clientUrl.href;
-            }
-          }
-        }
-      }
+app.post("/judge", async (req, rep) => {
+  let rule: string | undefined = void 0;
+  let file: Buffer | undefined = void 0;
+  let fileMime: string | undefined = void 0;
+  const parts = req.parts();
+  for await (const part of parts) {
+    console.log(part.fieldname);
+    if (part.fieldname === "file" && "file" in part) {
+      file = await part.toBuffer();
+      fileMime = part.mimetype;
+    } else if (part.fieldname === "rule" && "value" in part && typeof part.value === "string") {
+      rule = part.value;
+    } else {
+      return rep.code(400).send({
+        success: false,
+        message: `Invalid field name ${part.fieldname}`
+      });
     }
-  ]
-});
-if (result === null) {
-  throw new Error("Empty code");
-}
-const { code } = result;
-if (typeof code === "undefined" || code === null) {
-  throw new Error("Empty code");
-}
+  }
+  if (typeof rule === "undefined" || typeof file === "undefined") {
+    return rep.code(400).send({
+      success: false,
+      message: `Missing rule or file`
+    });
+  }
+  parseBuffer(file, fileMime);
+  return true;
+})
 
-tmp.setGracefulCleanup();
-
-const controller = await tmp.withFile(async ({ path }) => {
-  fs.writeFile(path, code);
-  const controller: Controller = (await import(pathToFileURL(path).href)).default;
-  return controller;
-}, { postfix: ".mjs" });
-
-await (controller.useDirectorySource ? tmp.withDir : tmp.withFile)(async ({ path }) => {
-  await controller.run(path);
-});
+app.listen({ port: 3000 });

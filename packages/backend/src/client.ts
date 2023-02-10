@@ -32,11 +32,7 @@ export class Controller<C extends Category = Category> {
   #cases: Case[] = [];
   #checker: Checker | null = null;
 
-  get useDirectorySource() {
-    return this.category === "web";
-  }
-
-  constructor(private category: C) {}
+  constructor(public category: C) {}
 
   async addCase(case_: Case) {
     this.#cases.push(case_);

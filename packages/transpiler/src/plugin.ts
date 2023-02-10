@@ -13,12 +13,16 @@ import type {
   StringLiteral,
 } from "@babel/types";
 import { RuleSyntaxError } from "./errors.js";
-import { checkIdentifier, IdElement } from "./ident.js";
+import { checkIdentifier, IdElement } from "./identifier.js";
 import { Category } from "./types.js";
 
 type BabelExport = typeof import("@babel/core");
+type ThisEnv = {
+  category?: Category;
+} | undefined;
 
-export default function (babel: BabelExport): PluginObj {
+export default function (this: ThisEnv, babel: BabelExport): PluginObj {
+  const pluginThis = this;
   const { types: t } = babel;
 
   /**
@@ -272,6 +276,7 @@ export default function (babel: BabelExport): PluginObj {
             directives[0]
           );
         }
+        pluginThis && (pluginThis.category = category);
         if (body.length === 0) {
           throw new RuleSyntaxError("Empty rule", path.node);
         }

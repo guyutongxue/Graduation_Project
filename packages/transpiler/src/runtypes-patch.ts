@@ -41,20 +41,29 @@ export function withCall<A, C extends CallSig>(
   } as any;
 }
 
+/**
+ * 辅助函数，用以提供到 Runtype<A> 的 A 的类型推导
+ * @param this 
+ * @returns this
+ */
+export function id<A>(this: Runtype<A>) {
+  return this;
+}
+
 export interface IProduction<C extends Category> {
-  type: C;
+  category: C;
   result: (...args: any[]) => AllCommand[C]
 }
 
 export function produces<A, C extends Category>(
   this: Runtype<A>,
-  type: C,
+  category: C,
   result: (...args: any[][]) => AllCommand[C]
 ): Runtype<A> {
   return {
     ...this,
     [Produced]: {
-      type,
+      category,
       result
     },
   };
@@ -73,6 +82,7 @@ function patch<T extends RuntypeFactory | Runtype>(a: T): T {
       const rt = a(...args);
       rt.withCall = withCall;
       rt.produces = produces;
+      rt.id = id;
       return rt;
     }) as any;
   } else {
@@ -80,6 +90,7 @@ function patch<T extends RuntypeFactory | Runtype>(a: T): T {
       ...a,
       withCall: withCall,
       produces: produces,
+      id: id,
     };
   }
 }

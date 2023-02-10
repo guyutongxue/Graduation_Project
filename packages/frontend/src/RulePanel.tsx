@@ -1,65 +1,22 @@
 import { Tab, Tabs, TabList, TabPanel } from "react-tabs";
 import "react-tabs/style/react-tabs.css";
 import MonacoEditor from "react-monaco-editor";
-import { transpile } from "transpiler";
 import { useState } from "react";
-import { map } from "rxjs";
-import { bind } from "@react-rxjs/core";
 import { BlocklyRule } from "./BlocklyRule";
-import MonacoRule, { rule$ } from "./MonacoRule";
-
-
-type TranspileResult =
-  | {
-      success: true;
-      code: string;
-    }
-  | {
-      success: false;
-      error?: Error;
-      message: string;
-    };
-
-const [useTranspileResult, transpileResult$] = bind<TranspileResult>(
-  rule$.pipe(
-    map((v): TranspileResult => {
-      try {
-        const { code } = transpile(v);
-        return {
-          success: true,
-          code: code ?? "",
-        };
-      } catch (e) {
-        if (e instanceof Error) {
-          return {
-            success: false,
-            error: e,
-            message: e.message,
-          };
-        } else {
-          return {
-            success: false,
-            message: "Unknown error",
-          };
-        }
-      }
-    })
-  ),
-  {
-    success: false,
-    message: "No rule",
-  }
-);
+import MonacoRule, { useTranspileResult } from "./MonacoRule";
 
 export default function RulePanel() {
   const [visualized, setVisualized] = useState(false);
   const transpileResult = useTranspileResult();
   return (
     <Tabs className="h-full">
-      <TabList className="flex justify-between react-tabs__tab-list">
+      <TabList className="react-tabs__tab-list flex justify-between">
         <div>
           <Tab>规则源码</Tab>
-          <Tab>转换结果(只读)</Tab>
+          <Tab className="react-tabs__tab inline-flex items-center">
+            <span>转换结果</span>
+            <div className="ml-1 badge badge-ghost badge-sm">只读</div>
+          </Tab>
         </div>
         <div className="flex items-center">
           <span>可视化</span>
@@ -92,5 +49,3 @@ export default function RulePanel() {
     </Tabs>
   );
 }
-
-export { transpileResult$ };

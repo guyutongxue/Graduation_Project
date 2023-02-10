@@ -1,4 +1,4 @@
-import type { Call, CallSig, IProduction, Produced, produces, withCall } from "./runtypes-patch.js";
+import type { Call, CallSig, id, IProduction, Produced, produces, withCall } from "./runtypes-patch.js";
 import { Category } from "./types.js";
 
 declare module "runtypes/lib/runtype.js" {
@@ -8,5 +8,6 @@ declare module "runtypes/lib/runtype.js" {
     [Produced]?: IProduction<Category>;
     withCall: typeof withCall;
     produces: typeof produces;
+    id: typeof id;
   }
 }

@@ -355,5 +355,5 @@ export const globals = (<const>{
         keys,
       })),
     }),
-  }),
+  }).id(), // 否则 TypeScript DTS 不会显式推导 Runtype<A> 的 A
 }) satisfies Record<string, Runtype>;

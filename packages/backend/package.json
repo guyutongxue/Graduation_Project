@@ -4,14 +4,17 @@
   "type": "module",
   "scripts": {
     "start": "pnpm build && node dist/index.js",
+    "start:dev": "nodemon src/index.ts",
     "build": "tsc"
   },
-  "//": "chalk (dep of babel) included here because it is not bundled by Rollup, while Pnpm do not flat inner dependencies unless specified here.",
   "dependencies": {
     "@babel/core": "^7.20.12",
-    "chalk": "^5.2.0",
+    "@fastify/cors": "^8.2.0",
+    "@fastify/multipart": "^7.4.0",
+    "fastify": "^4.11.0",
     "get-port": "^6.1.2",
     "jayson": "^4.0.0",
+    "nodemon": "^2.0.20",
     "tmp-promise": "^3.0.3",
     "transpiler": "workspace:*",
     "wait-port": "^1.0.4"

@@ -2,9 +2,8 @@ import { createSignal } from "@react-rxjs/utils";
 import { bind } from "@react-rxjs/core";
 import * as monaco from "monaco-editor";
 import MonacoEditor from "react-monaco-editor/lib/editor";
-import { debounceTime, distinctUntilChanged, Subscription } from "rxjs";
-import { RuleSyntaxError } from "transpiler";
-import { transpileResult$ } from "./RulePanel";
+import { debounceTime, distinctUntilChanged, map, Subscription } from "rxjs";
+import { RuleSyntaxError, transpile, transpileWithCategory } from "transpiler";
 
 const DEFAULT_RULE = `"use web";
 {
@@ -13,10 +12,54 @@ const DEFAULT_RULE = `"use web";
   assert: "Hello, JavaScript" in $("body").html;
 }`;
 
+type TranspileResult =
+  | {
+      success: true;
+      category?: string;
+      code: string;
+    }
+  | {
+      success: false;
+      error?: Error;
+      message: string;
+    };
+
 const [ruleChange$, setRule] = createSignal<string>();
 const [useRule, rule$] = bind(
   ruleChange$.pipe(distinctUntilChanged(), debounceTime(500)),
   DEFAULT_RULE
+);
+
+const [useTranspileResult, transpileResult$] = bind<TranspileResult>(
+  rule$.pipe(
+    map((v): TranspileResult => {
+      try {
+        const { code, category } = transpileWithCategory(v);
+        return {
+          success: true,
+          category: category,
+          code: code ?? "",
+        };
+      } catch (e) {
+        if (e instanceof Error) {
+          return {
+            success: false,
+            error: e,
+            message: e.message,
+          };
+        } else {
+          return {
+            success: false,
+            message: "Unknown error",
+          };
+        }
+      }
+    })
+  ),
+  {
+    success: false,
+    message: "No rule",
+  }
 );
 
 let transpileSubscription: Subscription | null = null;
@@ -101,4 +144,4 @@ export default function MonacoRule() {
   );
 }
 
-export { rule$ };
+export { rule$, useRule, transpileResult$, useTranspileResult };
