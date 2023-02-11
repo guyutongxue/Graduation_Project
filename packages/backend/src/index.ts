@@ -1,13 +1,10 @@
 import { fastify } from "fastify";
 import fastifyCors from "@fastify/cors";
-import fastifyMultipart, { Multipart } from "@fastify/multipart";
-import { judge } from "./judge.js";
-import { parseBuffer } from "./preparations.js";
-import { pipeline } from "node:stream/promises";
-import tmp from "tmp-promise";
+import fastifyMultipart, { type Multipart } from "@fastify/multipart";
+import { select, startJudge } from "./preparations.js";
 
 const app = fastify({
-  logger: true
+  logger: true,
 });
 
 await app.register(fastifyCors, {
@@ -15,33 +12,72 @@ await app.register(fastifyCors, {
 });
 await app.register(fastifyMultipart);
 
-app.post("/judge", async (req, rep) => {
-  let rule: string | undefined = void 0;
-  let file: Buffer | undefined = void 0;
-  let fileMime: string | undefined = void 0;
-  const parts = req.parts();
+async function parseMultipart<S extends Record<string, "file" | "value">>(
+  parts: AsyncIterableIterator<Multipart>,
+  schema: S
+) {
+  type Result = {
+    [K in keyof S]: S[K] extends "file"
+      ? [Buffer, string]
+      : S[K] extends "value"
+      ? string
+      : never;
+  };
+  const result: Record<string, unknown> = {};
+  let errStr: string | null = null;
   for await (const part of parts) {
-    console.log(part.fieldname);
-    if (part.fieldname === "file" && "file" in part) {
-      file = await part.toBuffer();
-      fileMime = part.mimetype;
-    } else if (part.fieldname === "rule" && "value" in part && typeof part.value === "string") {
-      rule = part.value;
+    if (part.fieldname in schema) {
+      if (schema[part.fieldname] === "file" && "file" in part) {
+        result[part.fieldname] = [await part.toBuffer(), part.mimetype];
+      } else if (
+        schema[part.fieldname] === "value" &&
+        "value" in part &&
+        typeof part.value === "string"
+      ) {
+        result[part.fieldname] = part.value;
+      } else {
+        errStr = `Field ${part.fieldname} incorrect format`;
+        break;
+      }
     } else {
-      return rep.code(400).send({
-        success: false,
-        message: `Invalid field name ${part.fieldname}`
-      });
+      errStr = `Invalid field name ${part.fieldname}`;
+      break;
     }
   }
-  if (typeof rule === "undefined" || typeof file === "undefined") {
+  for (const k in schema) {
+    if (!(k in result)) {
+      errStr = `Missing field ${k}`;
+      break;
+    }
+  }
+  return [errStr, result as Result] as const;
+}
+
+app.post("/judge", async (req, rep) => {
+  const parts = req.parts();
+  const [err, { file, rule, category }] = await parseMultipart(parts, {
+    rule: "value",
+    category: "value",
+    file: "file",
+  } as const);
+  if (err !== null) {
     return rep.code(400).send({
       success: false,
-      message: `Missing rule or file`
+      message: err
+    })
+  }
+  const f = await select(file[0], { category, mimeType: file[1] });
+  if (f === null) {
+    return rep.code(400).send({
+      success: false,
+      message: "Unsupported file type / category type",
     });
   }
-  parseBuffer(file, fileMime);
-  return true;
-})
+  const id = await startJudge(rule, f, category);
+  return {
+    success: true,
+    id
+  };
+});
 
 app.listen({ port: 3000 });

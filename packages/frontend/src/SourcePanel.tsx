@@ -6,13 +6,9 @@ import { HOST } from "./config";
 import { useRule } from "./MonacoRule";
 import { transpileResult$, useTranspileResult } from "./MonacoRule";
 
-function submit() {
-  transpileResult$.getValue();
-}
-
 const DEFAULT_SRC = `<!DOCTYPE html>
 <title>Hello, World</title>
-<button onclick="addContent()">Click me</button>
+<button id="hello" onclick="addContent()">Click me</button>
 <script>
   function addContent() {
     document.body.append("Hello, JavaScript");

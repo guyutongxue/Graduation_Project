@@ -6,8 +6,7 @@ import type { MethodLike } from "jayson/promise";
 
 function assert(cond: boolean, message?: string): asserts cond {
   if (!cond) {
-    rpcServer.error(510, message);
-    throw new Error(message);
+    throw rpcServer.error(510, message);
   }
 }
 
@@ -58,10 +57,10 @@ export class Handler {
       switch (component) {
         case "html":
           assert(target.length === 1, `Selector target ${selector} not exists or not unique`);
-          return target[0].evaluate(e => e.textContent);
+          return target[0].evaluate(e => e.innerHTML);
         case "text":
           assert(target.length === 1, `Selector target ${selector} not exists or not unique`);
-          return target[0].evaluate(e => e.innerHTML);
+          return target[0].evaluate(e => e.textContent);
         case "count":
           return target.length;
         default:

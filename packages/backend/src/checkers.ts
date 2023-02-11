@@ -5,6 +5,8 @@ import { fileURLToPath } from "node:url";
 import waitPort from "wait-port";
 import getPort from "get-port";
 
+import { JudgeError } from "./error.js";
+
 type RawRequest = {
   method: string;
 } & unknown;
@@ -18,9 +20,9 @@ export class Checker {
   }
 
   static async fromProcess(cp: ChildProcess, port: number) {
-    await waitPort({ 
-      port, 
-      // output: "silent" 
+    await waitPort({
+      port,
+      // output: "silent"
     });
     const client = jayson.Client.http({
       port,
@@ -32,11 +34,18 @@ export class Checker {
   async #sendImpl(method: string, param: any) {
     const response = await this.#client.request(method, [param]);
     console.log(response);
+    if (!jayson.utils.Response.isValidResponse(response)) {
+      throw new JudgeError(
+        "ConnectionFailure",
+        `Invalid response for method ${method}`
+      );
+    }
     if ("result" in response) {
       return response.result;
     } else {
-      throw new Error(
-        `send ${method} failed, ${response.error.code}: ${response.error.message}`
+      throw new JudgeError(
+        "UnmetPrecondition",
+        `${method} = (${response.error.code}) ${response.error.message}`
       );
     }
   }
@@ -72,13 +81,15 @@ async function createFormChecker() {
   const port = await getPort();
   const process = execFile(
     fileURLToPath(
-      new URL("../../formcheck/formcheck/bin/Debug/net7.0-windows/formcheck.exe", import.meta.url).href
+      new URL(
+        "../../formcheck/formcheck/bin/Debug/net7.0-windows/formcheck.exe",
+        import.meta.url
+      ).href
     ),
     [port.toString()]
   );
   return Checker.fromProcess(process, port);
 }
-
 
 export async function createChecker(category: Category) {
   switch (category) {
@@ -88,6 +99,6 @@ export async function createChecker(category: Category) {
       return createFormChecker();
     default:
       const _: never = category;
-      throw new Error();
+      throw new JudgeError("UnknownCategory");
   }
 }

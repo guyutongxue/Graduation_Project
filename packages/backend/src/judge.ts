@@ -7,14 +7,6 @@ import { Controller } from "./client.js";
 
 tmp.setGracefulCleanup();
 
-const TEST_SRC = `
-"use web";
-{
-  assert: $.title == "Hello, World";
-  $("#hello").click();
-  assert: "Hello, JavaScript" in $("body").html;
-}`;
-
 const clientUrl = new URL("./client.js", import.meta.url);
 
 export async function judge(ruleSrc: string, filepath: string, category?: string) {

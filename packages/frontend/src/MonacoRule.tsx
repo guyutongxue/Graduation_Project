@@ -9,7 +9,7 @@ const DEFAULT_RULE = `"use web";
 {
   assert: $.title == "Hello, World";
   $("#hello").click();
-  assert: "Hello, JavaScript" in $("body").html;
+  assert: "Hello, JavaScript" in $("body").text;
 }`;
 
 type TranspileResult =
