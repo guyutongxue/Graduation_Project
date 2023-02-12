@@ -2,6 +2,7 @@ import tmp, { type DirectoryResult } from "tmp-promise";
 import { writeFile } from "node:fs/promises";
 import path from "node:path";
 import { judge } from "./judge.js";
+import { ErrorType, JudgeError } from "./error.js";
 
 interface ParseBufferOptions {
   category: string;
@@ -10,11 +11,24 @@ interface ParseBufferOptions {
 
 type Status =
   | {
-      status: "running";
+      status: "launching";
+    }
+  | {
+      status: "judging";
+      caseNo: number;
     }
   | {
       status: "done";
-      result: unknown;
+      result:
+        | {
+            type: "Accepted";
+          }
+        | {
+            type: ErrorType;
+            typeDescription: string;
+            message: string;
+            caseNo: number;
+          };
     };
 
 const SUBMISSION_MAP = new Map<number, Status>();
@@ -44,12 +58,22 @@ export async function select(
 
 let nextId = 0;
 
-export async function startJudge(rule: string, result: DirectoryResult, category?: string) {
+export async function startJudge(
+  rule: string,
+  result: DirectoryResult,
+  category?: string
+) {
   const { path, cleanup } = result;
   const id = nextId++;
+  SUBMISSION_MAP.set(id, { status: "launching" });
   setTimeout(async () => {
     try {
-      await judge(rule, path, category);
+      await judge({
+        rule,
+        filePath: path, 
+        category,
+        judgeId: id,
+      });
     } finally {
       await cleanup.call(result);
     }
@@ -57,6 +81,29 @@ export async function startJudge(rule: string, result: DirectoryResult, category
   return id;
 }
 
+export function onCase(jid: number, caseNo: number) {
+  SUBMISSION_MAP.set(jid, { status: "judging", caseNo });
+}
+
+export function onSuccess(jid: number) {
+  SUBMISSION_MAP.set(jid, {
+    status: "done",
+    result: { type: "Accepted" },
+  });
+}
+
+export function onError(jid: number, caseNo: number, e: JudgeError) {
+  SUBMISSION_MAP.set(jid, {
+    status: "done",
+    result: {
+      type: e.type,
+      typeDescription: e.typeDescription,
+      message: e.message,
+      caseNo,
+    },
+  });
+}
+
 export function getJudgeStatus(id: number) {
-  return SUBMISSION_MAP.get(id);
+  return SUBMISSION_MAP.get(id) ?? null;
 }

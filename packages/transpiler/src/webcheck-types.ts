@@ -4,8 +4,8 @@ interface ClickControl  {
   selector: string;
 }
 
-interface ValueControl {
-  method: "value";
+interface InputControl {
+  method: "input";
   selector: string;
   value: string;
 }
@@ -27,4 +27,4 @@ interface SelectorTarget {
   component: "text" | "html" | "count";
 }
 
-export type WebCommand = ClickControl | KeyControl | ValueControl | PageTarget | SelectorTarget;
+export type WebCommand = ClickControl | KeyControl | InputControl | PageTarget | SelectorTarget;

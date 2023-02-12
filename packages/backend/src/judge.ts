@@ -9,8 +9,15 @@ tmp.setGracefulCleanup();
 
 const clientUrl = new URL("./client.js", import.meta.url);
 
-export async function judge(ruleSrc: string, filepath: string, category?: string) {
-  const result = await transformAsync(ruleSrc, {
+interface JudgeOption {
+  rule: string;
+  filePath: string;
+  category?: string;
+  judgeId: number;
+}
+
+export async function judge({ rule, filePath, category, judgeId}: JudgeOption) {
+  const result = await transformAsync(rule, {
     plugins: [
       babelPlugin,
       (): PluginObj => {
@@ -48,5 +55,5 @@ export async function judge(ruleSrc: string, filepath: string, category?: string
     throw new Error("Category inconsistency");
   }
 
-  await controller.run(filepath);
+  await controller.run(judgeId, filePath);
 }

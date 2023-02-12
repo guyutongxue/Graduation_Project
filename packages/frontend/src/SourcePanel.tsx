@@ -5,6 +5,7 @@ import { Tab, Tabs, TabList, TabPanel } from "react-tabs";
 import { HOST } from "./config";
 import { useRule } from "./MonacoRule";
 import { transpileResult$, useTranspileResult } from "./MonacoRule";
+import { jid$ } from "./ResultPanel";
 
 const DEFAULT_SRC = `<!DOCTYPE html>
 <title>Hello, World</title>
@@ -33,8 +34,12 @@ export default function SourcePanel() {
     if (editor) {
       let mimeType: string;
       switch (transpileResult.category) {
-        case "web": mimeType = "text/html"; break;
-        default: mimeType = "text/plain"; break;
+        case "web":
+          mimeType = "text/html";
+          break;
+        default:
+          mimeType = "text/plain";
+          break;
       }
       file = new Blob([editorValue], { type: mimeType });
     } else {
@@ -48,7 +53,10 @@ export default function SourcePanel() {
     data.set("rule", rule);
     data.set("category", transpileResult.category ?? "");
     data.set("file", file);
-    axios.post(`${HOST}/judge`, data);
+    const result = await axios.post(`${HOST}/judge`, data);
+    if (result.data.success) {
+      jid$.next(result.data.id);
+    }
   }
 
   return (

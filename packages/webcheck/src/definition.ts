@@ -6,7 +6,7 @@ import type { MethodLike } from "jayson/promise";
 
 function assert(cond: boolean, message?: string): asserts cond {
   if (!cond) {
-    throw rpcServer.error(510, message);
+    throw new Error(message);
   }
 }
 
@@ -43,7 +43,7 @@ export class Handler {
       case "html":
         return this.#browserContext.page.evaluate(() => document.documentElement.outerHTML);
       case "text":
-        return this.#browserContext.page.evaluate(() => document.body.innerText);
+        return this.#browserContext.page.evaluate(() => document.body.textContent);
       case "title":
         return this.#browserContext.page.title();
       default:
@@ -60,7 +60,7 @@ export class Handler {
           return target[0].evaluate(e => e.innerHTML);
         case "text":
           assert(target.length === 1, `Selector target ${selector} not exists or not unique`);
-          return target[0].evaluate(e => e.textContent);
+          return target[0].evaluate(e => e.innerText);
         case "count":
           return target.length;
         default:
@@ -75,7 +75,16 @@ export class Handler {
     await new Promise(r => setTimeout(r, 100));
   }
   key!: (param: any) => Promise<any>;
-  value!: (param: any) => Promise<any>;
+  async input({ selector, value }: any) {
+    assert(!!this.#browserContext, "browser not loaded");
+    // assert(typeof value === "string", "value must be string");
+    const target = await this.#browserContext.page.$$(selector);
+    assert(target.length === 1, `Selector target ${selector} not exists or not unique`);
+    const isInput = await target[0].evaluate(e => e instanceof HTMLInputElement);
+    assert(isInput, `Selector target ${selector} is not input element`);
+    await target[0].evaluate((e, v) => e.value = v, value);
+    await new Promise(r => setTimeout(r, 100));
+  };
 }
 
 let rpcServer: jayson.Server = undefined!;
@@ -95,7 +104,7 @@ export function createServer() {
           return result;
         } catch (e) {
           if (e instanceof Error) {
-            return rpcServer.error(510, e.message);
+            throw rpcServer.error(510, e.message);
           } else {
             throw e;
           }

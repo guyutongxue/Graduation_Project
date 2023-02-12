@@ -1,9 +1,8 @@
 import { Allotment } from "allotment";
-
 import RulePanel from "./RulePanel";
-
-import "allotment/dist/style.css";
 import SourcePanel from "./SourcePanel";
+import ResultPanel from "./ResultPanel";
+import "allotment/dist/style.css";
 
 function App() {
   return (
@@ -15,7 +14,7 @@ function App() {
         </Allotment>
       </Allotment.Pane>
       <Allotment.Pane>
-        <h1 className="text-blue-500">Result</h1>
+        <ResultPanel></ResultPanel>
       </Allotment.Pane>
     </Allotment>
   );

@@ -315,7 +315,7 @@ export const globals = (<const>{
       input: RFunction(<const>{
         parameters: [RString],
         returns: RVoid.produces("web", ([selector], [value]) => ({
-          method: "value",
+          method: "input",
           selector,
           value,
         })),

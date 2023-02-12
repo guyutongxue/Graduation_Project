@@ -16,7 +16,7 @@ export class JudgeError extends Error {
   constructor(public type: ErrorType, message?: string) {
     super(message);
   }
-  typeDescription() {
+  get typeDescription() {
     return ERROR_DESCRIPTION[this.type];
   }
 }

@@ -1,7 +1,7 @@
-import { fastify } from "fastify";
+import { fastify, FastifyRequest } from "fastify";
 import fastifyCors from "@fastify/cors";
 import fastifyMultipart, { type Multipart } from "@fastify/multipart";
-import { select, startJudge } from "./preparations.js";
+import { getJudgeStatus, select, startJudge } from "./preparations.js";
 
 const app = fastify({
   logger: true,
@@ -77,6 +77,22 @@ app.post("/judge", async (req, rep) => {
   return {
     success: true,
     id
+  };
+});
+
+app.get("/judgeStatus/:id", async (req, rep) => {
+  // @ts-expect-error No type definition for req.params
+  const id = parseInt(req.params.id);
+  const status = getJudgeStatus(id);
+  if (status === null) {
+    return rep.code(404).send({
+      success: false,
+      message: "ID not found"
+    });
+  }
+  return {
+    success: true,
+    ...status
   };
 });
 
