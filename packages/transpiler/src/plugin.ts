@@ -17,9 +17,13 @@ import { checkIdentifier, IdElement } from "./identifier.js";
 import { Category } from "./types.js";
 
 type BabelExport = typeof import("@babel/core");
-type ThisEnv = {
-  category?: Category;
-} | undefined;
+type ThisEnv =
+  | {
+      category?: Category;
+    }
+  | undefined;
+
+const enterIgnorance = Symbol("enterIgnorance");
 
 export default function (this: ThisEnv, babel: BabelExport): PluginObj {
   const pluginThis = this;
@@ -82,10 +86,27 @@ export default function (this: ThisEnv, babel: BabelExport): PluginObj {
     }
   }
 
-  type IdVisitorState = {
+  /**
+   * 捕获所有的链式调用，保存到 `this.target` 中。
+   */
+  interface IdVisitorState {
     readonly controller: RuleController;
+
+    /**
+     * 当前捕获到的链式调用。
+     * 由成员表达式、调用表达式和标识符构成
+     */
     target: IdElement[] | null;
+
+    /**
+     * 如果出现了函数实参，那么实参中的表达式应当递归处理（见下文），
+     * 且实参中的成员表达式/调用表达式不能出现在“链”中，
+     * 所以需要忽略它们。  
+     * 此成员记录被忽略的层数。
+     */
+    ignoreDepth: number;
   };
+
   type TopVisitorState = {
     readonly controller: RuleController;
   };
@@ -117,22 +138,28 @@ export default function (this: ThisEnv, babel: BabelExport): PluginObj {
     readonly addCase = () => this.method("addCase");
   }
 
-  function transformId<T extends Identifier | MemberExpression | CallExpression>(
-    this: IdVisitorState,
-    path: NodePath<T>
-  ) {
-    if (this.target) {
+  /**
+   * 将 AST 中的链式调用转换为 awaited-发送函数
+   * @param this 
+   * @param path 
+   */
+  function transformId(this: IdVisitorState, path: NodePath<Node>) {
+    // 当前存在“链”的时候。向其中推入新的组分；如果处于忽略阶段则不做任何事
+    if (this.target && !this.ignoreDepth) {
       const node = path.node;
       if (node.type === "MemberExpression") {
         const prop = node.property;
         if (prop.type !== "Identifier") {
-          throw new RuleSyntaxError(`Non-identifier member '${prop.type}' not supported.`, prop);
+          throw new RuleSyntaxError(
+            `Non-identifier member '${prop.type}' not supported.`,
+            prop
+          );
         }
         this.target.push({
           type: "identifier",
           name: prop.name,
           start: prop.start,
-          end: prop.end
+          end: prop.end,
         });
       } else if (node.type === "CallExpression") {
         this.target.push({
@@ -141,14 +168,15 @@ export default function (this: ThisEnv, babel: BabelExport): PluginObj {
             t.isExpression(n)
           ),
           start: node.start,
-          end: node.end
+          end: node.end,
         });
       }
+      // 如果上级节点不是“链”（即不是成员表达式的一部分，也不是调用方），
+      // 那么生成对应的 awaited-发送调用
       if (
         path.parent.type !== "MemberExpression" &&
         !(path.parent.type === "CallExpression" && path.parent.callee === node)
       ) {
-        // console.log(this.target);
         const production = checkIdentifier(
           this.controller.category,
           this.target
@@ -168,6 +196,44 @@ export default function (this: ThisEnv, babel: BabelExport): PluginObj {
     }
   }
   const idVisitor: Visitor<IdVisitorState> = {
+    enter(path) {
+      // 进入时，如果遍历到函数形参
+      if (
+        this.target &&
+        path.parent.type === "CallExpression" &&
+        path.parent.callee !== path.node
+      ) {
+        // 将当前的调用表达式节点标记为“该函数形参已忽略”，
+        // 并增加形参忽略深度。
+        // 如果已有标记则不做任何事
+        if (!Object.hasOwn(path.parent, enterIgnorance)) {
+          Object.defineProperty(path.parent, enterIgnorance, { value: true, enumerable: true, configurable: true });
+          this.ignoreDepth++;
+        }
+        const subThis = {
+          controller: this.controller,
+          target: null,
+          ignoreDepth: 0,
+        };
+        // 递归遍历，转换形参中的链式调用（若有）
+        path.traverse(idVisitor, subThis);
+        // .traverse 方法不会遍历根节点，故额外处理它
+        transformId.call(subThis, path);
+      }
+    },
+    exit(path) {
+      // 如果是链式调用组分，那么推入
+      if (path.node.type === "CallExpression" || path.node.type === "MemberExpression" || path.node.type === "Identifier") {
+        transformId.call(this, path);
+      }
+      // 退出时减少形参忽略深度，删除标记
+      if (Object.hasOwn(path.parent, enterIgnorance)) {
+        this.ignoreDepth--;
+        // @ts-expect-error No symbol typing
+        delete path.parent[enterIgnorance];
+      }
+    },
+    // 如果进入时遇到未声明的标识符，那么就视为链式调用的起点
     Identifier: {
       enter(path) {
         const { start, end, name } = path.node;
@@ -177,23 +243,10 @@ export default function (this: ThisEnv, babel: BabelExport): PluginObj {
               type: "identifier",
               name,
               start,
-              end
+              end,
             },
           ];
         }
-      },
-      exit(path) {
-        transformId.call(this, path);
-      },
-    },
-    MemberExpression: {
-      exit(path) {
-        transformId.call(this, path);
-      },
-    },
-    CallExpression: {
-      exit(path) {
-        transformId.call(this, path);
       },
     },
   };
@@ -203,9 +256,12 @@ export default function (this: ThisEnv, babel: BabelExport): PluginObj {
       path.traverse(idVisitor, {
         target: null,
         controller: this.controller,
+        ignoreDepth: 0,
       });
       const caseId = path.scope.generateUidIdentifier();
-      path.replaceWith(t.functionDeclaration(caseId, [], path.node, false, true));
+      path.replaceWith(
+        t.functionDeclaration(caseId, [], path.node, false, true)
+      );
       path.insertAfter(
         t.expressionStatement(
           t.callExpression(this.controller.addCase(), [caseId])
@@ -263,7 +319,10 @@ export default function (this: ThisEnv, babel: BabelExport): PluginObj {
           throw new RuleSyntaxError(`No "use ..." directive found.`, path.node);
         }
         if (directives.length > 1) {
-          throw new RuleSyntaxError(`Multiple directives. The first directive is "${directives[0].value.value}"`, directives[1]);
+          throw new RuleSyntaxError(
+            `Multiple directives. The first directive is "${directives[0].value.value}"`,
+            directives[1]
+          );
         }
         let category: Category;
         if (directives[0].value.value === "use web") {

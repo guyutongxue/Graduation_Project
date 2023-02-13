@@ -69,7 +69,6 @@ export function checkIdentifier(category: Category, ids: IdElement[]) {
     start: ids[0].start,
     end: ids[ids.length - 1].end,
   };
-  // console.log(production);
   if (typeof production === "undefined") {
     throw new RuleSyntaxError(`An invalid target`, pos);
   }
