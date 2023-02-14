@@ -9,3 +9,8 @@
 .react-tabs__tab-panel {
   flex-grow: 1;
 }
+
+/* Hide Blockly Toolbox's scrollbar. Bugs with it. */
+.blocklyScrollbarVertical.blocklyFlyoutScrollbar {
+  display: none;
+}
