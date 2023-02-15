@@ -2,7 +2,7 @@ import { WorkspaceSvg, svgResize } from "blockly";
 import { useEffect, useState } from "react";
 import { BlocklyWorkspace, ToolboxDefinition } from "react-blockly";
 import { useResizeDetector } from "react-resize-detector";
-import TOOLBOX from "./blockly_toolbox";
+import { getToolboxDefinition } from "./blockly_toolbox";
 
 let workspaceObj: WorkspaceSvg | null = null;
 
@@ -45,7 +45,9 @@ const DEFAULT_XML = `<xml xmlns="https://developers.google.com/blockly/xml">
     </block>
   </statement>
 </block>
-</xml>`
+</xml>`;
+
+const TOOLBOX = getToolboxDefinition();
 
 export function BlocklyRule() {
   const [xml, setXml] = useState(DEFAULT_XML);
@@ -53,6 +55,35 @@ export function BlocklyRule() {
   useEffect(() => {
     workspaceObj && svgResize(workspaceObj);
   }, [width, height]);
+  useEffect(() => {
+    const parser = new DOMParser();
+    const doc = parser.parseFromString(xml, "text/xml");
+    // https://developer.mozilla.org/en-US/docs/Web/XPath/Introduction_to_using_XPath_in_JavaScript#implementing_a_default_namespace_for_xml_documents
+    const nsResolver = () => {
+      return "https://developers.google.com/blockly/xml";
+    };
+    const result = doc.evaluate(
+      `//x:block[@type='meta_category']/x:field[@name='CATEGORY']/text()`,
+      doc,
+      nsResolver,
+      XPathResult.STRING_TYPE,
+      null
+    );
+    const category = result.stringValue.toLowerCase();
+    if (workspaceObj) {
+      workspaceObj.updateToolbox(getToolboxDefinition(category));
+      // Remove all category-specific blocks, except the ones in the current category
+      // Pretty dirty hack here:
+      // assume that these blocks' colors are #a5935b (45deg in HSV, see custom_blockly_blocks.ts)
+      workspaceObj
+        .getAllBlocks(false)
+        .filter(
+          (b) =>
+            b.getColour() === "#a5935b" && !b.type.startsWith(category + "_")
+        )
+        .forEach((b) => b.dispose(true, true));
+    }
+  }, [xml]);
   return (
     <div className="h-full w-full" ref={ref}>
       <BlocklyWorkspace
