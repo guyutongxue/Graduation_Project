@@ -31,8 +31,9 @@ export class Checker {
     return new Checker(cp, client);
   }
 
-  async #sendImpl(method: string, param: any) {
-    const response = await this.#client.request(method, [param]);
+  async #sendImpl(method: string, param?: any) {
+    param = typeof param === "undefined" ? []: [param];
+    const response = await this.#client.request(method, param);
     console.log(response);
     if (!jayson.utils.Response.isValidResponse(response)) {
       throw new JudgeError(
@@ -61,7 +62,7 @@ export class Checker {
   }
 
   async dispose() {
-    await this.#sendImpl("dispose", void 0);
+    await this.#sendImpl("dispose");
     this.#process.kill();
   }
 }
@@ -79,6 +80,11 @@ async function createWebChecker() {
 
 async function createFormChecker() {
   const port = await getPort();
+  console.log(
+    new URL(
+      "../../formcheck/formcheck/bin/Debug/net7.0-windows/formcheck.exe",
+      import.meta.url
+    ).href);
   const process = execFile(
     fileURLToPath(
       new URL(

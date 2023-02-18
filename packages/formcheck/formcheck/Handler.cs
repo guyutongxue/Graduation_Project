@@ -81,7 +81,10 @@ namespace formcheck
     {
       switch (action)
       {
-        case "clickButton": e.Click(); return null;
+        case "clickButton": 
+          e.Click();
+          Thread.Sleep(100);
+          return null;
         case "inputTextBox":
           {
             if (e.AsTextBox() is TextBox textBox && value is not null)
@@ -132,7 +135,7 @@ namespace formcheck
     }
 
     [JsonRpcMethod]
-    void key(KeyArg arg)
+    object? key(KeyArg arg)
     {
       if (app is null || automation is null)
       {
@@ -140,6 +143,9 @@ namespace formcheck
       }
       var window = app.GetMainWindow(automation);
       window.Focus();
+      KeyPresser.Press(arg.keys);
+      Thread.Sleep(100);
+      return null;
     }
 
     [JsonRpcMethod]

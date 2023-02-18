@@ -2,7 +2,8 @@ import { WorkspaceSvg, svgResize } from "blockly";
 import { useEffect, useState } from "react";
 import { BlocklyWorkspace, ToolboxDefinition } from "react-blockly";
 import { useResizeDetector } from "react-resize-detector";
-import { getToolboxDefinition } from "./blockly_toolbox";
+import { getToolboxDefinition } from "./blockly/toolbox";
+import { javascriptGenerator } from "blockly/javascript";
 
 let workspaceObj: WorkspaceSvg | null = null;
 
@@ -58,18 +59,10 @@ export function BlocklyRule() {
   useEffect(() => {
     const parser = new DOMParser();
     const doc = parser.parseFromString(xml, "text/xml");
-    // https://developer.mozilla.org/en-US/docs/Web/XPath/Introduction_to_using_XPath_in_JavaScript#implementing_a_default_namespace_for_xml_documents
-    const nsResolver = () => {
-      return "https://developers.google.com/blockly/xml";
-    };
-    const result = doc.evaluate(
-      `//x:block[@type='meta_category']/x:field[@name='CATEGORY']/text()`,
-      doc,
-      nsResolver,
-      XPathResult.STRING_TYPE,
-      null
-    );
-    const category = result.stringValue.toLowerCase();
+    const category =
+      doc
+        .querySelector("block[type=meta_category]>field[name=CATEGORY]")
+        ?.textContent?.toLowerCase() ?? null;
     if (workspaceObj) {
       workspaceObj.updateToolbox(getToolboxDefinition(category));
       // Remove all category-specific blocks, except the ones in the current category
@@ -96,4 +89,11 @@ export function BlocklyRule() {
       ></BlocklyWorkspace>
     </div>
   );
+}
+
+// @ts-ignore
+window.toCode = () => {
+  if (workspaceObj) {
+    return javascriptGenerator.workspaceToCode(workspaceObj);
+  }
 }

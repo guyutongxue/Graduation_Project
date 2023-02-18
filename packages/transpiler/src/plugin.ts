@@ -340,9 +340,9 @@ export default function (this: ThisEnv, babel: BabelExport): PluginObj {
           throw new RuleSyntaxError("Empty rule", path.node);
         }
         for (const stmt of body) {
-          if (stmt.type !== "BlockStatement") {
+          if (stmt.type !== "BlockStatement" && !t.isDeclaration(stmt)) {
             throw new RuleSyntaxError(
-              `A block expected at top-level, ${stmt.type} found`,
+              `A block or declaration expected at top-level, ${stmt.type} found`,
               stmt
             );
           }

@@ -56,9 +56,9 @@ namespace formcheck
 
     }
 
-    static void Main(String[] args)
+    static void Main(string[] args)
     {
-      if (args.Length < 1 || !int.TryParse(args[1], out var port)) {
+      if (args.Length < 1 || !int.TryParse(args[0], out var port)) {
         throw new Exception("Port not number");
       }
       Listen(port);

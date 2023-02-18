@@ -39,6 +39,12 @@ async function saveHtmlToTempDirectory(buffer: Buffer) {
   return directory;
 }
 
+async function saveExeToTemp(buffer: Buffer) {
+  const file = await tmp.file({ postfix: ".exe" });
+  await writeFile(file.path, buffer);
+  return file;
+}
+
 export async function select(
   buffer: Buffer,
   { category, mimeType }: ParseBufferOptions
@@ -50,6 +56,9 @@ export async function select(
       } else {
         return null;
       }
+    }
+    case "form": {
+      return saveExeToTemp(buffer);
     }
     default:
       return null;

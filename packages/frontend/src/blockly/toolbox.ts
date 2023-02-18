@@ -1,5 +1,8 @@
 import { ToolboxDefinition, ToolboxItemInfo } from "blockly/core/utils/toolbox";
-import "./custom_blockly_blocks";
+import "./blocks_meta";
+import "./blocks_assert";
+import "./blocks_web";
+import "./blocks_form";
 
 // https://github.com/google/blockly-samples/blob/master/plugins/dev-tools/src/toolboxCategories.js
 const PREDEFINED_BLOCKS: ToolboxItemInfo[] = [
@@ -957,7 +960,7 @@ const FORM_BLOCKS: ToolboxItemInfo = {
 };
 
 export function getToolboxDefinition(
-  category: string = "web"
+  category: string | null = "web"
 ): ToolboxDefinition {
   let categoryBlocks: ToolboxItemInfo[] = [];
   switch (category) {

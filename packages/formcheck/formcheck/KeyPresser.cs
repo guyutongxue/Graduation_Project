@@ -73,7 +73,7 @@ namespace formcheck
   
   static class KeyPresser
   {
-    static void Press(string keys)
+    static public void Press(string keys)
     {
       var inControl = false;
       var currentSnip = "";
