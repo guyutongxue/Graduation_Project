@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>Caculator</title>
+  </head>
+  <body>
+    <input type="text" id="a">
+    <span>+</span>
+    <input type="text" id="b">
+    <button id="calculate" onclick="calculate()">=</button>
+    <span id="c">?</span>
+    
+    <script>
+      function calculate() {
+        const a = Number(document.querySelector("#a").value);
+        const b = Number(document.querySelector("#b").value);
+        document.querySelector("#c").innerText = (a + b).toString();
+      }
+    </script>
+  </body>
+</html>

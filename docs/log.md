@@ -39,8 +39,10 @@
 
 - WinForm 按键发送
 - 前端：基于 React 的单页面应用，框架
+- 后端：HTML 适配
 
 ## W7 2.12 - 2.18
 
-- 后端：WinForm exe & HTML 
+- 修复了转译器的一些 bug
 - 前端：Blockly 自定义块（工作中）
+- 后端：WinForm 适配
