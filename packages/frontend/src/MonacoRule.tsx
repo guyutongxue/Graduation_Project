@@ -5,12 +5,16 @@ import MonacoEditor from "react-monaco-editor/lib/editor";
 import { debounceTime, distinctUntilChanged, map, Subscription } from "rxjs";
 import { RuleSyntaxError, transpile, transpileWithCategory } from "transpiler";
 
-const DEFAULT_RULE = `"use web";
+// const DEFAULT_RULE = `"use web";
+// {
+//   assert: $.title == "Hello, World";
+//   $("#hello").click();
+//   assert: "Hello, JavaScript" in $("body").text;
+// }`;
+const DEFAULT_RULE = `"use form";
 {
-  assert: $.title == "Hello, World";
-  $("#hello").click();
-  assert: "Hello, JavaScript" in $("body").text;
-}`;
+  
+}`
 
 type TranspileResult =
   | {

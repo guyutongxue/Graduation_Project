@@ -11,9 +11,11 @@ importers:
       '@rollup/plugin-json': ^6.0.0
       '@rollup/plugin-node-resolve': ^15.0.1
       '@rollup/plugin-typescript': ^10.0.1
+      '@types/adm-zip': ^0.5.0
       '@types/babel__core': ^7.20.0
       '@types/node': ^18.11.18
       '@types/tmp': ^0.2.3
+      adm-zip: ^0.5.10
       fastify: ^4.11.0
       get-port: ^6.1.2
       jayson: ^4.0.0
@@ -29,6 +31,7 @@ importers:
       '@babel/core': 7.20.12
       '@fastify/cors': 8.2.0
       '@fastify/multipart': 7.4.0
+      adm-zip: 0.5.10
       fastify: 4.11.0
       get-port: 6.1.2
       jayson: 4.0.0
@@ -41,6 +44,7 @@ importers:
       '@rollup/plugin-json': 6.0.0_rollup@3.9.1
       '@rollup/plugin-node-resolve': 15.0.1_rollup@3.9.1
       '@rollup/plugin-typescript': 10.0.1_hqjvco2e22ojmon3nhwchufpre
+      '@types/adm-zip': 0.5.0
       '@types/babel__core': 7.20.0
       '@types/node': 18.11.18
       '@types/tmp': 0.2.3
@@ -856,6 +860,12 @@ packages:
     engines: {node: '>= 10'}
     dev: false
 
+  /@types/adm-zip/0.5.0:
+    resolution: {integrity: sha512-FCJBJq9ODsQZUNURo5ILAQueuA8WJhRvuihS3ke2iI25mJlfV2LK8jG2Qj2z2AWg8U0FtWWqBHVRetceLskSaw==}
+    dependencies:
+      '@types/node': 18.11.18
+    dev: true
+
   /@types/babel__core/7.20.0:
     resolution: {integrity: sha512-+n8dL/9GWblDO0iU6eZAwEIJVr5DWigtle+Q6HLOrh/pdbXOhOtqzq8VPPE2zvNJzSKY4vH/z3iT3tn0A3ypiQ==}
     dependencies:
@@ -1026,6 +1036,11 @@ packages:
     resolution: {integrity: sha512-7zFpHzhnqYKrkYdUjF1HI1bzd0VygEGX8lFk4k5zVMqHEoES+P+7TKI+EvLO9WVMJ8eekdO0aDEK044xTXwPPA==}
     engines: {node: '>=0.4.0'}
     hasBin: true
+    dev: false
+
+  /adm-zip/0.5.10:
+    resolution: {integrity: sha512-x0HvcHqVJNTPk/Bw8JbLWlWoo6Wwnsug0fnYYro1HBrjxZ3G7/AZk7Ahv8JwDe1uIcz8eBqvu86FuF1POiG7vQ==}
+    engines: {node: '>=6.0'}
     dev: false
 
   /agent-base/6.0.2:

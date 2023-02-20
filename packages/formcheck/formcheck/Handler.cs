@@ -43,8 +43,7 @@ namespace formcheck
     [JsonRpcMethod]
     bool initialize(string path)
     {
-      path = @"C:\Users\guyutongxue\Documents\MyFiles\Code\Csharp\WeiboFishHack\WeiboFishHack\bin\Debug\net7.0-windows\WeiboFishHack.exe";
-
+      Environment.CurrentDirectory = (Path.GetDirectoryName(path) ?? "");
       app = Application.Launch(path);
       automation = new UIA3Automation();
       return true;

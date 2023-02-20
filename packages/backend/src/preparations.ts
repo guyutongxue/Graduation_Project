@@ -1,6 +1,7 @@
 import tmp, { type DirectoryResult } from "tmp-promise";
-import { writeFile } from "node:fs/promises";
+import { writeFile, readdir } from "node:fs/promises";
 import path from "node:path";
+import AdmZip from "adm-zip";
 import { judge } from "./judge.js";
 import { ErrorType, JudgeError } from "./error.js";
 
@@ -39,6 +40,27 @@ async function saveHtmlToTempDirectory(buffer: Buffer) {
   return directory;
 }
 
+async function decompressZipToTempDirectory(buffer: Buffer) {
+  const directory = await tmp.dir({ unsafeCleanup: true });
+  const zip = new AdmZip(buffer);
+  zip.extractAllTo(directory.path, true);
+  return directory;
+}
+
+async function getExeFromDirectory(
+  directory: DirectoryResult
+): Promise<DirectoryResult> {
+  const files = await readdir(directory.path);
+  const exeFiles = files.filter((file) => file.endsWith(".exe"));
+  if (exeFiles.length !== 1) {
+    throw new Error("No executable file or multiple found");
+  }
+  return {
+    path: path.join(directory.path, exeFiles[0]),
+    cleanup: directory.cleanup.bind(directory),
+  };
+}
+
 async function saveExeToTemp(buffer: Buffer) {
   const file = await tmp.file({ postfix: ".exe" });
   await writeFile(file.path, buffer);
@@ -58,7 +80,13 @@ export async function select(
       }
     }
     case "form": {
-      return saveExeToTemp(buffer);
+      console.log(mimeType);
+      if (mimeType === "application/x-zip-compressed") {
+        const d = await decompressZipToTempDirectory(buffer);
+        return getExeFromDirectory(d);
+      } else {
+        return saveExeToTemp(buffer);
+      }
     }
     default:
       return null;
@@ -79,7 +107,7 @@ export async function startJudge(
     try {
       await judge({
         rule,
-        filePath: path, 
+        filePath: path,
         category,
         judgeId: id,
       });
