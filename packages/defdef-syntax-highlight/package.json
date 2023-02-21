@@ -1,0 +1,39 @@
+{
+  "name": "defdef-syntax-highlight",
+  "displayName": "DefDef Syntax Highlight",
+  "description": "",
+  "version": "0.0.1",
+  "publisher": "Guyutongxue",
+  "repository": "https://github.com/Guyutongxue/Graduation_Project",
+  "engines": {
+    "vscode": "^1.75.0"
+  },
+  "categories": [
+    "Programming Languages"
+  ],
+  "contributes": {
+    "languages": [
+      {
+        "id": "defdef",
+        "aliases": [
+          "DefDef",
+          "defdef"
+        ],
+        "extensions": [
+          ".dd"
+        ],
+        "configuration": "./language-configuration.json"
+      }
+    ],
+    "grammars": [
+      {
+        "language": "defdef",
+        "scopeName": "source.defdef",
+        "path": "./syntaxes/defdef.tmLanguage.json",
+        "embeddedLanguages": {
+          "meta.embedded.typescript": "javascript"
+        }
+      }
+    ]
+  }
+}

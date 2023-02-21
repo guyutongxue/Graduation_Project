@@ -1,0 +1,6 @@
+{
+  "files": [
+    "tools/generate-def.ts"
+  ],
+  "extends": "./tsconfig.json"
+}

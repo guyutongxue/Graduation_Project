@@ -74,7 +74,12 @@ export class Handler {
     await target[0].click();
     await new Promise(r => setTimeout(r, 100));
   }
-  key!: (param: any) => Promise<any>;
+  
+  async key({ key }: any) {
+    assert(!!this.#browserContext, "browser not loaded");
+    await this.#browserContext.page.keyboard.press(key);
+  }
+
   async input({ selector, value }: any) {
     assert(!!this.#browserContext, "browser not loaded");
     // assert(typeof value === "string", "value must be string");

@@ -6,6 +6,7 @@
   "types": "dist/index.d.ts",
   "scripts": {
     "start": "pnpm build && node dist/index.js",
+    "build:defs": "tsx tools/generate-def.ts",
     "client-type": "dts-bundle-generator src/client.ts -o dist/client.d.ts --external-inlines runtypes --inline-declare-global",
     "build": "rollup -c",
     "build:all": "rimraf dist && rollup -c && pnpm client-type"
@@ -24,7 +25,9 @@
     "@types/babel__generator": "^7.6.4",
     "@types/babel__standalone": "^7.1.4",
     "@types/babel__traverse": "^7.18.3",
+    "@types/node": "^18.11.18",
     "dts-bundle-generator": "^7.1.0",
+    "peggy": "^2.0.1",
     "rimraf": "^4.1.2",
     "rollup": "^3.9.1",
     "tslib": "^2.4.1",

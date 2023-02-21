@@ -116,7 +116,9 @@ importers:
       '@types/babel__generator': ^7.6.4
       '@types/babel__standalone': ^7.1.4
       '@types/babel__traverse': ^7.18.3
+      '@types/node': ^18.11.18
       dts-bundle-generator: ^7.1.0
+      peggy: ^2.0.1
       rimraf: ^4.1.2
       rollup: ^3.9.1
       runtypes: ^6.6.0
@@ -136,7 +138,9 @@ importers:
       '@types/babel__generator': 7.6.4
       '@types/babel__standalone': 7.1.4
       '@types/babel__traverse': 7.18.3
+      '@types/node': 18.11.18
       dts-bundle-generator: 7.1.0
+      peggy: 2.0.1
       rimraf: 4.1.2
       rollup: 3.9.1
       tslib: 2.4.1
@@ -1356,7 +1360,6 @@ packages:
   /commander/9.5.0:
     resolution: {integrity: sha512-KRs7WVDKg86PWiuAqhDrAQnTXZKraVcCc6vFdL14qrZ/DcWwuRo7VoiYXalXO7S5GKpqYiVEwCbgFDfxNHKJBQ==}
     engines: {node: ^12.20.0 || >=14}
-    dev: false
 
   /commondir/1.0.1:
     resolution: {integrity: sha512-W9pAhw0ja1Edb5GVdIF1mjZw/ASI0AlShXM83UUGe2DVr5TdAPEA1OA8m/g8zWp9x6On7gqufY+FatDbC3MDQg==}
@@ -2618,6 +2621,15 @@ packages:
   /path-parse/1.0.7:
     resolution: {integrity: sha512-LDJzPVEEEPR+y48z93A0Ed0yXb8pAByGWo/k5YYdYgpY2/2EsOsksJrq7lOHxryrVOn1ejG6oAp8ahvOIQD8sw==}
 
+  /peggy/2.0.1:
+    resolution: {integrity: sha512-mBqfmdUAOVn7RILpXTbcRBhLfTR4Go0SresSnivGDdRylBOyVFJncFiVyCNNpPWq8HmgeRleXHs/Go4o8kQVXA==}
+    engines: {node: '>=10'}
+    hasBin: true
+    dependencies:
+      commander: 9.5.0
+      source-map-generator: 0.8.0
+    dev: true
+
   /pend/1.2.0:
     resolution: {integrity: sha512-F3asv42UuXchdzt+xXqfW1OGlVBe+mxa2mqI0pg5yAHZPvFmY3Y6drSf/GQ1A86WgWEN9Kzh/WrgKa6iGcHXLg==}
     dev: false
@@ -3113,6 +3125,11 @@ packages:
     dependencies:
       atomic-sleep: 1.0.0
     dev: false
+
+  /source-map-generator/0.8.0:
+    resolution: {integrity: sha512-psgxdGMwl5MZM9S3FWee4EgsEaIjahYV5AzGnwUvPhWeITz/j6rKpysQHlQ4USdxvINlb8lKfWGIXwfkrgtqkA==}
+    engines: {node: '>= 10'}
+    dev: true
 
   /source-map-js/1.0.2:
     resolution: {integrity: sha512-R0XvVJ9WusLiqTCEiGCmICCMplcCkIwwR11mOSD9CR5u+IXYdiseeEuXCVAjS54zqwkLcPNnmU4OeJ6tUrWhDw==}
