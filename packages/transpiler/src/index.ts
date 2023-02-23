@@ -4,6 +4,7 @@ import { RuleSyntaxError } from "./errors.js";
 import babelPlugin from "./plugin.js";
 import { Category } from "./types.js";
 
+
 const TEST_SRC = `
 "use web";
 {
@@ -40,5 +41,4 @@ export { babelPlugin };
 
 // console.log(transpile(TEST_SRC).code);
 
-export * from "./types.js";
 export * from "./errors.js";

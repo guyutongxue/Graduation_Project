@@ -1,5 +1,5 @@
 import * as monaco from "monaco-editor";
-import declarations from "transpiler/dist/client.d.ts?raw";
+import declarations from "transpiler/client-type?raw";
 
 // https://github.com/microsoft/monaco-editor/blob/main/docs/integrate-esm.md#using-vite
 import editorWorker from "monaco-editor/esm/vs/editor/editor.worker?worker";

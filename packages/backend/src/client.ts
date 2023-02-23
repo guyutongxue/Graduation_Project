@@ -1,4 +1,4 @@
-import type { Category, Command } from "transpiler";
+import type { Category } from "transpiler";
 import { Checker, createChecker } from "./checkers.js";
 import { JudgeError } from "./error.js";
 import { onCase, onError, onSuccess } from "./preparations.js";
@@ -30,6 +30,12 @@ type Assertion = (
     }
 ) & {
   src: string;
+};
+
+export type RawRequest = {
+  method: string;
+} & {
+  [key: string]: unknown;
 };
 
 function assertSingle(expr: boolean, src: string) {
@@ -168,17 +174,17 @@ function assertBinary(lhs: unknown, rhs: unknown, op: Op, src: string) {
   }
 }
 
-export class Controller<C extends Category = Category> {
+export class Controller {
   #cases: Case[] = [];
   #checker: Checker | null = null;
 
-  constructor(public category: C) {}
+  constructor(public category: Category) {}
 
   async addCase(case_: Case) {
     this.#cases.push(case_);
   }
 
-  async send(command: Command<C>) {
+  async send(command: RawRequest) {
     if (!this.#checker) {
       throw new JudgeError("EmptyChecker");
     }

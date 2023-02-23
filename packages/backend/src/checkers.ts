@@ -1,15 +1,12 @@
 import { ChildProcess, execFile, fork } from "node:child_process";
 import jayson from "jayson/promise/index.js";
-import type { AllCommand, Category } from "transpiler";
+import type { Category } from "transpiler";
 import { fileURLToPath } from "node:url";
 import waitPort from "wait-port";
 import getPort from "get-port";
 
 import { JudgeError } from "./error.js";
-
-type RawRequest = {
-  method: string;
-} & unknown;
+import type { RawRequest } from "./client.js";
 
 export class Checker {
   #process: ChildProcess;

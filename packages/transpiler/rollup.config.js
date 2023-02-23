@@ -17,7 +17,7 @@ export default defineConfig([
       nodeResolve(),
       commonJs(),
       json(),
-      typescript()
+      typescript(),
     ],
   },
 ]);

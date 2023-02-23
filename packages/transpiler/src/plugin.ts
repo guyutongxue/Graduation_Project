@@ -25,7 +25,7 @@ type ThisEnv =
 
 const enterIgnorance = Symbol("enterIgnorance");
 
-export default function (this: ThisEnv, babel: BabelExport): PluginObj {
+export default function ruleTranspilerPlugin(this: ThisEnv, babel: BabelExport): PluginObj {
   const pluginThis = this;
   const { types: t } = babel;
 

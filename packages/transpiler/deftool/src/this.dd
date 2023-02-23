@@ -11,29 +11,41 @@ using web;
 define $.title: string
   => page with { component: "title" }
 
+[[description = "Get page's html.", blockly = "page's html"]]
 define $.html: string
   => page with { component: "html" }
 
+[[description = "Get page's text.", blockly = "page's text"]]
 define $.text: string
   => page with { component: "text" }
 
+[[description = "Send a key input to the page.", blockly = "press $(key)"]]
 define $.key(key: KeyInput): void 
   => key
 
+[[description = "Get innerHTML of elements matching the selector.", blockly = "innerHTML of $(selector = '#id')"]]
 define $(selector: string).html: string
   => selector with { component: "html" }
 
+[[description = "Get innerText of an element matching the selector.", blockly = "innerText of $(selector = '#id')"]]
 define $(selector: string).text: string
   => selector with { component: "text" }
 
+[[description = "Get the count of elements matching the selector.", blockly = "count of $(selector = '#id')"]]
 define $(selector: string).count: number
   => selector with { component: "count" }
 
+[[description = "Click an element matching the selector.", blockly = "click $(selector = '#id')"]]
 define $(selector: string).click(): void
   => click
 
+[[description = "Set the value of an input element matching the selector.", blockly = "set the value of $(selector = '#id') to $(value)"]]
 define $(selector: string).input(value: string): void
   => input
+
+[[description = "Get the value of an input element matching the selector.", blockly = "get the value of $(selector = '#id')"]]
+define $(selector: string).value(): void
+  => selector with { component: "value" }
 
 using form;
 

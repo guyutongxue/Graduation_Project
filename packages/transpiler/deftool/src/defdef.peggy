@@ -56,13 +56,15 @@ topLevelId "Top level identifier"
 
 restPart "Rest part"
   = "." _ identifier:id { return { type: "identifier", identifier }; }
-  / "(" _ parameters:parameters? _ ")" { return { type: "call", parameters }; }
+  / "(" _ parameters:parameters? _ ")" { 
+    return { type: "call", parameters: parameters ?? [] }; 
+  }
 
 parameters "Parameters"
   = head:parameter tail:(_ "," _ @parameter)* { return [head, ...tail]; }
 
 parameter "Parameter"
-  = name:paramId type:(_ ":" _ @type)? { return {name, type}; }
+  = name:paramId type:(_ ":" _ @type)? { return { name, type }; }
 
 paramId "Parameter identifier"
   = id

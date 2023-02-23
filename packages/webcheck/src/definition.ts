@@ -63,6 +63,11 @@ export class Handler {
           return target[0].evaluate(e => e.innerText);
         case "count":
           return target.length;
+        case "value":
+          assert(target.length === 1, `Selector target ${selector} not exists or not unique`);
+          const isInput = await target[0].evaluate(e => e instanceof HTMLInputElement);
+          assert(isInput, `Selector target ${selector} is not input element`);
+          return target[0].evaluate((e) => e.value);
         default:
           throw new Error(`Unknown component ${component}`);
       }

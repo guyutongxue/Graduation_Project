@@ -4,12 +4,25 @@
   "type": "module",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
+  "exports": {
+    ".": {
+      "import": "./dist/index.js",
+      "types": "./dist/index.d.ts"
+    },
+    "./client": {
+      "types": "./deftool/build/client.d.ts"
+    },
+    "./client-type": {
+      "import": "./deftool/build/client.d.ts"
+    }
+  },
   "scripts": {
     "start": "pnpm build && node dist/index.js",
-    "build:defs": "tsx tools/generate-def.ts",
-    "client-type": "dts-bundle-generator src/client.ts -o dist/client.d.ts --external-inlines runtypes --inline-declare-global",
+    "build:def": "tsx deftool/src/index.ts",
+    "debug:def": "tsx --inspect-brk deftool/src/index.ts",
+    "build:types": "dts-bundle-generator src/index.ts -o dist/index.d.ts",
     "build": "rollup -c",
-    "build:all": "rimraf dist && rollup -c && pnpm client-type"
+    "build:all": "rimraf dist && pnpm build:def && pnpm build:types && pnpm build"
   },
   "dependencies": {
     "@babel/standalone": "^7.20.13",
