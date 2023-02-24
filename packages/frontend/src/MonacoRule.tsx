@@ -3,7 +3,7 @@ import { bind } from "@react-rxjs/core";
 import * as monaco from "monaco-editor";
 import MonacoEditor from "react-monaco-editor/lib/editor";
 import { debounceTime, distinctUntilChanged, map, Subscription } from "rxjs";
-import { RuleSyntaxError, transpile, transpileWithCategory } from "transpiler";
+import { RuleSyntaxError, transpileWithCategory } from "transpiler";
 
 // const DEFAULT_RULE = `"use web";
 // {

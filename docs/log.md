@@ -46,3 +46,13 @@
 - 修复了转译器的一些 bug
 - 前端：Blockly 自定义块（工作中）
 - 后端：WinForm 适配
+
+## W8 2.19 - 2.25
+
+- 增加上传 .zip，解压并检测 .exe 的机制
+- 通过额外的 deftools 模块，提供到 TS 类型、规则校验、Blockly 定义的统一方法（W2 目标）
+  - 自定义文法 DefDef，使用 Peggy JS 提供语法解析器
+  - 为方便开发，开发了 vscode 高亮扩展
+  - 通过 TypeScript factory 模块生成 TS 类型
+  - 生成 JSON 规则列表，供转译器读取并校验
+  - （正在工作）生成 Blockly 相关

@@ -54,30 +54,37 @@ async function parseMultipart<S extends Record<string, "file" | "value">>(
 }
 
 app.post("/judge", async (req, rep) => {
-  const parts = req.parts();
-  const [err, { file, rule, category }] = await parseMultipart(parts, {
-    rule: "value",
-    category: "value",
-    file: "file",
-  } as const);
-  if (err !== null) {
-    return rep.code(400).send({
+  try {
+    const parts = req.parts();
+    const [err, { file, rule, category }] = await parseMultipart(parts, {
+      rule: "value",
+      category: "value",
+      file: "file",
+    } as const);
+    if (err !== null) {
+      return rep.code(400).send({
+        success: false,
+        message: err,
+      });
+    }
+    const f = await select(file[0], { category, mimeType: file[1] });
+    if (f === null) {
+      return rep.code(400).send({
+        success: false,
+        message: "Unsupported file type / category type",
+      });
+    }
+    const id = await startJudge(rule, f, category);
+    return {
+      success: true,
+      id,
+    };
+  } catch (e) {
+    return rep.code(500).send({
       success: false,
-      message: err
-    })
-  }
-  const f = await select(file[0], { category, mimeType: file[1] });
-  if (f === null) {
-    return rep.code(400).send({
-      success: false,
-      message: "Unsupported file type / category type",
+      message: e instanceof Error ? e.message : e,
     });
   }
-  const id = await startJudge(rule, f, category);
-  return {
-    success: true,
-    id
-  };
 });
 
 app.get("/judgeStatus/:id", async (req, rep) => {
@@ -87,12 +94,12 @@ app.get("/judgeStatus/:id", async (req, rep) => {
   if (status === null) {
     return rep.code(404).send({
       success: false,
-      message: "ID not found"
+      message: "ID not found",
     });
   }
   return {
     success: true,
-    ...status
+    ...status,
   };
 });
 
