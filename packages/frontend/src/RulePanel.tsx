@@ -12,25 +12,27 @@ export default function RulePanel() {
     <Tabs className="h-full">
       <TabList className="react-tabs__tab-list flex justify-between">
         <div>
+          {visualized && <Tab>可视化编辑器</Tab>}
           <Tab>规则源码</Tab>
-          <Tab className="react-tabs__tab inline-flex items-center">
-            <span>转换结果</span>
-            <div className="ml-1 badge badge-ghost badge-sm">只读</div>
-          </Tab>
+          <Tab>转换结果</Tab>
         </div>
         <div className="flex items-center">
-          <span>可视化</span>
-          <input
-            type="checkbox"
-            className="toggle toggle-sm toggle-primary mx-3"
-            checked={visualized}
-            onChange={(e) => setVisualized(e.target.checked)}
-          />
+          <button
+            className="btn btn-secondary btn-link btn-sm"
+            onClick={() => setVisualized(!visualized)}
+          >
+            {visualized ? "返回" : "显示可视化编辑器"}
+          </button>
         </div>
       </TabList>
 
+      {visualized && (
+        <TabPanel>
+          <BlocklyRule></BlocklyRule>
+        </TabPanel>
+      )}
       <TabPanel>
-        {visualized ? <BlocklyRule></BlocklyRule> : <MonacoRule></MonacoRule>}
+        <MonacoRule readonly={visualized}></MonacoRule>
       </TabPanel>
       <TabPanel>
         <MonacoEditor

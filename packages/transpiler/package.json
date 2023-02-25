@@ -14,6 +14,9 @@
     },
     "./client-type": {
       "import": "./deftool/build/client.d.ts"
+    },
+    "./blockly": {
+      "import": "./deftool/build/blockly.json"
     }
   },
   "scripts": {

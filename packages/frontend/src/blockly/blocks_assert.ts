@@ -58,7 +58,7 @@ Blockly.defineBlocksWithJsonArray([
 
 javascriptGenerator["assert_unary"] = function (block: Block) {
   const expr = javascriptGenerator.valueToCode(block, "EXPR", javascriptGenerator.ORDER_NONE);
-  return `assert: ${expr};`;
+  return `assert: ${expr}; \n`;
 }
 
 javascriptGenerator["assert_binary"] = function (block: Block) {
@@ -75,5 +75,5 @@ javascriptGenerator["assert_binary"] = function (block: Block) {
     case "IN":op = "in"; break;
     default: throw new Error("unknown op in blockly assert_binary");
   }
-  return `assert: ${lhs} ${op} ${rhs};`;
+  return `assert: ${lhs} ${op} ${rhs}; \n`;
 }

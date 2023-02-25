@@ -5,6 +5,7 @@ import peggy from "peggy";
 import { DefDefAst } from "./types";
 import { generateDts } from "./dts";
 import { generateTranspileTargets } from "./transpile-target";
+import { generateBlocklyThings } from "./blockly";
 
 
 function loadFile(file: string) {
@@ -21,5 +22,6 @@ const ast: DefDefAst = parser.parse(source);
 
 writeFile("../build/client.d.ts", generateDts(ast));
 writeFile("../build/targets.json", generateTranspileTargets(ast));
+writeFile("../build/blockly.json", generateBlocklyThings(ast));
 
 // debugger;

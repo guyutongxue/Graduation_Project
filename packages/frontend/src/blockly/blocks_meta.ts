@@ -43,5 +43,5 @@ javascriptGenerator["meta_category"] = function (block: Block) {
 
 javascriptGenerator["meta_case"] = function (block: Block) {
   const actions = javascriptGenerator.statementToCode(block, "ACTIONS");
-  return `{ ${actions} }`;
+  return `{\n${actions}}`;
 }

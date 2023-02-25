@@ -1,6 +1,6 @@
 import axios from "axios";
 import { useRef, useState } from "react";
-import MonacoEditor from "react-monaco-editor/lib/editor";
+import MonacoEditor from "react-monaco-editor";
 import { Tab, Tabs, TabList, TabPanel } from "react-tabs";
 import { HOST } from "./config";
 import { useRule } from "./MonacoRule";

@@ -1,8 +1,7 @@
-import { ToolboxDefinition, ToolboxItemInfo } from "blockly/core/utils/toolbox";
+import { ToolboxDefinition, ToolboxItemInfo } from "blockly/core/utils/toolbox.js";
 import "./blocks_meta";
 import "./blocks_assert";
-import "./blocks_web";
-import "./blocks_form";
+import { getToolboxItems } from "./target";
 
 // https://github.com/google/blockly-samples/blob/master/plugins/dev-tools/src/toolboxCategories.js
 const PREDEFINED_BLOCKS: ToolboxItemInfo[] = [
@@ -919,54 +918,10 @@ const PREDEFINED_BLOCKS: ToolboxItemInfo[] = [
   },
 ];
 
-const WEB_BLOCKS: ToolboxItemInfo = {
-  kind: "category",
-  name: "Web",
-  colour: "45",
-  contents: [
-    {
-      type: "web_page_title",
-      kind: "block",
-    },
-    {
-      type: "web_click",
-      kind: "block",
-    },
-    {
-      type: "web_input",
-      kind: "block",
-    },
-    {
-      type: "web_html",
-      kind: "block",
-    },
-    {
-      type: "web_text",
-      kind: "block",
-    },
-  ],
-};
-
-const FORM_BLOCKS: ToolboxItemInfo = {
-  kind: "category",
-  name: "Form",
-  colour: "45",
-  contents: [
-    {
-      type: "form_click_button",
-      kind: "block",
-    },
-  ],
-};
-
 export function getToolboxDefinition(
   category: string | null = "web"
 ): ToolboxDefinition {
-  let categoryBlocks: ToolboxItemInfo[] = [];
-  switch (category) {
-    case "web": categoryBlocks = [WEB_BLOCKS]; break;
-    case "form": categoryBlocks = [FORM_BLOCKS]; break;
-  }
+  const categoryBlocks = category ? [getToolboxItems(category)] : [];
   return {
     kind: "categoryToolbox",
     contents: [

@@ -1,0 +1,40 @@
+<xml xmlns="https://developers.google.com/blockly/xml">
+  <block type="meta_category" id="b0" x="16" y="16">
+    <field name="CATEGORY">WEB</field>
+  </block>
+  <block type="meta_case" id="b1" x="16" y="60">
+    <statement name="ACTIONS">
+      <block type="assert_binary" id="b2">
+        <field name="OP">EQ</field>
+        <value name="LHS">
+          <block type="category_web_0" id="b3"></block>
+        </value>
+        <value name="RHS">
+          <block type="text" id="b4">
+            <field name="TEXT">Hello, World</field>
+          </block>
+        </value>
+        <next>
+          <block type="category_web_7" id="b5">
+            <field name="selector">#hello</field>
+            <next>
+              <block type="assert_binary" id="b6">
+                <field name="OP">IN</field>
+                <value name="LHS">
+                  <block type="text" id="b7">
+                    <field name="TEXT">JavaScript</field>
+                  </block>
+                </value>
+                <value name="RHS">
+                  <block type="category_web_5" id="b8">
+                    <field name="selector">body</field>
+                  </block>
+                </value>
+              </block>
+            </next>
+          </block>
+        </next>
+      </block>
+    </statement>
+  </block>
+</xml>

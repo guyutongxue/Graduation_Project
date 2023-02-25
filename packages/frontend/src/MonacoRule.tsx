@@ -5,16 +5,12 @@ import MonacoEditor from "react-monaco-editor/lib/editor";
 import { debounceTime, distinctUntilChanged, map, Subscription } from "rxjs";
 import { RuleSyntaxError, transpileWithCategory } from "transpiler";
 
-// const DEFAULT_RULE = `"use web";
-// {
-//   assert: $.title == "Hello, World";
-//   $("#hello").click();
-//   assert: "Hello, JavaScript" in $("body").text;
-// }`;
-const DEFAULT_RULE = `"use form";
+const DEFAULT_RULE = `"use web";
 {
-  
-}`
+  assert: $.title == "Hello, World";
+  $("#hello").click();
+  assert: "Hello, JavaScript" in $("body").text;
+}`;
 
 type TranspileResult =
   | {
@@ -133,7 +129,7 @@ function prepareEditor(editor: monaco.editor.IStandaloneCodeEditor) {
   });
 }
 
-export default function MonacoRule() {
+export default function MonacoRule(props: { readonly: boolean }) {
   const rule = useRule();
   return (
     <MonacoEditor
@@ -141,6 +137,7 @@ export default function MonacoRule() {
       value={rule}
       options={{
         automaticLayout: true,
+        readOnly: props.readonly,
       }}
       editorDidMount={prepareEditor}
       editorWillUnmount={() => transpileSubscription?.unsubscribe()}
@@ -148,4 +145,4 @@ export default function MonacoRule() {
   );
 }
 
-export { rule$, useRule, transpileResult$, useTranspileResult };
+export { setRule, useRule, transpileResult$, useTranspileResult };
