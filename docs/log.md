@@ -55,4 +55,4 @@
   - 为方便开发，开发了 vscode 高亮扩展
   - 通过 TypeScript factory 模块生成 TS 类型
   - 生成 JSON 规则列表，供转译器读取并校验
-  - （正在工作）生成 Blockly 相关
+  - 生成 Blockly 相关

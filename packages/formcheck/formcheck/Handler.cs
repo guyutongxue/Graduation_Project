@@ -71,7 +71,7 @@ namespace formcheck
       var eles = window.FindAllDescendants(cf => cf.ByText(arg.text));
       if (eles.Length != 1)
       {
-        throw new Exception("Multiple button or no button");
+        throw new Exception("Multiple element or no element");
       }
       return ActionOnElement(eles[0], arg.action, arg.value);
     }
@@ -83,17 +83,18 @@ namespace formcheck
         case "clickButton": 
           e.Click();
           Thread.Sleep(100);
-          return null;
+          return true;
         case "inputTextBox":
           {
             if (e.AsTextBox() is TextBox textBox && value is not null)
             {
               if (textBox.IsReadOnly)
               {
-                throw new InvalidOperationException("Try to input to a readonly textbox.");
+                throw new InvalidOperationException("Try to input to a read-only textbox.");
               }
               textBox.Text = value;
-              return null;
+              Thread.Sleep(100);
+              return textBox.Text;
             }
             else
             {
@@ -111,9 +112,51 @@ namespace formcheck
             {
               return tb.Text;
             }
+            if (e.AsComboBox() is  ComboBox cb)
+            {
+              return cb.SelectedItem.Text;
+            }
             return e.Name;
           }
-        default: return null;
+        case "checked":
+          {
+            if (e.AsCheckBox() is CheckBox cb)
+            {
+              return cb.IsChecked;
+            }
+            if (e.AsRadioButton() is RadioButton rb)
+            {
+              return rb.IsChecked;
+            }
+            throw new InvalidOperationException("Element is neither CheckBox nor RadioButton");
+          }
+        case "toggleCheck":
+          {
+            if (e.AsCheckBox() is CheckBox cb)
+            {
+              cb.IsChecked = !cb.IsChecked;
+            } else if (e.AsRadioButton() is RadioButton rb)
+            {
+              rb.IsChecked = !rb.IsChecked;
+            } else
+            {
+              throw new InvalidOperationException("Element is neither CheckBox nor RadioButton");
+            }
+            Thread.Sleep(100);
+            return true;
+          }
+        case "selectCombo":
+          {
+            if (e.AsComboBox() is ComboBox cb)
+            {
+              return cb.Select(value);
+            }
+            throw new InvalidOperationException("Element is not a ComboBox");
+          }
+        default:
+          {
+            return false;
+          }
       }
     }
 
@@ -128,7 +171,7 @@ namespace formcheck
       var eles = window.FindAllDescendants(cf => cf.ByAutomationId(arg.name));
       if (eles.Length != 1)
       {
-        throw new Exception("Multiple button or no button");
+        throw new Exception("Multiple element or no element");
       }
       return ActionOnElement(eles[0], arg.action, arg.value);
     }

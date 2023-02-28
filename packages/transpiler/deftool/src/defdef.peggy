@@ -96,9 +96,9 @@ sChar
   / "\\" e:[tnr"\\] { return e; }
 
 keyword "Keyword"
-  = "with"
+  = ("with" 
   / "define"
-  / "using"
+  / "using") [^a-zA-Z0-9_$]
 
 _
   = ([ \t\r\n] / comment)*

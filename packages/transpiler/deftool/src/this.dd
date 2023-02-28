@@ -19,7 +19,7 @@ define $.html: string
 define $.text: string
   => page with { component: "text" }
 
-[[description = "Send a key input to the page.", blockly = "press $(key)"]]
+[[description = "Send a keyboard input to the page.", blockly = "press $(key)"]]
 define $.key(key: KeyInput): void 
   => key
 
@@ -49,16 +49,34 @@ define $(selector: string).value(): void
 
 using form;
 
-// TODO: add more
-
-[[description = "Click button with the given text.", blockly = "click button with text $(text)"]]
+[[description = "Click button with the given text.", blockly = "click Button with Text $(text)"]]
 define win.buttonWithText(text: string).click(): void
   => byText with { action: "clickButton" }
 
+[[description = "Input to a TextBox with the given name", blockly = "Input $(value) to TextBox whose Name = $(name=textBox1)"]]
 define win.textBoxWithName(name: string).input(value: string): void
-  => byName with { action: "inputTextbox" }
+  => byName with { action: "inputTextBox" }
 
+[[description = "Send a keyboard input to the window.", blockly = "press $(keys)"]]
 define win.sendKey(keys: string): void
   => key
 
+[[description = "Get form title.", blockly = "form's title"]]
+define win.title: string
+  => title
 
+[[description = "Get the text of a control with the given name.", blockly = "text of the control whose Name = $(name=label1)"]]
+define win.textOf(name: string): string
+  => byName with { action: "text" }
+
+[[description = "Get the IsChecked of a CheckBox or RadioButton.", blockly = "is $(name=checkBox1) checked?"]]
+define win.isChecked(name: string): boolean
+  => byName with { action: "checked" }
+
+[[description = "Whether the given control is enabled", blockly = "is $(name=button1) enabled?"]]
+define win.isEnabled(name: string): boolean
+  => byName with { action: "enabled" }
+
+[[description = "Whether the given control (by Text) is enabled", blockly = "is the control with Text $(text) enabled?"]]
+define win.withText(text: string).enabled: boolean
+  => byText with { action: "enabled" }

@@ -30,6 +30,7 @@ export class Checker {
 
   async #sendImpl(method: string, param?: any) {
     param = typeof param === "undefined" ? []: [param];
+    console.log({ method, param });
     const response = await this.#client.request(method, param);
     console.log(response);
     if (!jayson.utils.Response.isValidResponse(response)) {

@@ -77,6 +77,11 @@ export function generateBlocklyThings({ defs }: DefDefAst): string {
       }
       case "number": {
         misc.output = "Number";
+        break;
+      }
+      case "boolean": {
+        misc.output = "Boolean";
+        break;
       }
     }
     const [first, ...rest] = form;
