@@ -53,6 +53,10 @@ export class Checker {
     return this.#sendImpl("initialize", sourcePath);
   }
 
+  async restart() {
+    return this.#sendImpl("restart");
+  }
+
   async send(command: RawRequest) {
     const param: any = { ...command };
     delete param.method;

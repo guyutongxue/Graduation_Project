@@ -25,6 +25,12 @@ export class Handler {
     return true;
   }
 
+  async restart() {
+    assert(!!this.#browserContext, "browser not loaded");
+    await this.#browserContext.page.reload({ waitUntil: "networkidle2" });
+    return true;
+  }
+
   async dispose() {
     if (this.#browserContext) {
       await this.#browserContext.browser.close();

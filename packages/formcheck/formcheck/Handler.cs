@@ -37,15 +37,26 @@ namespace formcheck
       Console.WriteLine("Handler registered. Do not optimize me");
     }
 
+    string path = "";
     Application? app;
     UIA3Automation? automation;
 
     [JsonRpcMethod]
     bool initialize(string path)
     {
-      Environment.CurrentDirectory = (Path.GetDirectoryName(path) ?? "");
-      app = Application.Launch(path);
+      this.path = Path.GetDirectoryName(path) ?? "";
+      Environment.CurrentDirectory = this.path;
+      app = Application.Launch(this.path);
       automation = new UIA3Automation();
+      return true;
+    }
+
+    [JsonRpcMethod]
+    bool restart()
+    {
+      app?.Close();
+      app?.Dispose();
+      app = Application.Launch(this.path);
       return true;
     }
 
@@ -200,6 +211,7 @@ namespace formcheck
     {
       automation?.Dispose();
       app?.Close();
+      app?.Dispose();
     }
   }
 

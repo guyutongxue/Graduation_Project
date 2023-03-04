@@ -207,11 +207,15 @@ export class Controller {
       if (this.#cases.length === 0) {
         throw new JudgeError("NoCase");
       }
+      const [first, ...rest] = this.#cases;
       await this.#checker.initialize(source);
-      for (const case_ of this.#cases) {
+      onCase(jid, caseNum);
+      await first();
+      for (const case_ of rest) {
+        caseNum++;
+        await this.#checker.restart();
         onCase(jid, caseNum);
         await case_();
-        caseNum++;
       }
       onSuccess(jid);
     } catch (e) {
