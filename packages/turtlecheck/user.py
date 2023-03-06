@@ -1,4 +1,5 @@
 from turtle import *
+bgcolor('blue')
 color('red', 'yellow')
 begin_fill()
 while True:

@@ -1,5 +1,10 @@
 import __turtle__ as turtle
 import threading
+import tempfile
+from screenshot import take_screenshot
+from PIL import Image
+import os
+import time
 
 forward = turtle.forward
 fd = turtle.fd
@@ -118,9 +123,18 @@ turtle.tracer(0, 0)
 turtle.speed(0)
 
 def _save_image(path: str):
-    turtle.getcanvas().postscript(file=path)
+    time.sleep(0.1)
+    root = turtle.getcanvas().winfo_toplevel()
+    with tempfile.NamedTemporaryFile(suffix=".bmp", delete=False) as fp:
+        filepath = fp.name
+    take_screenshot(root, filepath)
+    im = Image.open(filepath)
+    im.save(path, "PNG")
+    im.close()
+    os.remove(filepath)
+    os._exit(0)
 
 def done():
     turtle.update()
-    _save_image("turtle.eps")
-    # turtle.done()
+    threading.Thread(target=_save_image, args=("turtle.png",)).start()
+    turtle.done()
