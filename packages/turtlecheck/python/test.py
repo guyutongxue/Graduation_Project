@@ -12,4 +12,4 @@ def import_user_script(path):
     module = importlib.util.module_from_spec(spec)
     spec.loader.exec_module(module)
 
-import_user_script("C:\\Users\\Guyutongxue\\Documents\\MyFiles\\Graduation_Project\\packages\\turtlecheck\\user.py")
+import_user_script("C:\\Users\\Guyutongxue\\Documents\\MyFiles\\Graduation_Project\\packages\\turtlecheck\\user2.py")

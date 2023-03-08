@@ -1,7 +1,5 @@
 import __turtle__ as turtle
 import threading
-import tempfile
-from screenshot import take_screenshot
 from PIL import Image
 import os
 import time
@@ -80,7 +78,7 @@ begin_poly = turtle.begin_poly
 end_poly = turtle.end_poly
 get_poly = turtle.get_poly
 clone = turtle.clone
-getturtle = turtle.getturtle
+# getturtle = turtle.getturtle
 getpen = turtle.getpen
 getscreen = turtle.getscreen
 setundobuffer = turtle.setundobuffer
@@ -101,7 +99,7 @@ onkeypress = turtle.onkeypress
 # onclick = turtle.onclick
 onscreenclick = turtle.onscreenclick
 ontimer = turtle.ontimer
-mainloop = turtle.mainloop
+# mainloop = turtle.mainloop
 # done = turtle.done
 mode = turtle.mode
 colormode = turtle.colormode
@@ -109,7 +107,7 @@ colormode = turtle.colormode
 getshapes = turtle.getshapes
 register_shape = turtle.register_shape
 addshape = turtle.addshape
-turtles = turtle.turtles
+# turtles = turtle.turtles
 window_height = turtle.window_height
 window_width = turtle.window_width
 textinput = turtle.textinput
@@ -122,19 +120,8 @@ title = turtle.title
 turtle.tracer(0, 0)
 turtle.speed(0)
 
-def _save_image(path: str):
-    time.sleep(0.1)
-    root = turtle.getcanvas().winfo_toplevel()
-    with tempfile.NamedTemporaryFile(suffix=".bmp", delete=False) as fp:
-        filepath = fp.name
-    take_screenshot(root, filepath)
-    im = Image.open(filepath)
-    im.save(path, "PNG")
-    im.close()
-    os.remove(filepath)
-    os._exit(0)
-
 def done():
     turtle.update()
-    threading.Thread(target=_save_image, args=("turtle.png",)).start()
     turtle.done()
+
+mainloop = done

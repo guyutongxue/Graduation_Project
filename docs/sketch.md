@@ -70,7 +70,7 @@ C# 包装库 FlaUI
 
 -----
 
-## 关于两次重构
+## 关于重构
 
 初版
 
@@ -103,3 +103,7 @@ C# 包装库 FlaUI
          traverse;
       Babel generator;
 ```
+
+第三次重构
+
+![structure](./structure.drawio.png)

@@ -1,4 +1,5 @@
 #include <Windows.h>
+#include <shellscalingapi.h>
 
 #include <iostream>
 #include <memory>
@@ -9,6 +10,7 @@ enum class Error : int {
     None,
     CreateFileError,
     WriteFileError,
+    SetProcessDpiError,
     SetForegroundError,
     GetWindowRectError,
     GetDCError,
@@ -63,6 +65,10 @@ Error writeBmpFile(LPCWSTR filename, PBITMAPINFOHEADER bi, std::unique_ptr<char[
 }  // namespace
 
 extern "C" __declspec(dllexport) Error CaptureWindow(HWND hWnd, LPCWSTR filename) {
+    // Dynamically set DPI awareness
+    // if (SetProcessDpiAwareness(PROCESS_PER_MONITOR_DPI_AWARE) != S_OK) {
+    //     return Error::SetProcessDpiError;
+    // }
     // Bring the window to the foreground
     if (!SetForegroundWindow(hWnd)) {
         return Error::SetForegroundError;

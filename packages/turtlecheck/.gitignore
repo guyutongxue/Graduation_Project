@@ -1,2 +1,12 @@
 __pycache__
+
 *.png
+*.bmp
+
+.vscode/*
+!.vscode/tasks.json
+!.vscode/launch.json
+
+.xmake
+bin
+build
