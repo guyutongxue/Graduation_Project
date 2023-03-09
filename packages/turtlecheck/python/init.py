@@ -12,4 +12,8 @@ def import_user_script(path):
     module = importlib.util.module_from_spec(spec)
     spec.loader.exec_module(module)
 
-import_user_script("C:\\Users\\Guyutongxue\\Documents\\MyFiles\\Graduation_Project\\packages\\turtlecheck\\user2.py")
+if __name__ == "__main__":
+    if (len(sys.argv) != 2):
+        print("Usage: python init.py <script>")
+        exit(1)
+    import_user_script(sys.argv[1])

@@ -1,0 +1,6 @@
+BasedOnStyle: Google
+PointerAlignment: Left
+AllowShortFunctionsOnASingleLine: Empty
+AllowShortCaseLabelsOnASingleLine: true
+AllowShortIfStatementsOnASingleLine: WithoutElse
+AllowAllArgumentsOnNextLine: true
