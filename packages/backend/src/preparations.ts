@@ -61,8 +61,8 @@ async function getExeFromDirectory(
   };
 }
 
-async function saveExeToTemp(buffer: Buffer) {
-  const file = await tmp.file({ postfix: ".exe" });
+async function saveFileToTemp(buffer: Buffer, ext: `.${string}`) {
+  const file = await tmp.file({ postfix: ext });
   await writeFile(file.path, buffer);
   return file;
 }
@@ -85,7 +85,14 @@ export async function select(
         const d = await decompressZipToTempDirectory(buffer);
         return getExeFromDirectory(d);
       } else {
-        return saveExeToTemp(buffer);
+        return saveFileToTemp(buffer, ".exe");
+      }
+    }
+    case "graphics.turtle": {
+      if (mimeType === "text/plain") {
+        return saveFileToTemp(buffer, ".py");
+      } else {
+        return null;
       }
     }
     default:

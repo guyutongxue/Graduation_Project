@@ -24,7 +24,7 @@ interface Target {
 }
 
 export function checkIdentifier(category: Category, ids: IdElement[]) {
-  let targets: Target[] = allTargets[category] as any;
+  let targets: Target[] = (allTargets as any)[category];
   if (typeof targets === "undefined") {
     throw new Error(`internal: category ${category} do not have any rules`);
   }

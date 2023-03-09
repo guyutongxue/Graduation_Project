@@ -82,15 +82,24 @@ async function createWebChecker() {
 
 async function createFormChecker() {
   const port = await getPort();
-  console.log(
-    new URL(
-      "../../formcheck/formcheck/bin/Debug/net7.0-windows/formcheck.exe",
-      import.meta.url
-    ).href);
   const process = execFile(
     fileURLToPath(
       new URL(
         "../../formcheck/formcheck/bin/Debug/net7.0-windows/formcheck.exe",
+        import.meta.url
+      ).href
+    ),
+    [port.toString()]
+  );
+  return Checker.fromProcess(process, port);
+}
+
+async function createGraphicsChecker() {
+  const port = await getPort();
+  const process = execFile(
+    fileURLToPath(
+      new URL(
+        "../../turtlecheck/bin/turtlecheck.exe",
         import.meta.url
       ).href
     ),
@@ -105,6 +114,8 @@ export async function createChecker(category: Category) {
       return createWebChecker();
     case "form":
       return createFormChecker();
+    case "graphics.turtle":
+      return createGraphicsChecker();
     default:
       const _: never = category;
       throw new JudgeError("UnknownCategory");

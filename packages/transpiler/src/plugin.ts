@@ -329,6 +329,8 @@ export default function ruleTranspilerPlugin(this: ThisEnv, babel: BabelExport):
           category = "web";
         } else if (directives[0].value.value === "use form") {
           category = "form";
+        } else if (directives[0].value.value === "use graphics.turtle") {
+          category = "graphics.turtle";
         } else {
           throw new RuleSyntaxError(
             `Unknown rule directive ${directives[0].value.value}`,

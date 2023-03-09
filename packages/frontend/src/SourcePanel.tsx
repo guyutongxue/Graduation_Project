@@ -25,6 +25,20 @@ export default function SourcePanel() {
   const rule = useRule();
   const transpileResult = useTranspileResult();
 
+  function getLang() {
+    if (!transpileResult.success) {
+      return "plaintext";
+    }
+    switch (transpileResult.category) {
+      case "web":
+        return "html";
+      case "graphics.turtle":
+        return "python";
+      default:
+        return "plaintext";
+    }
+  }
+
   async function submit() {
     if (!transpileResult.success) {
       alert("规则尚有错误");
@@ -103,7 +117,7 @@ export default function SourcePanel() {
       <div className="flex-grow">
         {editor ? (
           <MonacoEditor
-            language="html"
+            language={getLang()}
             value={editorValue}
             onChange={setEditorValue}
             options={{

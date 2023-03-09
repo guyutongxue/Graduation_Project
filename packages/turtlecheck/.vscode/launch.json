@@ -1,0 +1,15 @@
+{
+  "configurations": [
+  {
+    "name": "(Windows) 启动",
+    "type": "cppvsdbg",
+    "request": "launch",
+    "program": "${workspaceFolder}/bin/turtlecheck.exe",
+    "args": [],
+    "stopAtEntry": false,
+    "cwd": "${fileDirname}",
+    "environment": [],
+    "console": "externalTerminal"
+  }
+  ]
+}

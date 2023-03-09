@@ -80,3 +80,8 @@ define win.isEnabled(name: string): boolean
 [[description = "Whether the given control (by Text) is enabled", blockly = "is the control with Text $(text) enabled?"]]
 define win.withText(text: string).enabled: boolean
   => byText with { action: "enabled" }
+
+using graphics.turtle;
+
+define g.dummy: void
+  => dummy

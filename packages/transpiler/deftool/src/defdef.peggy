@@ -17,7 +17,7 @@ usingDecl "Using declaration"
   = "using" _ category:category _ ";"? { return category; }
 
 category "Category"
-  = "web" / "form"
+  = "web" / "form" / "graphics.turtle"
 
 def "Rule definition"
   = attr:(@attributes _)?
