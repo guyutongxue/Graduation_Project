@@ -99,7 +99,7 @@ async function createGraphicsChecker() {
   const process = execFile(
     fileURLToPath(
       new URL(
-        "../../turtlecheck/bin/turtlecheck.exe",
+        "../../graphicscheck/bin/graphicscheck.exe",
         import.meta.url
       ).href
     ),

@@ -2,7 +2,7 @@ add_rules("mode.debug", "mode.release");
 
 add_requires("cpp-httplib", "nlohmann_json", "boost")
 
-target("turtlecheck")
+target("graphicscheck")
   -- Add third party libraries
   add_packages("cpp-httplib", "nlohmann_json", "boost")
   add_includedirs("third_party/json-rpc-cxx/include", "third_party/unique_resource")

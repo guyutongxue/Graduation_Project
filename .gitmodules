@@ -1,6 +1,6 @@
-[submodule "packages/turtlecheck/third_party/json-rpc-cxx"]
-	path = packages/turtlecheck/third_party/json-rpc-cxx
+[submodule "packages/graphicscheck/third_party/json-rpc-cxx"]
+	path = packages/graphicscheck/third_party/json-rpc-cxx
 	url = https://github.com/jsonrpcx/json-rpc-cxx.git
-[submodule "packages/turtlecheck/third_party/unique_resource"]
-	path = packages/turtlecheck/third_party/unique_resource
+[submodule "packages/graphicscheck/third_party/unique_resource"]
+	path = packages/graphicscheck/third_party/unique_resource
 	url = https://github.com/okdshin/unique_resource.git
