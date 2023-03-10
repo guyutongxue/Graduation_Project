@@ -1,10 +1,10 @@
 add_rules("mode.debug", "mode.release");
 
-add_requires("cpp-httplib", "nlohmann_json", "boost")
+add_requires("cpp-httplib", "nlohmann_json", "boost", "turbobase64")
 
 target("graphicscheck")
   -- Add third party libraries
-  add_packages("cpp-httplib", "nlohmann_json", "boost")
+  add_packages("cpp-httplib", "nlohmann_json", "boost", "turbobase64")
   add_includedirs("third_party/json-rpc-cxx/include", "third_party/unique_resource")
 
   -- Input files

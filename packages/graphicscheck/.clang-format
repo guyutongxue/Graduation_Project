@@ -1,4 +1,5 @@
 BasedOnStyle: Google
+AccessModifierOffset: -2
 PointerAlignment: Left
 AllowShortFunctionsOnASingleLine: Empty
 AllowShortCaseLabelsOnASingleLine: true

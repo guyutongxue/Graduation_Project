@@ -1,143 +1,117 @@
-#include <Windows.h>
-#include <shellscalingapi.h>
+#include "./screenshot.h"
 
+#include <shellscalingapi.h>
+#include <wingdi.h>
+
+#include <boost/nowide/convert.hpp>
+#include <functional>
 #include <iostream>
 #include <memory>
+#include <unique_resource.hpp>
 
-namespace {
+using namespace std::placeholders;
+using std_experimental::make_unique_resource;
 
-enum class Error : int {
-    None,
-    CreateFileError,
-    WriteFileError,
-    SetProcessDpiError,
-    SetForegroundError,
-    GetWindowRectError,
-    GetDCError,
-    CreateCompatibleDCError,
-    CreateCompatibleBitmapError,
-    SelectObjectError,
-    BitBltError,
-    GetDIBitsError,
+BITMAPINFOHEADER createBitmapHeader(unsigned width, unsigned height) {
+  return BITMAPINFOHEADER{
+      .biSize = sizeof(BITMAPINFOHEADER),
+      .biWidth = static_cast<LONG>(width),
+      // this is the line that makes it draw upside down or not
+      .biHeight = -static_cast<LONG>(height),
+      .biPlanes = 1,
+      .biBitCount = 32,
+      .biCompression = BI_RGB,
+      .biSizeImage = ((width * 32 + 31) / 32) * 4 * height,
+      .biXPelsPerMeter = 0,
+      .biYPelsPerMeter = 0,
+      .biClrUsed = 0,
+      .biClrImportant = 0,
+  };
+}
+
+struct PrepareBmpFileResult {
+  std::unique_ptr<unsigned char[]> data;
+  std::size_t size;
+  BITMAPINFO* pBi;
+  unsigned char* pImage;
 };
 
-BITMAPINFOHEADER createBitmapHeader(int width, int height) {
-    BITMAPINFOHEADER bi{
-        .biSize = sizeof(BITMAPINFOHEADER),
-        .biWidth = width,
-        .biHeight = -height,  // this is the line that makes it draw upside down or not
-        .biPlanes = 1,
-        .biBitCount = 32,
-        .biCompression = BI_RGB,
-        .biSizeImage = 0,
-        .biXPelsPerMeter = 0,
-        .biYPelsPerMeter = 0,
-        .biClrUsed = 0,
-        .biClrImportant = 0,
-    };
-    return bi;
+PrepareBmpFileResult prepareBmpFile(int width, int height) {
+  BITMAPINFOHEADER bi = createBitmapHeader(width, height);
+
+  BITMAPFILEHEADER bfh{};
+  bfh.bfType = 0x4d42;  // "BM"
+  bfh.bfOffBits = sizeof(BITMAPFILEHEADER) + sizeof(BITMAPINFOHEADER);
+  bfh.bfSize = bfh.bfOffBits + bi.biSizeImage;
+
+  auto allData = std::make_unique_for_overwrite<unsigned char[]>(bfh.bfSize);
+
+  std::memcpy(allData.get(), &bfh, sizeof(BITMAPFILEHEADER));
+  auto pbi = allData.get() + sizeof(BITMAPFILEHEADER);
+  std::memcpy(pbi, &bi, sizeof(BITMAPINFOHEADER));
+  auto pImage = allData.get() + bfh.bfOffBits;
+
+  return {
+      std::move(allData),
+      bfh.bfSize,
+      reinterpret_cast<BITMAPINFO*>(pbi),
+      pImage
+  };
 }
 
-Error writeBmpFile(LPCWSTR filename, PBITMAPINFOHEADER bi, std::unique_ptr<char[]> data) {
-    HANDLE file =
-        CreateFileW(filename, GENERIC_WRITE, 0, NULL, CREATE_ALWAYS, FILE_ATTRIBUTE_NORMAL, NULL);
-    if (file == INVALID_HANDLE_VALUE) {
-        return Error::CreateFileError;
-    }
+UniquePtrWithSize captureWindow(HWND hWnd) {
+  // Dynamically set DPI awareness
+  // SetProcessDpiAwareness(PROCESS_PER_MONITOR_DPI_AWARE);
+  // Bring the window to the foreground
+  if (!SetForegroundWindow(hWnd)) {
+    throw std::runtime_error("Could not set foreground window");
+  }
+  Sleep(100);
+  // Get windows's position
+  RECT clientRect{};
+  if (!GetWindowRect(hWnd, &clientRect)) {
+    throw std::runtime_error("Could not get window rect");
+  }
+  auto [left, top, right, bottom] = clientRect;
+  int width = right - left;
+  int height = bottom - top;
 
-    BITMAPFILEHEADER bfh{};
-    bfh.bfType = 0x4d42;  // "BM"
-    bfh.bfOffBits = sizeof(BITMAPFILEHEADER) + bi->biSize + bi->biClrUsed * sizeof(RGBQUAD);
-    bfh.bfSize = bfh.bfOffBits + bi->biSizeImage;
+  // Get handles to a device context (DC)
+  auto hdcScreen = make_unique_resource(GetDC(HWND_DESKTOP),
+                                        std::bind(ReleaseDC, HWND_DESKTOP, _1));
+  if (!hdcScreen) {
+    throw std::runtime_error("Could not get desktop DC");
+  }
+  auto hdcWindow =
+      make_unique_resource(CreateCompatibleDC(hdcScreen), &DeleteDC);
+  if (!hdcWindow) {
+    throw std::runtime_error("Could not create compatible DC");
+  }
 
-    DWORD dwWritten = 0;
-    if (!WriteFile(file, &bfh, sizeof(bfh), &dwWritten, NULL) ||
-        !WriteFile(file, bi, sizeof(BITMAPINFOHEADER), &dwWritten, NULL) ||
-        !WriteFile(file, data.get(), bi->biSizeImage, &dwWritten, NULL)) {
-        CloseHandle(file);
-        return Error::WriteFileError;
-    }
+  // Create a bitmap
+  auto hbWindow = make_unique_resource(
+      CreateCompatibleBitmap(hdcScreen, width, height), &DeleteObject);
+  if (!hbWindow) {
+    throw std::runtime_error("Could not create compatible bitmap");
+  }
+  auto result = SelectObject(hdcWindow, hbWindow);
+  if (result == HGDI_ERROR || result == nullptr) {
+    throw std::runtime_error("Could not select object");
+  }
 
-    CloseHandle(file);
-    return Error::None;
-}
+  auto [allData, size, pBi, pImg] = prepareBmpFile(width, height);
 
-}  // namespace
+  // Copy from the window device context to the bitmap device context
+  // change SRCCOPY to NOTSRCCOPY for wacky colors
+  if (!BitBlt(hdcWindow, 0, 0, width, height, hdcScreen, left, top, SRCCOPY)) {
+    throw std::runtime_error("Could not blit");
+  }
+  if (!GetDIBits(hdcWindow, hbWindow, 0, height, pImg, pBi, DIB_RGB_COLORS)) {
+    throw std::runtime_error("Could not get DIBits");
+  }
 
-extern "C" __declspec(dllexport) Error CaptureWindow(HWND hWnd, LPCWSTR filename) {
-    // Dynamically set DPI awareness
-    // if (SetProcessDpiAwareness(PROCESS_PER_MONITOR_DPI_AWARE) != S_OK) {
-    //     return Error::SetProcessDpiError;
-    // }
-    // Bring the window to the foreground
-    if (!SetForegroundWindow(hWnd)) {
-        return Error::SetForegroundError;
-    }
-    Sleep(100);
-    // Get windows's position
-    RECT clientRect{};
-    if (!GetWindowRect(hWnd, &clientRect)) {
-        return Error::GetWindowRectError;
-    }
-    auto [left, top, right, bottom] = clientRect;
-    int width = right - left;
-    int height = bottom - top;
-
-    // Get handles to a device context (DC)
-    HDC hdcScreen = GetDC(HWND_DESKTOP);
-    if (!hdcScreen) {
-        return Error::GetDCError;
-    }
-    HDC hdcWindow = CreateCompatibleDC(hdcScreen);
-    if (!hdcWindow) {
-        ReleaseDC(HWND_DESKTOP, hdcScreen);
-        return Error::CreateCompatibleDCError;
-    }
-
-    // Create a bitmap
-    HBITMAP hbWindow = CreateCompatibleBitmap(hdcScreen, width, height);
-    if (!hbWindow) {
-        DeleteDC(hdcWindow);
-        ReleaseDC(HWND_DESKTOP, hdcScreen);
-        return Error::CreateCompatibleBitmapError;
-    }
-    auto result = SelectObject(hdcWindow, hbWindow);
-    if (result == HGDI_ERROR || result == nullptr) {
-        DeleteObject(hbWindow);
-        DeleteDC(hdcWindow);
-        ReleaseDC(HWND_DESKTOP, hdcScreen);
-        return Error::SelectObjectError;
-    }
-
-    BITMAPINFOHEADER bi = createBitmapHeader(width, height);
-    DWORD dwBmpSize = ((width * bi.biBitCount + 31) / 32) * 4 * height;
-    auto lpbitmap = std::make_unique_for_overwrite<char[]>(dwBmpSize);
-
-    // Copy from the window device context to the bitmap device context
-    // change SRCCOPY to NOTSRCCOPY for wacky colors
-    if (!BitBlt(hdcWindow, 0, 0, width, height, hdcScreen, left, top, SRCCOPY)) {
-        DeleteObject(hbWindow);
-        DeleteDC(hdcWindow);
-        ReleaseDC(HWND_DESKTOP, hdcScreen);
-        return Error::BitBltError;
-    }
-    if (!GetDIBits(hdcWindow, hbWindow, 0, height, lpbitmap.get(),
-                   reinterpret_cast<BITMAPINFO*>(&bi), DIB_RGB_COLORS)) {
-        DeleteObject(hbWindow);
-        DeleteDC(hdcWindow);
-        ReleaseDC(HWND_DESKTOP, hdcScreen);
-        return Error::GetDIBitsError;
-    }
-
-    if (writeBmpFile(filename, &bi, std::move(lpbitmap)) != Error::None) {
-        DeleteObject(hbWindow);
-        DeleteDC(hdcWindow);
-        ReleaseDC(HWND_DESKTOP, hdcScreen);
-        return Error::WriteFileError;
-    }
-
-    DeleteObject(hbWindow);
-    DeleteDC(hdcWindow);
-    ReleaseDC(HWND_DESKTOP, hdcScreen);
-    return Error::None;
+  return {
+      std::move(allData),
+      size,
+  };
 }
