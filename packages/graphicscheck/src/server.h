@@ -4,6 +4,7 @@
 
 #include <boost/filesystem.hpp>
 #include <iostream>
+#include <nlohmann/json.hpp>
 
 class Server {
 private:
@@ -20,6 +21,8 @@ public:
   bool initialize(const std::string& path);
   bool restart();
   bool dispose();
+
+  std::string screenshot(nlohmann::json);
 
   ~Server();
 };

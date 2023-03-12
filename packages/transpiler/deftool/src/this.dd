@@ -83,5 +83,5 @@ define win.withText(text: string).enabled: boolean
 
 using graphics.turtle;
 
-define g.dummy: void
-  => dummy
+define g.screenshot(): string
+  => screenshot

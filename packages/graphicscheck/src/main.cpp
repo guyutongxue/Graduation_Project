@@ -7,22 +7,25 @@
 #include "./http_connector.hpp"
 #include "./server.h"
 
+#define BIND(rpc, app, method) \
+  rpc.Add(#method, jsonrpccxx::GetHandle(&decltype(app)::method, app))
+
 int main(int argc, char** argv) {
   if (argc != 2) {
     std::cerr << "Usage: " << argv[0] << " <port>\n";
     std::exit(1);
   }
+  boost::nowide::nowide_filesystem();
 
   auto port = std::stoi(argv[1]);
-  using namespace jsonrpccxx;
-  boost::nowide::nowide_filesystem();
-  JsonRpc2Server rpcServer;
+  jsonrpccxx::JsonRpc2Server rpc;
   Server app;
-  rpcServer.Add("initialize", GetHandle(&Server::initialize, app));
-  rpcServer.Add("restart", GetHandle(&Server::restart, app));
-  rpcServer.Add("dispose", GetHandle(&Server::dispose, app));
+  BIND(rpc, app, initialize);
+  BIND(rpc, app, restart);
+  BIND(rpc, app, dispose);
+  BIND(rpc, app, screenshot);
 
-  HttpConnector httpServer(rpcServer, port);
+  HttpConnector httpServer(rpc, port);
   std::cout << "Listening on port " << port << std::endl;
   httpServer.listen();
 }

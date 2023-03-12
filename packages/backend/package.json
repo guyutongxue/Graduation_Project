@@ -16,6 +16,7 @@
     "get-port": "^6.1.2",
     "jayson": "^4.0.0",
     "nodemon": "^2.0.20",
+    "opencv-wasm": "4.3.0-10",
     "tmp-promise": "^3.0.3",
     "transpiler": "workspace:*",
     "wait-port": "^1.0.4"

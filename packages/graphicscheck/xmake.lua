@@ -20,4 +20,5 @@ target("graphicscheck")
   end
 
   set_kind("binary")
+  set_license("GPL-3.0")
   set_targetdir("bin")

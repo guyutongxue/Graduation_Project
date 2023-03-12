@@ -4,8 +4,10 @@
 #include <stdexcept>
 #include <thread>
 #include <unique_resource.hpp>
+#include <turbobase64/turbob64.h>
 
 #include "./hwnd.h"
+#include "./screenshot.h"
 
 namespace bp = boost::process;
 using namespace std::literals;
@@ -35,6 +37,14 @@ bool Server::dispose() {
       OpenProcess(PROCESS_TERMINATE, FALSE, this->pid), &CloseHandle);
   TerminateProcess(h, 1);
   return true;
+}
+
+std::string Server::screenshot(nlohmann::json) {
+  auto [data, size] = captureWindow(this->hWnd);
+  auto b64size = tb64enclen(size);
+  std::string b64(b64size, '\0');
+  tb64enc(data.get(), size, reinterpret_cast<unsigned char*>(b64.data()));
+  return b64;
 }
 
 Server::~Server() {
