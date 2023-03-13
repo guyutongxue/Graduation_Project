@@ -32,7 +32,7 @@ bool Server::restart() {
 }
 
 bool Server::dispose() {
-  std::this_thread::sleep_for(1s);
+  // std::this_thread::sleep_for(1s);
   auto h = std_experimental::make_unique_resource(
       OpenProcess(PROCESS_TERMINATE, FALSE, this->pid), &CloseHandle);
   TerminateProcess(h, 1);

@@ -1,0 +1,30 @@
+{
+  "name": "rtlib",
+  "version": "0.0.0",
+  "type": "module",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "exports": {
+    ".": {
+      "import": "./dist/index.js",
+      "types": "./dist/index.d.ts"
+    },
+    "./client-type": {
+      "import": "./dist/index.d.ts"
+    }
+  },
+  "scripts": {
+    "build:types": "dts-bundle-generator -o dist/index.d.ts src/index.ts",
+    "build": "tsc",
+    "build:all": "pnpm build && pnpm build:types"
+  },
+  "devDependencies": {
+    "dts-bundle-generator": "^7.1.0",
+    "tsx": "^3.12.1",
+    "typescript": "^4.9.5"
+  },
+  "dependencies": {
+    "jimp": "^0.22.7",
+    "looks-same": "^8.1.0"
+  }
+}

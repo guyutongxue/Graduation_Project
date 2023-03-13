@@ -23,7 +23,8 @@
     "react-resize-detector": "^8.0.3",
     "react-tabs": "^6.0.0",
     "rxjs": "^7.8.0",
-    "transpiler": "workspace:*"
+    "transpiler": "workspace:*",
+    "rtlib": "workspace:*"
   },
   "devDependencies": {
     "@types/react": "^18.0.27",

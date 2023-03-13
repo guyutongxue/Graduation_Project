@@ -8,6 +8,7 @@ import { Controller } from "./client.js";
 tmp.setGracefulCleanup();
 
 const clientUrl = new URL("./client.js", import.meta.url);
+const utilsUrl = new URL("../../rtlib/dist/index.js", import.meta.url);
 
 interface JudgeOption {
   rule: string;
@@ -26,6 +27,9 @@ export async function judge({ rule, filePath, category, judgeId}: JudgeOption) {
             ImportDeclaration(path) {
               if (path.node.source.value === "graduate") {
                 path.node.source.value = clientUrl.href;
+              }
+              if (path.node.source.value === "utils") {
+                path.node.source.value = utilsUrl.href;
               }
             },
           },

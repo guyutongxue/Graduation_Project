@@ -64,17 +64,23 @@ const [useTranspileResult, transpileResult$] = bind<TranspileResult>(
 
 let transpileSubscription: Subscription | null = null;
 
-function prepareEditor(editor: monaco.editor.IStandaloneCodeEditor) {
-  const model = editor.getModel();
+function getModel() {
+  const modelUri = monaco.Uri.parse("file:///rule.ts");
+  let model = monaco.editor.getModel(modelUri);
   if (model === null) {
-    throw new Error("Model is null");
+    model = monaco.editor.createModel("", "javascript", modelUri);
   }
+  return model;
+}
+
+function prepareEditor(editor: monaco.editor.IStandaloneCodeEditor) {
+  const model = getModel();
   model.onDidChangeContent(() => {
     setRule(model.getValue());
   });
 
   transpileSubscription = transpileResult$.subscribe((v) => {
-    const model = editor.getModel();
+    // const model = editor.getModel();
     if (model === null) {
       // throw new Error("Model is null");
       return;
@@ -138,6 +144,7 @@ export default function MonacoRule(props: { readonly: boolean }) {
       options={{
         automaticLayout: true,
         readOnly: props.readonly,
+        model: getModel(),
       }}
       editorDidMount={prepareEditor}
       editorWillUnmount={() => transpileSubscription?.unsubscribe()}

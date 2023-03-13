@@ -1,8 +1,7 @@
 import __turtle__ as turtle
-import threading
-from PIL import Image
-import os
-import time
+import ctypes
+
+# ctypes.windll.shcore.SetProcessDpiAwareness(2)
 
 forward = turtle.forward
 fd = turtle.fd
@@ -121,6 +120,7 @@ turtle.tracer(0, 0)
 turtle.speed(0)
 
 def done():
+    print(turtle.getcanvas().winfo_toplevel().winfo_id())
     turtle.update()
     turtle.done()
 

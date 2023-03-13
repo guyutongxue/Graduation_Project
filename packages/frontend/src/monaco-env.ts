@@ -1,5 +1,6 @@
 import * as monaco from "monaco-editor";
-import declarations from "transpiler/client-type?raw";
+import transpilerDecl from "transpiler/client-type?raw";
+import utilsDecl from "rtlib/client-type?raw";
 
 // https://github.com/microsoft/monaco-editor/blob/main/docs/integrate-esm.md#using-vite
 import editorWorker from "monaco-editor/esm/vs/editor/editor.worker?worker";
@@ -27,7 +28,8 @@ self.MonacoEnvironment = {
   },
 };
 monaco.languages.typescript.javascriptDefaults.setDiagnosticsOptions({
-  // noSemanticValidation: true,
+  noSemanticValidation: true,
   noSuggestionDiagnostics: true,
 });
-monaco.languages.typescript.javascriptDefaults.addExtraLib(declarations);
+monaco.languages.typescript.javascriptDefaults.addExtraLib(transpilerDecl);
+monaco.languages.typescript.javascriptDefaults.addExtraLib(utilsDecl, "file:///node_modules/@types/utils/index.d.ts");
