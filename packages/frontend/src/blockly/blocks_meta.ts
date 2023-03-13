@@ -11,8 +11,8 @@ Blockly.defineBlocksWithJsonArray([
         type: "field_dropdown",
         name: "CATEGORY",
         options: [
-          ["Web", "WEB"],
-          ["Windows form", "FORM"],
+          ["Web", "web"],
+          ["Windows form", "form"],
         ],
       },
     ],
@@ -35,10 +35,10 @@ Blockly.defineBlocksWithJsonArray([
   },
 ]);
 
-// TODO Should use external method
+// Using external patch (`updateRule` in `BlocklyRule.tsx`)
+// to make sure "use ..." is top-most
 javascriptGenerator["meta_category"] = function (block: Block) {
-  const category = block.getFieldValue("CATEGORY");
-  return `"use ${category.toLowerCase()}";`;
+  return "";
 }
 
 javascriptGenerator["meta_case"] = function (block: Block) {

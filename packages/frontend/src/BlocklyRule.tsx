@@ -12,6 +12,8 @@ let workspaceObj: WorkspaceSvg | null = null;
 // 我真不想把这玩意儿放在父组件里，直接用全局变量存一下得了
 let xml: string = DEFAULT_XML;
 
+const CategorySymbol = Symbol("Category");
+
 const TOOLBOX = getToolboxDefinition();
 function updateCategory() {
   const parser = new DOMParser();
@@ -19,12 +21,10 @@ function updateCategory() {
   const category =
     doc
       .querySelector("block[type=meta_category]>field[name=CATEGORY]")
-      ?.textContent?.toLowerCase() ?? null;
+      ?.textContent ?? null;
   if (workspaceObj) {
     workspaceObj.updateToolbox(getToolboxDefinition(category));
     // Remove all category-specific blocks, except the ones in the current category
-    // Pretty dirty hack here:
-    // assume that these blocks' colors are #a5935b (45deg in HSV, see custom_blockly_blocks.ts)
     workspaceObj
       .getAllBlocks(false)
       .filter(
@@ -33,13 +33,21 @@ function updateCategory() {
           !b.type.startsWith(`category_${category}_`)
       )
       .forEach((b) => b.dispose(true, true));
+
+    // @ts-expect-error Custom property here
+    workspaceObj[CategorySymbol] = category;
   }
 }
 
 function updateRule() {
   try {
-    const code = javascriptGenerator.workspaceToCode(workspaceObj);
+    let code = javascriptGenerator.workspaceToCode(workspaceObj);
     if (code) {
+      // @ts-expect-error Custom property here
+      if (workspaceObj[CategorySymbol]) {
+        // @ts-expect-error Custom property here
+        code = `"use ${workspaceObj[CategorySymbol]}";\n` + code;
+      }
       setRule(code);
     } else {
       // 有时 Blockly 进行无意义拖动操作后，会返回空字符串。为什么捏？
@@ -61,8 +69,9 @@ export function BlocklyRule() {
   }, [width, height]);
   
   useEffect(() => {
+    updateCategory();
     updateRule();
-  }, []);
+  });
 
   return (
     <div className="h-full w-full" ref={ref}>

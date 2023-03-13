@@ -1,6 +1,6 @@
 <xml xmlns="https://developers.google.com/blockly/xml">
   <block type="meta_category" id="b0" x="16" y="16">
-    <field name="CATEGORY">WEB</field>
+    <field name="CATEGORY">web</field>
   </block>
   <block type="meta_case" id="b1" x="16" y="60">
     <statement name="ACTIONS">
