@@ -20,4 +20,9 @@
 
 ## W8
 
-- `"use ..."` 指令的 Blockly 生成
+- `"use ..."` 指令的 Blockly 生成（完成）
+
+## W10
+
+- 图像差异识别算法。不能逐像素比对。
+- Web：Attribute / Style

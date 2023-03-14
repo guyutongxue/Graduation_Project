@@ -13,9 +13,14 @@ function assert(cond: boolean, message?: string): asserts cond {
 export class Handler {
   #htmlServer: Server | null = null;
   #browserContext: {
-    page: Page,
-    browser: Browser,
+    page: Page;
+    browser: Browser;
   } | null = null;
+
+  #assertSingle<T>(elem: T[], description = "Target"): T {
+    assert(elem.length === 1, `${description} not exists or not unique`);
+    return elem[0];
+  }
 
   async initialize(path: string) {
     assert(!this.#htmlServer, "HTML server already started");
@@ -47,9 +52,13 @@ export class Handler {
     assert(!!this.#browserContext, "browser not loaded");
     switch (component) {
       case "html":
-        return this.#browserContext.page.evaluate(() => document.documentElement.outerHTML);
+        return this.#browserContext.page.evaluate(
+          () => document.documentElement.outerHTML
+        );
       case "text":
-        return this.#browserContext.page.evaluate(() => document.body.textContent);
+        return this.#browserContext.page.evaluate(
+          () => document.body.textContent
+        );
       case "title":
         return this.#browserContext.page.title();
       default:
@@ -60,32 +69,35 @@ export class Handler {
   async selector({ selector, component }: any) {
     assert(!!this.#browserContext, "browser not loaded");
     const target = await this.#browserContext.page.$$(selector);
-      switch (component) {
-        case "html":
-          assert(target.length === 1, `Selector target ${selector} not exists or not unique`);
-          return target[0].evaluate(e => e.innerHTML);
-        case "text":
-          assert(target.length === 1, `Selector target ${selector} not exists or not unique`);
-          return target[0].evaluate(e => e.innerText);
-        case "count":
-          return target.length;
-        case "value":
-          assert(target.length === 1, `Selector target ${selector} not exists or not unique`);
-          const isInput = await target[0].evaluate(e => e instanceof HTMLInputElement);
-          assert(isInput, `Selector target ${selector} is not input element`);
-          return target[0].evaluate((e) => e.value);
-        default:
-          throw new Error(`Unknown component ${component}`);
+    switch (component) {
+      case "html": {
+        const t = this.#assertSingle(target, selector);
+        return t.evaluate((e) => e.innerHTML);
       }
+      case "text": {
+        const t = this.#assertSingle(target, selector);
+        return t.evaluate((e) => e.innerText);
+      }
+      case "count":
+        return target.length;
+      case "value": {
+        const t = this.#assertSingle(target, selector);
+        const isInput = await t.evaluate((e) => e instanceof HTMLInputElement);
+        assert(isInput, `Selector target ${selector} is not input element`);
+        return t.evaluate((e) => e.value);
+      }
+      default:
+        throw new Error(`Unknown component ${component}`);
+    }
   }
   async click({ selector }: any) {
     assert(!!this.#browserContext, "browser not loaded");
     const target = await this.#browserContext.page.$$(selector);
-    assert(target.length === 1, `Selector target ${selector} not exists or not unique`);
-    await target[0].click();
-    await new Promise(r => setTimeout(r, 100));
+    const t = this.#assertSingle(target, selector);
+    await t.click();
+    await new Promise((r) => setTimeout(r, 100));
   }
-  
+
   async key({ key }: any) {
     assert(!!this.#browserContext, "browser not loaded");
     await this.#browserContext.page.keyboard.press(key);
@@ -93,14 +105,30 @@ export class Handler {
 
   async input({ selector, value }: any) {
     assert(!!this.#browserContext, "browser not loaded");
-    // assert(typeof value === "string", "value must be string");
     const target = await this.#browserContext.page.$$(selector);
-    assert(target.length === 1, `Selector target ${selector} not exists or not unique`);
-    const isInput = await target[0].evaluate(e => e instanceof HTMLInputElement);
+    const t = this.#assertSingle(target, selector);
+    const isInput = await t.evaluate((e) => e instanceof HTMLInputElement);
     assert(isInput, `Selector target ${selector} is not input element`);
-    await target[0].evaluate((e, v) => e.value = v, value);
-    await new Promise(r => setTimeout(r, 100));
-  };
+    await t.evaluate((e, v) => (e.value = v), value);
+    await new Promise((r) => setTimeout(r, 100));
+  }
+
+  async attribute({ selector, attribute }: any) {
+    assert(!!this.#browserContext, "browser not loaded");
+    const target = await this.#browserContext.page.$$(selector);
+    const t = this.#assertSingle(target, selector);
+    return t.evaluate((e, a) => e.getAttribute(a), attribute);
+  }
+
+  async style({ selector, property }: any) {
+    assert(!!this.#browserContext, "browser not loaded");
+    const target = await this.#browserContext.page.$$(selector);
+    const t = this.#assertSingle(target, selector);
+    return t.evaluate(
+      (e, p) => window.getComputedStyle(e).getPropertyValue(p),
+      property
+    );
+  }
 }
 
 let rpcServer: jayson.Server = undefined!;
@@ -125,10 +153,9 @@ export function createServer() {
             throw e;
           }
         }
-      }
+      };
     }
   }
   console.log(init);
-  return rpcServer = jayson.Server(init);
+  return (rpcServer = jayson.Server(init));
 }
-

@@ -1,5 +1,5 @@
 from turtle import *
-bgcolor('blue')
+# bgcolor('blue')
 color('red', 'yellow')
 begin_fill()
 while True:
