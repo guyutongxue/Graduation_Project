@@ -3,6 +3,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 from collections import namedtuple
 
+EDGE_OFFSET = 10
 BLUR = 21
 CANNY_LOW = 15
 CANNY_HIGH = 150
@@ -16,10 +17,12 @@ ContourResult = namedtuple("ContourResult", ["image", "contours", "background_co
 def average_color(img, mask):
     flat_mask = mask.flatten()
     flat_img = img.reshape(-1, img.shape[-1])
-    masked = flat_img[flat_mask]
+    masked = flat_img[flat_mask == 0]
     return np.mean(masked, axis=0)
 
 def get_contours(img):
+    width, height = img.shape[:2]
+    img = img[EDGE_OFFSET:height-EDGE_OFFSET, EDGE_OFFSET:width-EDGE_OFFSET]
     img_gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
     edges = cv2.Canny(img_gray, CANNY_LOW, CANNY_HIGH)
     edges = cv2.dilate(edges, None)
@@ -35,13 +38,16 @@ def get_contours(img):
 
     contours = [c for c in contours if min_area < cv2.contourArea(c) < max_area]
     contour_rects = [cv2.boundingRect(c) for c in contours]
-    left, top, right, bottom = (np.array(contour_rects) @ np.array([
-        [1, 0, 1, 0],
-        [0, 1, 0, 1],
-        [0, 0, 1, 0],
-        [0, 0, 0, 1]
-    ])).T
-    left, top, right, bottom = (left.min(), top.min(), right.max(), bottom.max())
+    if len(contour_rects) > 0:
+        left, top, right, bottom = (np.array(contour_rects) @ np.array([
+            [1, 0, 1, 0],
+            [0, 1, 0, 1],
+            [0, 0, 1, 0],
+            [0, 0, 0, 1]
+        ])).T
+        left, top, right, bottom = (left.min(), top.min(), right.max(), bottom.max())
+    else:
+        left, top, right, bottom = (0, 0, 1, 1)
 
     # background mask
     mask = np.zeros(edges.shape, dtype = np.uint8)
