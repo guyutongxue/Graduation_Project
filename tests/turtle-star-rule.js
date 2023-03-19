@@ -1,7 +1,8 @@
 "use graphics.turtle";
-import { createImageFromUrl, compareImageStrict } from "utils";
+import { createImageFromUrl, imageSimilarity } from "utils";
 {
-    const expected = await createImageFromUrl("https://s1.ax1x.com/2023/03/12/ppMKu5T.png");
-    const current = g.screenshot();
-    assert: await compareImageStrict(current, expected);
+    const standard = await createImageFromUrl("https://s1.ax1x.com/2023/03/12/ppMKu5T.png");
+    const user = g.screenshot();
+    const s = await imageSimilarity(standard, user);
+    assert: s < 0;
 }

@@ -17,7 +17,7 @@ interface JudgeOption {
   judgeId: number;
 }
 
-export async function judge({ rule, filePath, category, judgeId}: JudgeOption) {
+export async function judge({ rule, filePath, category, judgeId }: JudgeOption) {
   const result = await transformAsync(rule, {
     plugins: [
       babelPlugin,

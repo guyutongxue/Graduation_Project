@@ -19,12 +19,14 @@
     "build:all": "pnpm build && pnpm build:types"
   },
   "devDependencies": {
+    "@types/node": "^18.11.18",
+    "@types/tmp": "^0.2.3",
     "dts-bundle-generator": "^7.1.0",
     "tsx": "^3.12.1",
     "typescript": "^4.9.5"
   },
   "dependencies": {
     "jimp": "^0.22.7",
-    "looks-same": "^8.1.0"
+    "tmp-promise": "^3.0.3"
   }
 }
