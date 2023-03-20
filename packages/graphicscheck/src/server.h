@@ -6,6 +6,8 @@
 #include <iostream>
 #include <nlohmann/json.hpp>
 
+#include "./click.hpp"
+
 class Server {
 private:
   static inline const boost::filesystem::path PY_SCRIPT_PATH{
@@ -23,6 +25,7 @@ public:
   bool dispose();
 
   std::string screenshot(nlohmann::json);
+  int click(ClickArgs);
 
   ~Server();
 };

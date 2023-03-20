@@ -8,6 +8,7 @@
 
 #include "./hwnd.h"
 #include "./screenshot.h"
+#include "server.h"
 
 namespace bp = boost::process;
 using namespace std::literals;
@@ -45,6 +46,38 @@ std::string Server::screenshot(nlohmann::json) {
   std::string b64(b64size, '\0');
   tb64enc(data.get(), size, reinterpret_cast<unsigned char*>(b64.data()));
   return b64;
+}
+
+int Server::click(ClickArgs args) {
+  LONG dx = std::floor(args.x * 65536);
+  LONG dy = std::floor(args.y * 65536);
+  INPUT inputs[3]{
+    {
+      .type = INPUT_MOUSE,
+      .mi = {
+        .dx = dx,
+        .dy = dy,
+        .dwFlags = MOUSEEVENTF_ABSOLUTE | MOUSEEVENTF_MOVE,
+      }
+    },
+    {
+      .type = INPUT_MOUSE,
+      .mi = {
+        .dwFlags = MOUSEEVENTF_LEFTDOWN
+      }
+    },
+    {
+      .type = INPUT_MOUSE,
+      .mi = {
+        .dwFlags = MOUSEEVENTF_LEFTUP
+      }
+    }
+  };
+  SetForegroundWindow(this->hWnd);
+  std::this_thread::sleep_for(100ms);
+  int sent = SendInput(std::size(inputs), inputs, sizeof(inputs));
+  std::this_thread::sleep_for(100ms);
+  return sent;
 }
 
 Server::~Server() {

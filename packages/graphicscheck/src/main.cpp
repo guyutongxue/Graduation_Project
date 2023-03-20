@@ -34,6 +34,7 @@ int main(int argc, char** argv) {
   BIND(rpc, app, restart);
   BIND(rpc, app, dispose);
   BIND(rpc, app, screenshot);
+  BIND(rpc, app, click);
 
   HttpConnector httpServer(rpc, port);
   std::cout << "Listening on port " << port << std::endl;
