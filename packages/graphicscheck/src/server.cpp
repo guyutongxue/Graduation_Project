@@ -48,36 +48,8 @@ std::string Server::screenshot(nlohmann::json) {
   return b64;
 }
 
-int Server::click(ClickArgs args) {
-  LONG dx = std::floor(args.x * 65536);
-  LONG dy = std::floor(args.y * 65536);
-  INPUT inputs[3]{
-    {
-      .type = INPUT_MOUSE,
-      .mi = {
-        .dx = dx,
-        .dy = dy,
-        .dwFlags = MOUSEEVENTF_ABSOLUTE | MOUSEEVENTF_MOVE,
-      }
-    },
-    {
-      .type = INPUT_MOUSE,
-      .mi = {
-        .dwFlags = MOUSEEVENTF_LEFTDOWN
-      }
-    },
-    {
-      .type = INPUT_MOUSE,
-      .mi = {
-        .dwFlags = MOUSEEVENTF_LEFTUP
-      }
-    }
-  };
-  SetForegroundWindow(this->hWnd);
-  std::this_thread::sleep_for(100ms);
-  int sent = SendInput(std::size(inputs), inputs, sizeof(inputs));
-  std::this_thread::sleep_for(100ms);
-  return sent;
+bool Server::click(ClickArgs args) {
+  return clickOnWindow(this->hWnd, args.x, args.y);
 }
 
 Server::~Server() {

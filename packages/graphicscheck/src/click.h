@@ -1,3 +1,4 @@
+#include <Windows.h>
 
 #include <nlohmann/json.hpp>
 
@@ -7,3 +8,5 @@ struct ClickArgs {
 
   NLOHMANN_DEFINE_TYPE_INTRUSIVE(ClickArgs, x, y);
 };
+
+bool clickOnWindow(HWND hWnd, float x, float y);

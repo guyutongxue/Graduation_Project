@@ -6,7 +6,7 @@
 #include <iostream>
 #include <nlohmann/json.hpp>
 
-#include "./click.hpp"
+#include "./click.h"
 
 class Server {
 private:
@@ -25,7 +25,7 @@ public:
   bool dispose();
 
   std::string screenshot(nlohmann::json);
-  int click(ClickArgs);
+  bool click(ClickArgs);
 
   ~Server();
 };

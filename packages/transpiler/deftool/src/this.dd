@@ -85,3 +85,6 @@ using graphics.turtle;
 
 define g.screenshot(): string
   => screenshot
+
+define g.click(x: number, y: number): void
+  => click

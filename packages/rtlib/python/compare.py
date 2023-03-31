@@ -59,12 +59,15 @@ def compare_image(img1, img2):
     background_similarity = 1 - color_difference(r1.background_color, r2.background_color)
     object_number_diff = abs(len(r1.contours) - len(r2.contours)) / (1 + len(r1.contours))
 
+    min_len = min(len(r1.contours), len(r2.contours))
+
     r1.contours.sort(key=lambda c: cv2.contourArea(c), reverse=True)
-    r2pos = np.array([_center_position(c, r2.image) for c in r2.contours])
-    r1pos = np.array([_center_position(c, r1.image) for c in r1.contours][:len(r2pos)])
+    r2.contours.sort(key=lambda c: cv2.contourArea(c), reverse=True)
+    r1pos = np.array([_center_position(c, r1.image) for c in r1.contours][:min_len])
+    r2pos = np.array([_center_position(c, r2.image) for c in r2.contours][:min_len])
     r2index = np.array(range(len(r2pos)))
 
-    if len(r2pos) == 0:
+    if min_len == 0:
         shape_similarity = 1.0
         image_similarity = 1.0
         position_similarity = 1.0
