@@ -6,7 +6,7 @@
 #include <iostream>
 #include <nlohmann/json.hpp>
 
-#include "./click.h"
+#include "./input.h"
 
 class Server {
 private:

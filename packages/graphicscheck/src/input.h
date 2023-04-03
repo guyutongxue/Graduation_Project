@@ -10,3 +10,4 @@ struct ClickArgs {
 };
 
 bool clickOnWindow(HWND hWnd, float x, float y);
+bool keyOnWindow(HWND hWnd, int keyCode);

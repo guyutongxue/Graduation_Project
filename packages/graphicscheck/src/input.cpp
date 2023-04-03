@@ -1,4 +1,5 @@
-#include "./click.h"
+#include "./input.h"
+#include <winuser.h>
 
 bool clickOnWindow(HWND hWnd, float x, float y) {
   if (!SetForegroundWindow(hWnd)) {
@@ -40,6 +41,37 @@ bool clickOnWindow(HWND hWnd, float x, float y) {
       .type = INPUT_MOUSE,
       .mi = {
         .dwFlags = MOUSEEVENTF_LEFTUP
+      }
+    }
+  };
+  int sent = SendInput(std::size(inputs), inputs, sizeof(INPUT));
+  Sleep(100);
+  return sent == std::size(inputs);
+}
+
+bool keyOnWindow(HWND hWnd, int keyCode) {
+  if (!SetForegroundWindow(hWnd)) {
+    throw std::runtime_error("Could not set foreground window");
+  }
+  Sleep(100);
+  
+  ULONG_PTR extraInfo = GetMessageExtraInfo();
+
+  INPUT inputs[2]{
+    {
+      .type = INPUT_KEYBOARD,
+      .ki = {
+        .wVk = static_cast<WORD>(keyCode),
+        .dwFlags = 0,
+        .dwExtraInfo = extraInfo,
+      }
+    },
+    {
+      .type = INPUT_KEYBOARD,
+      .ki = {
+        .wVk = static_cast<WORD>(keyCode),
+        .dwFlags = KEYEVENTF_KEYUP,
+        .dwExtraInfo = extraInfo,
       }
     }
   };
