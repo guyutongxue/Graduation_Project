@@ -26,6 +26,7 @@ public:
 
   std::string screenshot(nlohmann::json);
   bool click(ClickArgs);
+  bool key(KeyArgs);
 
   ~Server();
 };

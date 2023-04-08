@@ -52,6 +52,10 @@ bool Server::click(ClickArgs args) {
   return clickOnWindow(this->hWnd, args.x, args.y);
 }
 
+bool Server::key(KeyArgs args) {
+  return keyOnWindow(this->hWnd, args.keyCode);
+}
+
 Server::~Server() {
   dispose();
 }

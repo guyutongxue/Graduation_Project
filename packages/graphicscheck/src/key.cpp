@@ -1,3 +1,5 @@
+#if 0
+
 #include <Windows.h>
 
 int SendKeystrokesToNotepad( const TCHAR *const text )
@@ -43,3 +45,5 @@ int SendKeystrokesToNotepad( const TCHAR *const text )
 
     return keystrokes_sent == keystrokes_to_send;
 }
+
+#endif
