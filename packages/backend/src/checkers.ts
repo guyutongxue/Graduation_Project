@@ -29,7 +29,7 @@ export class Checker {
   }
 
   async #sendImpl(method: string, param?: any) {
-    param = typeof param === "undefined" ? []: [param];
+    param = typeof param === "undefined" ? [] : [param];
     console.log({ method, param });
     const response = await this.#client.request(method, param);
     console.log(response);
@@ -98,12 +98,9 @@ async function createGraphicsChecker() {
   const port = await getPort();
   const process = execFile(
     fileURLToPath(
-      new URL(
-        "../../graphicscheck/bin/graphicscheck.exe",
-        import.meta.url
-      ).href
+      new URL("../../graphicscheck/bin/graphicscheck.exe", import.meta.url).href
     ),
-    [port.toString()]
+    ["-p", port.toString(), "--python"]
   );
   return Checker.fromProcess(process, port);
 }

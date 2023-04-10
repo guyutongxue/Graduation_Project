@@ -1,6 +1,11 @@
 add_rules("mode.debug", "mode.release");
 
-add_requires("cpp-httplib", "nlohmann_json", "boost", "turbobase64")
+add_requires("cpp-httplib", "nlohmann_json", "turbobase64")
+add_requires("boost", {
+  configs = {
+    all = true
+  }
+})
 
 target("graphicscheck")
   -- Add third party libraries

@@ -13,12 +13,14 @@ private:
   static inline const boost::filesystem::path PY_SCRIPT_PATH{
       boost::filesystem::path(__FILE__).parent_path() / "../python/init.py"};
 
+  bool usePython;
+
   std::string path;
   DWORD pid{0};
   HWND hWnd{nullptr};
 
 public:
-  Server() = default;
+  Server(bool usePython = false) : usePython{usePython} {};
 
   bool initialize(const std::string& path);
   bool restart();

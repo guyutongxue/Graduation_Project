@@ -1,4 +1,5 @@
 #include <boost/nowide/filesystem.hpp>
+#include <boost/program_options.hpp>
 #include <iostream>
 #include <jsonrpccxx/server.hpp>
 #include <stdexcept>
@@ -6,30 +7,30 @@
 
 #include "./http_connector.hpp"
 #include "./server.h"
-// #include "./hwnd.h"
-// #include "./screenshot.h"
-// #include <fstream>
+#include "boost/program_options/options_description.hpp"
 
 #define BIND(rpc, app, method) \
   rpc.Add(#method, jsonrpccxx::GetHandle(&decltype(app)::method, app))
 
+namespace po = boost::program_options;
+
 int main(int argc, char** argv) {
-  // if (auto hwnd = getHwnd(24172)) {
-  //   std::cout << std::int64_t(*hwnd) << std::endl;
-  //   auto [data, size] = captureWindow(*hwnd);
-  //   std::ofstream ofs("a.bmp", std::ios::binary);
-  //   ofs.write(reinterpret_cast<char*>(data.get()), size);
-  //   return 0;
-  // }
-  if (argc != 2) {
-    std::cerr << "Usage: " << argv[0] << " <port>\n";
-    std::exit(1);
-  }
   boost::nowide::nowide_filesystem();
 
-  auto port = std::stoi(argv[1]);
+  po::options_description desc;
+  desc.add_options()
+    ("port,p", po::value<int>(), "Port to listen on")
+    ("python", "Use Python host script");
+
+  po::variables_map vm;
+  po::store(po::parse_command_line(argc, argv, desc), vm);
+  po::notify(vm);
+
+  bool usePython = vm.count("python") > 0;
+  int port = vm.count("port") > 0 ? vm["port"].as<int>() : 8080;
+
   jsonrpccxx::JsonRpc2Server rpc;
-  Server app;
+  Server app(usePython);
   BIND(rpc, app, initialize);
   BIND(rpc, app, restart);
   BIND(rpc, app, dispose);
