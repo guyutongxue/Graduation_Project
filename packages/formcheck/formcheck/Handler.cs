@@ -9,6 +9,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.IO;
 using FlaUI.Core.Input;
+using FlaUI.Core.Tools;
 
 namespace formcheck
 {
@@ -28,6 +29,13 @@ namespace formcheck
   struct KeyArg
   {
     public string keys;
+  }
+
+  struct AroundLabelArg {
+    public string text;
+    public int threshold;
+    public string action;
+    public string? value;
   }
 
   class Handler : JsonRpcService, IDisposable
@@ -69,6 +77,24 @@ namespace formcheck
       }
       var window = app.GetMainWindow(automation);
       return window.Title;
+    }
+
+    [JsonRpcMethod]
+    object? aroundLabel(AroundLabelArg arg) {
+      if (app is null || automation is null) {
+        throw new NullReferenceException();
+      }
+      var window = app.GetMainWindow(automation);
+      var labels = window.FindAllDescendants(cf => cf.ByText(arg.text)).Where(e => e is Label).ToList();
+      if (labels.Count != 1) {
+        throw new Exception($"Multiple label or no label has text {arg.text}");
+      }
+      var basePoint = labels[0].GetClickablePoint();
+      var textBoxes = window.FindAllDescendants().Where(e => e is TextBox).OrderBy(e => basePoint.Distance(e.GetClickablePoint())).ToList();
+      if (textBoxes.Count == 0) {
+        throw new Exception("No textbox found");
+      }
+      return ActionOnElement(textBoxes[0], arg.action, arg.value);
     }
 
     [JsonRpcMethod]
