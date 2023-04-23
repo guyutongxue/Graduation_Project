@@ -25,7 +25,7 @@
   仿宋: ("Times New Roman", "FangSong"),
   宋体: ("Times New Roman", "Source Han Serif SC", "SimSun"),
   黑体: ("Calibri", "SimHei"),
-  楷体: ("Times New Roman", "KaiTi", "SimKai"),
+  楷体: ("Georgia", "KaiTi", "SimKai"),
   代码: ("New Computer Modern Mono", "Consolas", "Courier New"),
 )
 
