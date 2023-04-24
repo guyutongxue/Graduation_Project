@@ -12,6 +12,24 @@
 
 #let enKeywords = ("programming design", "visual programming", "online programming", "online judge", "experimental teaching")
 
+#let acknowledgements = [
+  首先，我感谢邓习峰导师提供了这个选题，以及让我研究这类问题的机会。在理科为主、算法至上的北京大学教育氛围下，提出如此贴近现实环境、教育教学、工业生产的题目实在不容易。该题目也充分发挥了我所擅长的软件工程、操作系统、编译原理等知识的运用。
+
+  感谢舍友郭易提供的图像识别算法思路；没有他的帮助，本论文可能要花更多的时间才能完善。
+
+  感谢 Node.js 和 Python 开发者提供的优秀的语言设计和开发框架。感谢以下开源第三方库的开发者：pnpm、Babel、Fastify、adm-zip、get-port、jayson、nodemon、tmp 与 tmp-promise、wait-port、Rollup、TypeScript、FlaUI、AustinHarris.JsonRpc、React、allotment、axios、Blockly、DaisyUI、Monaco Editor、RxJS、PostCSS、TailwindCSS、Vite、xmake、cpp-httplib、nlohmann_json、turbobase64、Boost、json-rpc-cxx、unique_resource、dts-bundle-generator、tsx、Peggy、rimraf、DefinitelyTyped 和 Puppeteer。本论文的实现离不开上述优秀的开源项目。
+
+  感谢 Typst 项目的开发者，提供了如此易用的论文排版工具。感谢 GitHub 用户 #link("https://github.com/lucifer1004")[lucifer1004] 提供的基于 Typst 的北大学位论文模板。 
+
+  感谢#link("https://www.microsoft.com/")[微软]主导开发的 #link("https://code.visualstudio.com/")[Visual Studio Code] 项目，让我能流畅舒服地完成编写代码、调试代码、编写论文等各个方面的工作。
+
+  感谢舍友赵一鸣四年的陪伴。
+  
+  感谢 OpenAI 的 ChatGPT 和 GitHub 的 Copilot 提出一些有趣但不一定合适的回复，让我在编写代码或完成论文时多了一些灵感。
+
+  感谢虚拟主播#link("https://space.bilibili.com/401480763")[真白花音]，在赶稿写代码的日子里用甜美的声音和温暖的歌声陪伴了我。感谢#link("https://www.mihoyo.com/")[米哈游]开发的 #link("https://ys.mihoyo.com/main/")[《原神》]游戏，极大程度地丰富了我的休息时间，让我能每天充满精力地完成论文工作。
+]
+
 #show: doc => conf(
   author: "谷雨",
   studentId: "1900012983",
@@ -29,7 +47,7 @@
   keywords: keywords,
   enAbstract: enAbstract,
   enKeywords: enKeywords,
-  acknowledgements: [感谢 Typst 开发者的辛勤付出。 #lorem(300)],
+  acknowledgements: acknowledgements,
   doc,
 )
 
@@ -116,17 +134,29 @@ _可视化程序设计_ 通常是指以可视化方式编写的程序设计平�
 
 == 规则派发与执行系统
 
+原型设计使用 Node.js 作为该系统的实现框架；其实现细节将在 @ipc 中讨论。
+
 == 前端用户界面
+
+原型设计提供了供研究者测试用的 Web 前端用户界面，使用 React 框架实现。该实现细节，连同更宏观的生产环境前端设计，将在 @frontend 中讨论。
 
 = 判题后端实现 <categories>
 
 == Web 程序
 
+Web 程序是当前互联网时代的最主流应用程序。它不仅应用在浏览器等传统 Web 环境中，也适用于桌面程序（Electron、Tauri 等）和移动程序（React Native、Flutter 等）。Web 程序通常使用 JavaScript 作为开发语言，并用 HTML 和 CSS 处理图形界面布局，但也可以使用 TypeScript、CoffeeScript、Dart 等语言开发。
+
 == Windows 窗体程序
+
+Windows 窗体（Windows Form）程序，是 Windows 平台上基于窗口的最经典的开发环境。它底层上是 MFC（微软基础类库，Microsoft Foundation Class）的封装，提供了一组基于 Win32 窗体控件的开发接口。Windows 窗体可以用 C\#、VB.NET、C++ 等语言开发。
 
 == Python turtle 2D 图形程序
 
-== 其它程序
+Python 是当前最流行的编程语言，也是非专业计算机学习者最常用的编程语言。Python turtle 是 Python 的一个标准库，它提供了一个简单的绘图接口，可以用来绘制 2D 图形。作为
+
+== 其它程序类别与跨平台问题
+
+非 Windows 的
 
 = 判题规则实现 <transpiler>
 
@@ -156,7 +186,7 @@ _可视化程序设计_ 通常是指以可视化方式编写的程序设计平�
 
 == 图像比对算法的缺陷与改进方向
 
-= 宏语言 DefDef 的实现 <defdef>
+= 宏语言 DefDef <defdef>
 
 = 前端用户界面实现 <frontend>
 

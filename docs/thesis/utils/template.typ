@@ -481,11 +481,10 @@
         pagebreak(weak: true)
       // }
       locate(loc => {
-        // if it.body.text == "摘要" {
-        //   partcounter.update(10)
-        //   counter(page).update(1)
-        // } else 
-        if it.numbering != none and partcounter.at(loc).first() < 20 {
+        /* if it.body.text == "摘要" {
+          partcounter.update(10)
+          counter(page).update(1)
+        } else*/ if it.numbering != none and partcounter.at(loc).first() < 20 {
           partcounter.update(20)
           counter(page).update(1)
         }
@@ -858,6 +857,8 @@
   if listOfCode {
     listoffigures(title: "代码", kind: "code")
   }
+  
+  partcounter.update(10)
 
   set align(left + top)
   par(justify: true, first-line-indent: 2em, leading: lineSpacing)[
