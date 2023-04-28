@@ -107,7 +107,7 @@
   }
 })
 
-#let underlineCell(body, width: 350pt) = {
+#let underlineCell(body, width: 380pt) = {
   rect(
     width: width,
     stroke: (bottom: 1pt, rest: none),
@@ -758,8 +758,8 @@
       columns: (auto, auto, 1fr),
       align: horizon,
       inset: 0.7em,
-      rowspanx(2)[论文题目],[#h(1em)中文#h(1em)],[可视化程序设计 OJ 技术研究],
-      [#h(1em)英文#h(1em)],[Visual Programming Online Judge Techonology Research],
+      rowspanx(2)[论文题目],[#h(1em)中文#h(1em)], title,
+      [#h(1em)英文#h(1em)], enTitle,
     ),
     table(
       columns: (1fr),
