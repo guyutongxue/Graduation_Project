@@ -54,39 +54,39 @@
 #let equationcounter = counter(math.equation)
 #let appendix() = {
   appendixcounter.update(10)
-  chaptercounter.update(())
-  counter(heading).update(())
+  chaptercounter.update(0)
+  counter(heading).update(0)
 }
 
 #let chinesenumber(num, standalone: false) = if num < 11 {
   ("零", "一", "二", "三", "四", "五", "六", "七", "八", "九", "十").at(num)
 } else if num < 100 {
-  if calc.mod(num, 10) == 0 {
+  if calc.rem(num, 10) == 0 {
     chinesenumber(calc.floor(num / 10)) + "十"
   } else if num < 20 and standalone {
-    "十" + chinesenumber(calc.mod(num, 10))
+    "十" + chinesenumber(calc.rem(num, 10))
   } else {
-    chinesenumber(calc.floor(num / 10)) + "十" + chinesenumber(calc.mod(num, 10))
+    chinesenumber(calc.floor(num / 10)) + "十" + chinesenumber(calc.rem(num, 10))
   }
 } else if num < 1000 {
   let left = chinesenumber(calc.floor(num / 100)) + "百"
-  if calc.mod(num, 100) == 0 {
+  if calc.rem(num, 100) == 0 {
     left
-  } else if calc.mod(num, 100) < 10 {
-    left + "零" + chinesenumber(calc.mod(num, 100))
+  } else if calc.rem(num, 100) < 10 {
+    left + "零" + chinesenumber(calc.rem(num, 100))
   } else {
-    left + chinesenumber(calc.mod(num, 100))
+    left + chinesenumber(calc.rem(num, 100))
   }
 } else {
   let left = chinesenumber(calc.floor(num / 1000)) + "千"
-  if calc.mod(num, 1000) == 0 {
+  if calc.rem(num, 1000) == 0 {
     left
-  } else if calc.mod(num, 1000) < 10 {
-    left + "零" + chinesenumber(calc.mod(num, 1000))
-  } else if calc.mod(num, 1000) < 100 {
-    left + "零" + chinesenumber(calc.mod(num, 1000))
+  } else if calc.rem(num, 1000) < 10 {
+    left + "零" + chinesenumber(calc.rem(num, 1000))
+  } else if calc.rem(num, 1000) < 100 {
+    left + "零" + chinesenumber(calc.rem(num, 1000))
   } else {
-    left + chinesenumber(calc.mod(num, 1000))
+    left + chinesenumber(calc.rem(num, 1000))
   }
 }
 
@@ -122,7 +122,7 @@
 #let chineseoutline(title: "目录", depth: none, indent: false) = {
   heading(title, numbering: none, outlined: false)
   locate(it => {
-    let elements = query(heading.where(outlined: true), after: it)
+    let elements = query(heading.where(outlined: true).after(it), it)
 
     for el in elements {
       // Skip list of images and list of tables
@@ -154,20 +154,26 @@
             let width = measure(maybe_number, styles).width
             box(
               width: lengthceil(width),
-              if el.level == 1 {
-                textbf(maybe_number)
-              } else {
-                maybe_number
-              }
+              link(
+                el.location(),
+                if el.level == 1 {
+                  textbf(maybe_number)
+                } else {
+                  maybe_number
+                }
+              )
             )
           })
         }
 
-        if el.level == 1 {
-          textbf(el.body)
-        } else {
-          el.body
-        }
+        link(
+          el.location(),
+          if el.level == 1 {
+            textbf(el.body)
+          } else {
+            el.body
+          }
+        )
 
         // Filler dots
         if el.level == 1 {
@@ -177,23 +183,26 @@
         }
 
         // Page number
-        let footer = query(<__footer__>, after: el.location())
+        let footer = query(selector(<__footer__>).after(el.location()), el.location())
         let page_number = if footer == () {
           0
         } else {
           counter(page).at(footer.first().location()).first()
         }
-        if el.level == 1 {
-          textbf(str(page_number))
-        } else {
-          str(page_number)
-        }
+        link(
+          el.location(),
+          if el.level == 1 {
+            textbf(str(page_number))
+          } else {
+            str(page_number)
+          }
+        )
 
         linebreak()
         v(-0.2em)
       }
 
-      link(el.location(), line)
+      line
     }
   })
 }
@@ -201,7 +210,7 @@
 #let listoffigures(title: "插图", kind: image) = {
   heading(title, numbering: none, outlined: false)
   locate(it => {
-    let elements = query(figure.where(kind: kind), after: it)
+    let elements = query(figure.where(kind: kind).after(it), it)
 
     for el in elements {
       let maybe_number = {
@@ -214,28 +223,28 @@
           let width = measure(maybe_number, styles).width
           box(
             width: lengthceil(width),
-            maybe_number
+            link(el.location(), maybe_number)
           )
         })
 
-        el.caption
+        link(el.location(), el.caption)
 
         // Filler dots
         box(width: 1fr, h(10pt) + box(width: 1fr, repeat[.]) + h(10pt))
 
         // Page number
-        let footers = query(<__footer__>, after: el.location())
+        let footers = query(<__footer__>.after(el.location()), el.location())
         let page_number = if footers == () {
           0
         } else {
           counter(page).at(footers.first().location()).first()
         }
-        str(page_number)
+        link(el.location(), str(page_number))
         linebreak()
         v(-0.2em)
       }
 
-      link(el.location(), line)
+      line
     }
   })
 }
@@ -268,7 +277,7 @@
 
   let content_aligns = ()
   for i in range(0, contents.len()) {
-    content_aligns.push(aligns.at(calc.mod(i, aligns.len())))
+    content_aligns.push(aligns.at(calc.rem(i, aligns.len())))
   }
 
   figure(
@@ -354,7 +363,7 @@
         #set align(center)
         #if partcounter.at(loc).at(0) < 10 {
           // Handle the first page of Chinese abstract specailly
-          // let headings = query(heading, after: loc)
+          // let headings = query(selector(heading).after(loc), loc)
           // let next_heading = if headings == () {
           //   ()
           // } else {
@@ -376,12 +385,12 @@
               #line(length: 100%)
             ]
           // } else {
-          //   let footers = query(<__footer__>, after: loc)
+          //   let footers = query(selector(<__footer__>).after(loc), loc)
           //   let elems = if footers == () {
           //     ()
           //   } else {
           //     query(
-          //       heading.where(level: 1), before: footers.first().location()
+          //       heading.where(level: 1).before(footers.first().location()), footers.first().location()
           //     )
           //   }
           //   if elems == () {
@@ -408,10 +417,10 @@
       [
         #set text(字号.五号)
         #set align(center)
-        #if query(heading, before: loc).len() < 2 or query(heading, after: loc).len() == 0 {
+        #if query(selector(heading).before(loc), loc).len() < 2 or query(selector(heading).after(loc), loc).len() == 0 {
           // Skip cover, copyright and origin pages
         } else {
-          let headers = query(heading, before: loc)
+          let headers = query(selector(heading).before(loc), loc)
           let part = partcounter.at(headers.last().location()).first()
           [
             #if part < 20 {
@@ -551,77 +560,54 @@
   ]
 
   show ref: it => {
-    locate(loc => {
-      let elems = query(it.target, loc)
+    if it.element == none {
+      // Keep citations as is
+      it
+    } else {
+      // Remove prefix spacing
+      h(0em, weak: true)
 
-      if elems == () {
-        // Keep citations as is
-        it
-      } else {
-        // Remove prefix spacing
-        h(0em, weak: true)
-
-        let el = elems.first()
-        let el_loc = el.location()
-        if el.func() == math.equation {
-          // Handle equations
+      let el = it.element
+      let el_loc = el.location()
+      if el.func() == math.equation {
+        // Handle equations
+        link(el_loc, [
+          式
+          #chinesenumbering(chaptercounter.at(el_loc).first(), equationcounter.at(el_loc).first(), location: el_loc, brackets: true)
+        ])
+      } else if el.func() == figure {
+        // Handle figures
+        if el.kind == image {
           link(el_loc, [
-            式
-            #chinesenumbering(chaptercounter.at(el_loc).first(), equationcounter.at(el_loc).first(), location: el_loc, brackets: true)
+            图
+            #chinesenumbering(chaptercounter.at(el_loc).first(), imagecounter.at(el_loc).first(), location: el_loc)
           ])
-        } else if el.func() == figure {
-          // Handle figures
-          if el.kind == image {
-            link(el_loc, [
-              图
-              #chinesenumbering(chaptercounter.at(el_loc).first(), imagecounter.at(el_loc).first(), location: el_loc)
-            ])
-          } else if el.kind == table {
-            link(el_loc, [
-              表
-              #chinesenumbering(chaptercounter.at(el_loc).first(), tablecounter.at(el_loc).first(), location: el_loc)
-            ])
-          } else if el.kind == "code" {
-            link(el_loc, [
-              代码
-              #chinesenumbering(chaptercounter.at(el_loc).first(), rawcounter.at(el_loc).first(), location: el_loc)
-            ])
-          }
-        } else if el.func() == heading {
-          // Handle headings
-          if el.level == 1 {
-            link(el_loc, chinesenumbering(..counter(heading).at(el_loc), location: el_loc))
-          } else {
-            link(el_loc, [
-              节
-              #chinesenumbering(..counter(heading).at(el_loc), location: el_loc)
-            ])
-          }
-        } else {
-          // Handle code blocks
-          // Since the ref is linked to the code block instead of the internal
-          // `figure`, we need to do an extra query here.
-          let figure_el = query(figure, after: el_loc).first()
-          let el_loc = figure_el.location()
+        } else if el.kind == table {
           link(el_loc, [
-            #if figure_el.kind == image {
-              [图]
-            } else if figure_el.kind == table {
-              [表]
-            } else if figure_el.kind == "code" {
-              [代码]
-            }
-            #chinesenumbering(
-              chaptercounter.at(el_loc).first(),
-              counter(figure.where(kind: figure_el.kind)).at(el_loc).first(), location: el_loc
-           )]
-          )
+            表
+            #chinesenumbering(chaptercounter.at(el_loc).first(), tablecounter.at(el_loc).first(), location: el_loc)
+          ])
+        } else if el.kind == "code" {
+          link(el_loc, [
+            代码
+            #chinesenumbering(chaptercounter.at(el_loc).first(), rawcounter.at(el_loc).first(), location: el_loc)
+          ])
         }
-
-        // Remove suffix spacing
-        h(0em, weak: true)
+      } else if el.func() == heading {
+        // Handle headings
+        if el.level == 1 {
+          link(el_loc, chinesenumbering(..counter(heading).at(el_loc), location: el_loc))
+        } else {
+          link(el_loc, [
+            节
+            #chinesenumbering(..counter(heading).at(el_loc), location: el_loc)
+          ])
+        }
       }
-    })
+
+      // Remove suffix spacing
+      h(0em, weak: true)
+    }
   }
 
   let fieldname(name) = [
