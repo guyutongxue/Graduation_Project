@@ -25,7 +25,7 @@
   仿宋: ("Times New Roman", "FangSong"),
   宋体: ("Times New Roman", "Source Han Serif SC", "SimSun"),
   黑体: ("Calibri", "SimHei"),
-  楷体: ("Georgia", "KaiTi", "SimKai"),
+  楷体: ("Cambria", "KaiTi", "SimKai"),
   代码: ("New Computer Modern Mono", "Consolas", "Courier New"),
 )
 
@@ -323,6 +323,8 @@
   )
 }
 
+#let fix_id = par(text(size: 0pt, ""))
+
 #let conf(
   author: "张三",
   // enAuthor: "Zhang San",
@@ -464,9 +466,9 @@
   )
   set list(indent: 2em)
   set enum(indent: 2em)
-
-  show strong: it => textbf(it)
-  show emph: it => textit(it)
+  
+  show strong: it => textbf(it.body)
+  show emph: it => textit(it.body)
   show par: set block(spacing: lineSpacing)
   show raw: set text(font: 字体.代码)
 
@@ -557,6 +559,7 @@
       ]
       it.body
     }
+    #fix_id
   ]
 
   show ref: it => {

@@ -1,0 +1,11 @@
+{
+  "typst-lsp.exportPdf": "never",
+  "emeraldwalk.runonsave": {
+    "commands": [
+      {
+        "match": "\\.typ$",
+        "cmd": "typst compile ${file} ${fileDirname}/${fileBasenameNoExt}.pdf"
+      }
+    ]
+  }
+}
