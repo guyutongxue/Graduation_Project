@@ -434,11 +434,68 @@ JSON-RPC 是基于 JSON 的一个远程过程调用（Remote Procedure Call, RPC
 
 在 GUI-OJ 软件系统中，我选择了 _运行时库_（Runtime Library）的概念来解决这一问题。运行时库是一组函数的集合，它们可以被规则描述者直接调用，以完成一些常见的操作。例如，GUI-OJ 中的运行时库包含了字符串与数型数据的相互转换、简单的系统功能调用、图像比对等功能。运行时库的实现是由规则解释系统提供的，因此规则描述者可以直接调用运行时库中的函数，而无需关心其实现细节。
 
-下文将重点阐述图像比对功能。因为 GUI-OJ 的图像比对的目标是判别用户 2D 图形程序所产生的图像是否接近于标准图像；它与计算机视觉领域所述的图像比对目标有一定差距。在 2D 图形程序中，没有
+== 图像比对算法综述
 
-== 已有的图像比对算法考察
+下文将重点阐述图像比对功能。因为 GUI-OJ 的图像比对的目标是判别用户 2D 图形程序所产生的图像是否接近于标准图像；它与计算机视觉、人工智能领域所述的图像比对目标有一定差距。在 2D 图形程序中，没有明确的具名目标（如人物、车辆、水果等），取而代之的是构造简单、轮廓分明的几何图形（如正方形、圆等）。因此，基于通用的物品识别算法难以正常工作。
 
-== 原型中的图像比对算法设计
+其次，传统图像相似度/差异度算法如 MSE 或 SSIM，则是针对图片整体的色彩或特征，而不是针对图像中的特定物体。2D 图形程序中的图像可能由多个图形构成的，因此整体的色彩或特征并不能反映出图像中的物体的差异。例如，题目标准图像由若干色彩各异的几何图形得到，而学生程序的图形位置、色彩、形状均有较大差异时，MSE 或 SSIM 在整体上得到的性质是趋同的。很显然这种程序在判题上应当不予通过。
+
+最后考虑平凡的算法，即使用逐像素比对的简单算法。但这也有困难：学生可能提交的程序有轻微色差，或者位置上有小程度偏移，或者旋转角度不合适；但这些在教学领域上是可以被接受的误差。逐像素比对对于上述差异接受程度很低，因此不适用。
+
+因此综上所述，我针对 GUI-OJ 中所需的图像比对需求，设计了一种特殊的、专用的算法。
+
+== GUI-OJ 图像比对算法
+
+该算法的核心思想是：先提取画布中的所有可视元素，对每个元素的整体性状做分析，然后对元素之间的关系、以及背景相关性做分析，最后综合上述因素给出总体的相似度指标。
+
+具体来说，该算法分为三个步骤：
+
+$ op("Diff") (bold(A), bold(B)) = (1 - d_N) dot.op (w_S d_S + w_I d_I + w_R d_R + w_B d_B) $
+
+记 $cal(C)(bold(X))$ 为图像 $bold(X)$ 的轮廓构成的集合。记 $cal(L)_(bold(X)) = abs(cal(C)(bold(X)))$ 为图像 $bold(X)$ 的轮廓的个数。
+
+
+// 计数相似度
+
+$ d_N(bold(A), bold(B)) = abs(cal(L)_(bold(A)) - cal(L)_(bold(B))) / (1 - cal(L)_(bold(A))) $
+
+将 $cal(C)(bold(A))$ 与 $cal(C)(bold(B))$ 的元素按面积从大到小排列，取前 $min(cal(L)_(bold(A)), cal(L)_(bold(B)))$ 个，将这样两组序列转置为二元数对的序列，记为 $cal(U C)(bold(A), bold(B))$，称之为 $bold(A)$ 和 $bold(B)$ 的 _联合轮廓_ 。
+
+// 轮廓相似度
+
+$ d_S(bold(A), bold(B)) = sum_((a, b) in cal(U C)(bold(A), bold(B))) S(a) / (sum_(bold(A)) S) op("Hu")(a, b) $
+
+其中 $sum_(bold(A)) S$ 为 $cal(U C)(bold(A), bold(B))$ 中位于 $bold(A)$ 的轮廓的面积的和。
+
+// 图形相似度
+
+$ d_I(bold(A), bold(B)) = sum_((a, b) in cal(U C)(bold(A), bold(B))) S(a) / (sum_(bold(A)) S) op("SSIM")(bold(A)[a], bold(B)[b]) $
+
+// 位置相似度
+
+对于轮廓集合 $C$，定义距离矩阵 $bold(Delta)_C = { delta_(i j) }$，其中 $delta_(i j) = abs(M(c_i) - M(c_j))$，$c_i, c_j in C$。
+
+$ d_R(bold(A), bold(B)) = cases(
+  1 "                            ," abs( cal(U C)(bold(A), bold(B))) <= 1,
+  abs(delta_11 - delta_22) / max(delta_11, delta_22) "                  ," abs( cal(U C)(bold(A), bold(B))) = 2,
+  op("Mantel")(bold(Delta)_(cal(C)(bold(A))), bold(Delta)_(cal(C)(bold(B)))) " otherwise"
+) $
+
+// 背景颜色相似度
+
+记图像 $bold(X)$ 的背景部分，即去除所有轮廓的内含之后的剩余像素点集合为 $beta_(bold(X))=bold(X) - limits(union)_(c in cal(C)(bold(X))) integral_c$。记该像素点集的红通道、绿通道和蓝通道的平均值为 $R_beta_(bold(X))$、$G_beta_(bold(X))$ 和 $B_beta_(bold(X))$，取值 $[0, 1)$。
+
+记通道 $I$ 的颜色差 $Delta_I = I_beta_(bold(A)) - I_beta_(bold(B))$。
+
+$ d_B(bold(A), bold(B)) = cases(
+  sqrt(2 Delta_R^2 + 4 Delta_G^2 + 3 Delta_B^2) "," macron(R) < 1 / 2,
+  sqrt(3 Delta_R^2 + 4 Delta_G^2 + 2 Delta_B^2) "," macron(R) >= 1 / 2,
+) $
+
+其中 $macron(R) = 1/2 (R_beta_(bold(A)) + R_beta_(bold(B)))$。
+
+// https://en.wikipedia.org/wiki/Color_difference
+
 
 == 图像比对算法效果示例
 
