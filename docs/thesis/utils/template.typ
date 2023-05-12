@@ -31,16 +31,16 @@
 
 #let textit(it) = [
   #set text(font: 字体.楷体, style: "italic")
-  #h(0em, weak: true)
+  // #h(0em, weak: true)
   #it
-  #h(0em, weak: true)
+  // #h(0em, weak: true)
 ]
 
 #let textbf(it) = [
   #set text(font: 字体.黑体, weight: "semibold")
-  #h(0em, weak: true)
+  // #h(0em, weak: true)
   #it
-  #h(0em, weak: true)
+  // #h(0em, weak: true)
 ]
 
 #let lengthceil(len, unit: 字号.小四) = calc.ceil(len / unit) * unit
@@ -467,7 +467,10 @@
   set list(indent: 2em)
   set enum(indent: 2em)
   
-  show strong: it => textbf(it.body)
+  show strong: it => [
+    #set text(font: ("Source Han Sans SC"), weight: "bold")
+    #it.body
+  ]
   show emph: it => textit(it.body)
   show par: set block(spacing: lineSpacing)
   show raw: set text(font: 字体.代码)

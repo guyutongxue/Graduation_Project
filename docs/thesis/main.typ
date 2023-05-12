@@ -51,6 +51,11 @@
   doc,
 )
 
+#let citation = box(fill: red, radius: 3pt, inset: 3pt)[
+  #set text(fill: white)
+  来源请求
+]
+
 = 引言
 
 == OJ 系统简介
@@ -76,7 +81,7 @@ Wasik 在 @Wasik2018 中以数学方式定义了宏观的 OJ 系统。在该数�
 
 == 图形用户界面程序简介
 
-_图形用户界面_（Graphical User Interface，GUI）是指采用图形方式显示的计算机操作用户界面。与早期计算机使用的命令行界面相比，除了降低用户的操作负担之外，对于新用户而言，图形界面对于用户来说在视觉上更易于接受，学习成本大幅下降，也让电脑的大众化得以实现。 *CITATION NEEDED*
+_图形用户界面_（Graphical User Interface，GUI）是指采用图形方式显示的计算机操作用户界面。与早期计算机使用的命令行界面相比，除了降低用户的操作负担之外，对于新用户而言，图形界面对于用户来说在视觉上更易于接受，学习成本大幅下降，也让电脑的大众化得以实现。 #citation
 
 图形用户界面可以是具体的、运行在某绘图环境中的图形界面，也可以是抽象的，运行在某高层次画布（如 HTML、WXML 等）及相关虚拟机平台的图形界面。这些图形界面通常由图形元素构成，比如按钮、文本框、下拉菜单等。
 
@@ -153,15 +158,15 @@ Web 程序是当前互联网时代的最主流应用程序。它不仅应用在�
 
 在原型设计中，我们先假定 Web 程序只运行在浏览器中（且是现代浏览器，即符合 W3C 最近五年规范的浏览器），从而简化问题的处理。在该假设下，我们只需要使用一个遵循规范的、可由程序控制的浏览器，如 Chromium，就可以实现对 Web 程序的判题。
 
-在原型设计中，我采用了 Puppeteer 库 *CITATION NEEDED* 。该库可用于控制 Chromium 浏览器的行为，如加载页面、审查元素等等。Puppeteer 库提供了一个 Node.js 的 API，因此可以直接在 Node.js 环境中使用。稍后 @rdccs 所呈现的控制系统也在 Node.js 环境中运行，因此 Web 段的判题控制会相对容易很多。
+在原型设计中，我采用了 Puppeteer 库 #citation 。该库可用于控制 Chromium 浏览器的行为，如加载页面、审查元素等等。Puppeteer 库提供了一个 Node.js 的 API，因此可以直接在 Node.js 环境中使用。稍后 @rdccs 所呈现的控制系统也在 Node.js 环境中运行，因此 Web 段的判题控制会相对容易很多。
 
 另一方面，我们还需要将 Web 程序呈现在网页上。我们假定目前判题后端接收到的是一系列静态网页素材，那么浏览器可以有两种方式加载这些素材：
 - 通过 HTTP 服务器加载，这是最常见的方式，也是原型设计采用的方式。
-- 通过本地文件系统协议（`file://`）加载，这种方式可以避免 HTTP 服务配置，拥有更优的性能。但是本地文件系统协议的跨域访问通常是被禁止的 *CITATION NEEDED* ，从而许多功能无法正常运行。
+- 通过本地文件系统协议（`file://`）加载，这种方式可以避免 HTTP 服务配置，拥有更优的性能。但是本地文件系统协议的跨域访问通常是被禁止的 #citation ，从而许多功能无法正常运行。
 
 #fix_id
 
-为了尽可能在生产环境模拟 Web 程序的运作，我们选择本地启动一个轻量的 HTTP 服务器。在原型设计中，我们使用了 Fastify 库 *CITATION NEEDED*。它也是 Node.js 环境下的新型 HTTP 服务端库，相比传统的 Express 等库，它的性能更好。
+为了尽可能在生产环境模拟 Web 程序的运作，我们选择本地启动一个轻量的 HTTP 服务器。在原型设计中，我们使用了 Fastify 库 #citation。它也是 Node.js 环境下的新型 HTTP 服务端库，相比传统的 Express 等库，它的性能更好。
 
 对于网页中的特定元素选择，可直接使用 CSS 选择器语法。它在 Chromium 浏览器内部受支持，且在 JavaScript 中也有对应的 API。
 
@@ -189,9 +194,9 @@ Windows 窗体（Windows Form）程序，是 Windows 平台上基于窗口的最
 
 Windows 窗体程序由控件（Control）组成，每个控件都有其独立的句柄。因此，我们可以通过获取一个 Windows 窗体程序的控件树，根据需要选定其中控件的句柄，然后基于句柄进行操作。
 
-从 Windows 95 开始，系统便内置了可供程序操作的操作系统接口，其名为 Microsoft Active Accessibility（MSAA） *CITATION NEEDED*。MSAA 为 Windows 窗体程序提供了一套标准的、可供程序访问的接口，包括控件树的获取、控件属性的获取、控件操作的执行等等。MSAA 也是早期 Windows 窗体程序的无障碍访问渠道，因此，任何一个 Windows 窗体程序都支持 MSAA （但非 Windows 窗体的程序，即“自绘窗体”，仍然使用起来有不便之处）。在随后的数十年内，该功能逐步升级为 UI Automation（UIA），以 C\# 和 C++ 的形式提供接口。 *CITATION NEEDED*
+从 Windows 95 开始，系统便内置了可供程序操作的操作系统接口，其名为 Microsoft Active Accessibility（MSAA） #citation。MSAA 为 Windows 窗体程序提供了一套标准的、可供程序访问的接口，包括控件树的获取、控件属性的获取、控件操作的执行等等。MSAA 也是早期 Windows 窗体程序的无障碍访问渠道，因此，任何一个 Windows 窗体程序都支持 MSAA （但非 Windows 窗体的程序，即“自绘窗体”，仍然使用起来有不便之处）。在随后的数十年内，该功能逐步升级为 UI Automation（UIA），以 C\# 和 C++ 的形式提供接口。 #citation
 
-原型设计并没有选择直接调用 UIA，而是选择其上的一个包装库 FlaUI  *CITATION NEEDED*。该库为 C\# 库，可以简单地用 .NET 运行时来测试所有 Windows 窗体程序。在原型设计中，我们使用了 .NET 7 运行时；虽然它不在操作系统上预装，但是能够获得更多的性能提升，并提升开发人员的编码效率。
+原型设计并没有选择直接调用 UIA，而是选择其上的一个包装库 FlaUI  #citation。该库为 C\# 库，可以简单地用 .NET 运行时来测试所有 Windows 窗体程序。在原型设计中，我们使用了 .NET 7 运行时；虽然它不在操作系统上预装，但是能够获得更多的性能提升，并提升开发人员的编码效率。
 
 不同于 DOM，Windows 窗体控件树没有一个合适的控件选择语法。因此我提供了如下选择方式：
 - 基于文本的选择：给定按钮文本、标签文本或文本框的文本，然后查找所有空间中符合文本或包含文本的控件。
@@ -223,7 +228,7 @@ Windows 窗体程序由控件（Control）组成，每个控件都有其独立�
 
 Python 是当前最流行的编程语言，也是非专业计算机学习者最常用的编程语言。Python `turtle` 是 Python 的一个标准库，它提供了一个简单的绘图接口，可以用来绘制 2D 图形。
 
-`turtle` 库的设计来源于 Logo 编程语言的绘图库。*CITATION NEEDED* 该绘图库假想一只带着画笔的海龟可以接受简单的命令，例如向前走 100 步，或者左转 30 度。通过对这只海龟发送命令，可以让它绘制出较为复杂的图形，例如正方形，三角形，圆等。*CITATION NEEDED*  Python 的 `turtle` 库提供若干全局函数，以实现类似 Logo 绘图的命令式接口；同时，它也提供面向对象的接口，以实现更为复杂的图形。*CITATION NEEDED*
+`turtle` 库的设计来源于 Logo 编程语言的绘图库。#citation 该绘图库假想一只带着画笔的海龟可以接受简单的命令，例如向前走 100 步，或者左转 30 度。通过对这只海龟发送命令，可以让它绘制出较为复杂的图形，例如正方形，三角形，圆等。#citation  Python 的 `turtle` 库提供若干全局函数，以实现类似 Logo 绘图的命令式接口；同时，它也提供面向对象的接口，以实现更为复杂的图形。#citation
 
 对于这类程序的判别，需要考虑如下问题：
 + 作为解释型语言，需要提供合适的解释器即运行环境；
@@ -260,7 +265,7 @@ Python 是当前最流行的编程语言，也是非专业计算机学习者最�
 
 对于 Electron 或 Tauri 等基于 Web 界面的程序，可以使用类似“Web 程序”判题后端的思路，但是在细节上要做大量修改，比如直接启动程序而非额外的 HTTP 服务器；使用 Puppeteer 时，需要将 Chromium 指定为 Electron 内的 Chromium 或系统的 WebView 等。
 
-非 Windows 的 GUI 程序则更加难以处理。非 Windows 系统上，GUI 程序的实现多种多样：既可以直接使用 X *CITATION NEEDED*；也可以使用 GTK、Qt 等跨平台的 GUI 库。对于这些程序，需要针对性地设计判题后端，没有很好的统一处理的途径。因此，本次原型设计对非 Windows 的 GUI 程序暂时不做考虑。
+非 Windows 的 GUI 程序则更加难以处理。非 Windows 系统上，GUI 程序的实现多种多样：既可以直接使用 X #citation；也可以使用 GTK、Qt 等跨平台的 GUI 库。对于这些程序，需要针对性地设计判题后端，没有很好的统一处理的途径。因此，本次原型设计对非 Windows 的 GUI 程序暂时不做考虑。
 
 = 判题规则实现 <transpiler>
 
@@ -268,7 +273,7 @@ Python 是当前最流行的编程语言，也是非专业计算机学习者最�
 
 对于传统的 OJ，只需给定若干组测试输入输出样例，即可判定用户程序的正确性。但是对于 GUI 程序，这种方式并不适用。因此，需要设计一种新的判题规则描述方式。
 
-考察非传统的 OJ，如基于自定义规则的 AutoLab，则使用了规约式的设计方法：要求教师或比赛组织者提供一个程序（或脚本），对于给定的用户程序，输出其得分。 *CITATION NEEDED* 
+考察非传统的 OJ，如基于自定义规则的 AutoLab，则使用了规约式的设计方法：要求教师或比赛组织者提供一个程序（或脚本），对于给定的用户程序，输出其得分。 #citation 
 // https://docs.autolabproject.com/lab/#writing-autograders 
 这种方式的优点是灵活性高，可以适应各种各样的题目类型，但是缺点也很明显：需要教师或比赛组织者极高的编程能力，且必须对 GUI 程序十分熟悉，以给出各种细节的判定规则。
 
@@ -280,7 +285,7 @@ Python 是当前最流行的编程语言，也是非专业计算机学习者最�
 
 == 基于现有编程语言的设计
 
-充分利用已有的库，是软件设计的一大原则，即“不重复造轮子”。*CITATION NEEDED*
+充分利用已有的库，是软件设计的一大原则，即“不重复造轮子”。#citation
 // https://en.wikipedia.org/wiki/Reinventing_the_wheel#cite_ref-1
 因此我们首先考察基于已有编程语言设计规则描述的方式是否可行。
 
@@ -326,7 +331,7 @@ test {
 
 考虑到 DSL 的编写成本，我们可以考虑使用已有的编程语言的抽象语法树（Abstract Syntax Tree, AST）来实现 DSL 的解析。这样做的好处在于，我们可以直接使用已有的编译器前端来解析 DSL，而无需自行编写解析器，从而减少开发成本。在得到 AST 后，再对其进行树的遍历算法，进行代码生成或规则执行等操作。
 
-本原型实现使用了 JavaScript AST，因为 JavaScript 具有统一的 AST 格式 ESTree *CITATION NEEDED* 
+本原型实现使用了 JavaScript AST，因为 JavaScript 具有统一的 AST 格式 ESTree #citation 
 // https://github.com/estree/estree
 ，且有众多的解析器支持（如 Acorn、Babel、ESLint、SWC 等等），生态颇为成熟。原型实现使用了 Babel 作为解析器，并以 Babel 插件的形式给出具体的解析方法，最终产生可执行的 JavaScript 代码。一个具体的规则代码示例如 @code_ast_rule 所示。
 
@@ -369,7 +374,7 @@ test {
 
 #fix_id
 
-其中，_Block_ 的定义参见 ECMAScript 2023 标准 *CITATION NEEDED*。
+其中，_Block_ 的定义参见 ECMAScript 2023 标准 #citation。
 // https://tc39.es/ecma262/
 该 DSL 主要由 _RuleCategoryDirective_ 和若干个 _RuleCase_ 构成；前者指代判题类别（@categories），后者则指代每一个测试用例的具体流程。
 
@@ -408,7 +413,7 @@ test {
 
 首先对需求进行分析。该跨进程通信是单方面（RDCCS）发起的，而非双向主动通信，因此可以用一个半双工通信信道解决问题。考虑到判题后端的独立性，其必然以进程为基本单位，故两者的通信是跨进程的（Inter-Process Communitation, IPC）。跨进程通信在最底层可以基于管道（Pipe）、套接字（Socket）等操作系统设施，但是在实际使用中我们需要更高层的抽象以简化开发的复杂度。因此，我选择了基于 HTTP 及 JSON-RPC 的通信方案。
 
-JSON-RPC 是基于 JSON 的一个远程过程调用（Remote Procedure Call, RPC）协议。它的基本思想是，将函数调用转换为 JSON 对象，以 HTTP 请求、TCP 请求或管道的形式发送给服务端，服务端执行相应的操作，并将结果以 JSON 对象的形式返回给客户端。JSON-RPC 在 C++、Python、C\# 语言有第三方库提供包装，为我们的编程工作提供便利 *CITATION NEEDED*。
+JSON-RPC 是基于 JSON 的一个远程过程调用（Remote Procedure Call, RPC）协议。它的基本思想是，将函数调用转换为 JSON 对象，以 HTTP 请求、TCP 请求或管道的形式发送给服务端，服务端执行相应的操作，并将结果以 JSON 对象的形式返回给客户端。JSON-RPC 在 C++、Python、C\# 语言有第三方库提供包装，为我们的编程工作提供便利 #citation。
 
 与判题后端通信的具体的流程如下。判题开始前，RDCCS 获取一个空闲的 TCP 端口号，并以该端口号作为启动参数启动判题后端。判题后端需要作为服务端监听该端口号上的 TCP 请求。当 RDCCS 检测到该端口号被监听后，即可开始判题流程。当 RDCCS 遇到后端操纵对象的操作时，会将该操作转换为 JSON-RPC 请求，并以 HTTP POST 请求形式发送给判题后端。判题后端收到请求后，会执行相应的操作，并将结果按 JSON-RPC 的约定返回给 RDCCS。类似地，当测试用例结束或者判题流程结束时，RDCCS 会向判题后端发送相应的通知或请求，以结束或开始新的判题操作。
 
@@ -418,7 +423,7 @@ JSON-RPC 是基于 JSON 的一个远程过程调用（Remote Procedure Call, RPC
 
 由于前端的多样性，与前端通信的方法也不尽相同。原型实现中的前端为简单 Web 项目，因此原型采用 HTTP 作为通信方法。
 
-原型中提供的通信数据包括：开始判题时的判题规则和用户程序、判题过程中的判题结果和判题结束得到的判题结果。前者是由前端主动发起的，后两者则是由 RDCCS 主动发起的，因此该通信的最佳实践应当为双端主动通信；信道选择上应为全双工的。在 HTTP 及更高层次的通信协议中，WebSocket 最为适合。*CITATION NEEDED* 原型设计中出于项目复杂度的考虑，没有使用 WebSocket，而是直接使用基于简单 HTTP 的客户端轮询；相关的优劣讨论将在 @frontend 中讨论。
+原型中提供的通信数据包括：开始判题时的判题规则和用户程序、判题过程中的判题结果和判题结束得到的判题结果。前者是由前端主动发起的，后两者则是由 RDCCS 主动发起的，因此该通信的最佳实践应当为双端主动通信；信道选择上应为全双工的。在 HTTP 及更高层次的通信协议中，WebSocket 最为适合。#citation 原型设计中出于项目复杂度的考虑，没有使用 WebSocket，而是直接使用基于简单 HTTP 的客户端轮询；相关的优劣讨论将在 @frontend 中讨论。
 
 按照上述分析，原型中的 RDCCS 接受来自前端的如下请求：
 - `POST /judge`：提交一个判题请求。请求体为 JSON 对象，包含判题规则和用户程序的信息。RDCCS 先分配一个判题请求 ID 并返回给前端，并启动新协程调用规则解释系统，然后执行 @ipc 所述通信流程。
@@ -446,46 +451,55 @@ JSON-RPC 是基于 JSON 的一个远程过程调用（Remote Procedure Call, RPC
 
 == GUI-OJ 图像比对算法
 
-该算法的核心思想是：先提取画布中的所有可视元素，对每个元素的整体性状做分析，然后对元素之间的关系、以及背景相关性做分析，最后综合上述因素给出总体的相似度指标。
+该算法的核心思想是：先提取画布中的所有可视元素，对每个元素的整体性状做分析，然后对元素之间的关系、以及背景相关性做分析，最后综合上述因素给出总体的相似度指标。因此，该算法分为如下三个步骤。 
 
-具体来说，该算法分为三个步骤：
+*记号约定* 在本章的剩余部分，以加粗斜体字母如 $bold(X)$ 表示图像，其本质为三维张量，维数为长像素数、宽像素数和通道数。为方便数学描述，其取值总是在 $[0, 1)$ 之间。在 GUI-OJ 工作时，会截取 _用户程序图像_ 并与 _标准图像_ 进行比对。在不引起歧义的情况下，$bold(A)$ 表示标准图像，$bold(B)$ 表示用户程序图像。
 
-$ op("Diff") (bold(A), bold(B)) = (1 - d_N) dot.op (w_S d_S + w_I d_I + w_R d_R + w_B d_B) $
+*步骤 1* 提取画布中的可视元素。该步骤的具体实现是通过边缘检测算法检测到图像中的所有边缘，进行降采样后，边缘所围起的闭合区域即为一个可视元素。
 
-记 $cal(C)(bold(X))$ 为图像 $bold(X)$ 的轮廓构成的集合。记 $cal(L)_(bold(X)) = abs(cal(C)(bold(X)))$ 为图像 $bold(X)$ 的轮廓的个数。
+规定数学记号如下。记 $cal(C)(bold(X))$ 为图像 $bold(X)$ 的轮廓构成的集合。记 $cal(L)_(bold(X)) = abs(cal(C)(bold(X)))$ 为图像 $bold(X)$ 的轮廓的个数。
 
-
-// 计数相似度
+随后，统计用户程序图像和标准图像的元素个数差异，依此计算 _计数相似度_ $d_N$。其计算方式为：
 
 $ d_N(bold(A), bold(B)) = abs(cal(L)_(bold(A)) - cal(L)_(bold(B))) / (1 - cal(L)_(bold(A))) $
 
+#fix_id
+
+*步骤 2* 将两张图片的元素进行配对，并计算每对可视元素之间的内在差异。
+
 将 $cal(C)(bold(A))$ 与 $cal(C)(bold(B))$ 的元素按面积从大到小排列，取前 $min(cal(L)_(bold(A)), cal(L)_(bold(B)))$ 个，将这样两组序列转置为二元数对的序列，记为 $cal(U C)(bold(A), bold(B))$，称之为 $bold(A)$ 和 $bold(B)$ 的 _联合轮廓_ 。
 
-// 轮廓相似度
+首先，比较每个轮廓形状的相似度。以下是 _轮廓相似度_ $d_S$ 的计算方法，核心部分用 HuMoment 算法给出：
 
-$ d_S(bold(A), bold(B)) = sum_((a, b) in cal(U C)(bold(A), bold(B))) S(a) / (sum_(bold(A)) S) op("Hu")(a, b) $
+$ d_S(bold(A), bold(B)) = sum_((a, b) in cal(U C)(bold(A), bold(B))) S(a) / (sum_(bold(A)) S) (1 - (op("Hu")(a, b)) / 8) $
 
 其中 $sum_(bold(A)) S$ 为 $cal(U C)(bold(A), bold(B))$ 中位于 $bold(A)$ 的轮廓的面积的和。
 
-// 图形相似度
+随后，比较每个轮廓内部图像的相似度；此时，直接简单地套用 SSIM 算法即可。以下是 _图像相似度_ $d_I$ 的计算方法。
 
 $ d_I(bold(A), bold(B)) = sum_((a, b) in cal(U C)(bold(A), bold(B))) S(a) / (sum_(bold(A)) S) op("SSIM")(bold(A)[a], bold(B)[b]) $
 
-// 位置相似度
+#fix_id
 
-对于轮廓集合 $C$，定义距离矩阵 $bold(Delta)_C = { delta_(i j) }$，其中 $delta_(i j) = abs(M(c_i) - M(c_j))$，$c_i, c_j in C$。
+再次，对于每个轮廓之间的相对位置，比较两个图像的相似度。定义轮廓的 $c$ 的重心为 $M(c)$；对于轮廓集合 $C$，定义距离矩阵 $bold(Delta)_C = { delta_(i j) }$，其中 $delta_(i j) = abs(M(c_i) - M(c_j))$，$c_i, c_j in C$。
+
+两个图像的 _相对位置相似度_ $d_R$ 分情况以下式定义：
 
 $ d_R(bold(A), bold(B)) = cases(
   1 "                            ," abs( cal(U C)(bold(A), bold(B))) <= 1,
-  abs(delta_11 - delta_22) / max(delta_11, delta_22) "                  ," abs( cal(U C)(bold(A), bold(B))) = 2,
+  abs(delta_(12,bold(A)) - delta_(12,bold(B))) / max(delta_(12,bold(A)), delta_(12,bold(B))) "              ," abs( cal(U C)(bold(A), bold(B))) = 2,
   op("Mantel")(bold(Delta)_(cal(C)(bold(A))), bold(Delta)_(cal(C)(bold(B)))) " otherwise"
 ) $
 
-// 背景颜色相似度
+#fix_id
 
-记图像 $bold(X)$ 的背景部分，即去除所有轮廓的内含之后的剩余像素点集合为 $beta_(bold(X))=bold(X) - limits(union)_(c in cal(C)(bold(X))) integral_c$。记该像素点集的红通道、绿通道和蓝通道的平均值为 $R_beta_(bold(X))$、$G_beta_(bold(X))$ 和 $B_beta_(bold(X))$，取值 $[0, 1)$。
+若联合轮廓只有一个元素，那么不考虑相对位置相似度（即设为 $1$）。只有两个元素时，以两个元素之间距离的差作为相似度。三个及以上元素时，使用 Mantel 测试算法判断相似程度，该算法常在生态学研究上用于判断环境效应是否存在。#citation
 
-记通道 $I$ 的颜色差 $Delta_I = I_beta_(bold(A)) - I_beta_(bold(B))$。
+最后考察背景部分的相似程度。考虑到 2D 图形界面程序的简单性，此处只判断颜色的相似程度即颜色差。
+
+记图像 $bold(X)$ 的背景部分，即去除所有轮廓的内含之后的剩余像素点集合为 $beta_(bold(X))=bold(X) - limits(union)_(c in cal(C)(bold(X))) integral_c$。记该像素点集的红通道、绿通道和蓝通道的平均值为 $R_beta_(bold(X))$、$G_beta_(bold(X))$ 和 $B_beta_(bold(X))$。记通道 $I$ 的颜色差 $Delta_I = I_beta_(bold(A)) - I_beta_(bold(B))$。
+
+则 _背景颜色相似度_ $d_B$ 的定义由下式给出；它根据人眼对三原色的敏感度做了权重调整。#citation
 
 $ d_B(bold(A), bold(B)) = cases(
   sqrt(2 Delta_R^2 + 4 Delta_G^2 + 3 Delta_B^2) "," macron(R) < 1 / 2,
@@ -496,28 +510,48 @@ $ d_B(bold(A), bold(B)) = cases(
 
 // https://en.wikipedia.org/wiki/Color_difference
 
+*步骤 3* 综合步骤 2 分元素得到的 $d_N$、$d_S$、$d_I$、$d_R$ 和 $d_B$，给出整体图像相似度的公式如下：
+
+$ op("Diff") (bold(A), bold(B)) = (1 - d_N) dot.op (w_S f(d_S) + w_I f(d_I) + w_R d_R + w_B d_B) $
+
+其中 $w_S$、$w_I$、$w_R$ 和 $w_B$ 为权重参数，在原型中取值分别为 $0.3$、$0.3$、$0.2$ 和 $0.2$。$f$ 为非线性调整函数；当图像比较相似时 $d_S$ 和 $d_I$ 差异过小，不适合判题。$f(x)$ 在原型中取值为 $x^6$。
 
 == 图像比对算法效果示例
 
-== 图像比对算法的缺陷与改进方向
+// insert a table here
+// sun - sun (position diff)
+// sun - lesser sun
+// four point - three point
+// circle - square
+// background diff
 
-== 运行时库的改进方向
+== 图像比对算法的缺陷与改进
+
+在设计算法时，刻意地忽略了元素的平移效应，因为用户程序不太可能完美复刻标准图像中的具体位置。但是，元素大小和元素的旋转却没有得到考虑。这也是上述算法的两个严重问题。
+
+在处理元素大小时，相同大小的元素容易出现匹配联合轮廓时的错误匹配。解决方法：在比较大小时保留一定阈值，在接近阈值范围内的元素使用基于相对位置的匹配。
+
+在处理元素旋转时，由于采用了 Hu-矩比较轮廓形状，因此旋转因素被忽略。这导致判题程序将认为旋转过的元素也是正确的，这不符合预期结果。解决方法：改用不使用 Hu-矩的轮廓比较算法，目前还需要进一步调研。
+
+== 运行时库的部署
+
+== 运行时库的改进
 
 = 宏语言 DefDef <defdef>
 
 = 前端用户界面实现 <frontend>
 
-== 本原型设计的前端用户界面
+== 原型设计的前端
 
 == 依赖于 DefDef 的规则智能提示系统
 
-== GUI-OJ 系统的前端功能性考察
+== 完整的 GUI-OJ 系统前端概述
 
 = 用户程序安全性 <security>
 
 == 通用 OJ 系统的安全功能考察
 
-== 本原型设计的安全性缺陷
+== 原型设计的安全性缺陷
 
 == GUI-OJ 系统的可用安全性保障措施考察
 
