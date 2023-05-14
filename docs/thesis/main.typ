@@ -369,14 +369,15 @@ test {
   #h(2em) _RuleCase_ \
   #h(2em) _RuleCases_ _RuleCase_ \
   _RuleCase_ `::` \
+  #h(2em) _ImportDeclaration_ \
+  #h(2em) _LexicalDeclaration_ |
   #h(2em) _Block_
 ]
 
-#fix_id
-
-其中，_Block_ 的定义参见 ECMAScript 2023 标准 #citation。
+其中，_ImportDeclaration_、_LexicalDeclaration_ 和 _Block_ 的定义参见 ECMAScript 2023 标准 #citation。
 // https://tc39.es/ecma262/
-该 DSL 主要由 _RuleCategoryDirective_ 和若干个 _RuleCase_ 构成；前者指代判题类别（@categories），后者则指代每一个测试用例的具体流程。
+
+该 DSL 主要由 _RuleCategoryDirective_ 和若干个 _RuleCase_ 构成；前者指代判题类别（@categories），后者中的每个 _Block_ 则指代一个测试用例的具体流程。（_ImportDeclaration_ 见 @rtlib，_LexicalDeclaration_ 见 @frontend。）
 
 在流程中，每条语句都会作为测试步骤解释执行；若该语句为 _LabelledStatement_ 且 _LabelIdentifier_ 为 `assert`，那么就将其解释为判定步骤；否则解释为操作步骤。判定步骤要求其 _Statement_ 为 _ExpressionStatement_，进一步求值并检查结果是否为实值（truthy），来得到判定结果。操作步骤则直接执行其 _Statement_。
 
@@ -533,15 +534,80 @@ $ op("Diff") (bold(A), bold(B)) = (1 - d_N) dot.op (w_S f(d_S) + w_I f(d_I) + w_
 
 在处理元素旋转时，由于采用了 Hu-矩比较轮廓形状，因此旋转因素被忽略。这导致判题程序将认为旋转过的元素也是正确的，这不符合预期结果。解决方法：改用不使用 Hu-矩的轮廓比较算法，目前还需要进一步调研。
 
-== 运行时库的部署
+== 运行时库的部署与改进
 
-== 运行时库的改进
+运行时库是为了补足规则解释系统采用的 DSL 的不足而设计的，因此它被设计为嵌入规则解释系统。
+
+在原型实现的 DSL 中，引入了 JavaScript 的 _ImportDeclaration_，即导入声明；若该声明来自某个特定的模块标识符（在原型中为 `graduate`），则将其解释为对运行时库中实体的导入。实现上，只需在 Babel 转译过程中将该标识符翻译为运行时库 JavaScript 模块的路径即可。
+
+对于如图像相似度算法等非 JS 实现的程序，则通过 Node.js `child_process` 模块启动 Python 解释器执行。这会导致性能降低并导致性能瓶颈，但目前系统的功能较为简单，因而暂时忽略此问题。后续可考虑改为基于 C 接口的 FFI 调用。
+
+此外，部分运行时库接口的设计不合理，如读取图片数据需要从第三方 URL 加载等等。这些设计的改进需要配合整体系统部署以及前端实现的改进。
 
 = 宏语言 DefDef <defdef>
+
+本章讨论专为 GUI-OJ 设计的一种宏性质 DSL——DefDef。
+
+GUI-OJ 与传统 OJ 的最大不同点即在于不同判题后端提供功能各异的图形界面判题功能。DefDef（可认为是 Definition-of-the-Definition 的缩写，即“判题功能定义的定义”）以宏语言的方式，提供了在不同的系统模块中组织这些功能的能力。
+
+在 @packages 所述的系统模块结构中，涉及判题功能列表的模块有：
+- 判题后端：需要作为 JSON-RPC 服务端，给出判题功能的具体实现；
+- RDCCS：需要将各项判题功能描述作为 JSON-RPC 请求转发给判题后端；
+- 判题规则描述系统：需要将规则描述转换为对应的 JSON-RPC 请求格式；
+- 前端：需要生成相关的智能提示、可视化编辑信息等。
+
+上述四个组件都或多或少需要用到判题功能的信息，若分开管理它们，则难以同步、更新迭代。因此 DefDef 提供了这样的管理方法：编写一份 DefDef 源码，通过 DefDef 转译器生成上述各个模块所需要的格式的信息，从而实现统一管理。
+
+DefDef 使用解析表达文法（Parsing Expression Grammar，PEG）作为文法格式。它相比传统的上下文无关文法（Context-Free Grammar，CFG）更加简洁，且可以直接转换为递归下降解析器。出于篇幅的原因，我不在这里列出完整的 DefDef 文法定义；但可以从一个 DefDef 的示例来了解它的基本结构。
+
+#codeblock([
+
+```
+using web;
+
+[[description = "Get the count of elements matching the selector.", blockly = "count of $(selector=#id)"]]
+define $(selector: string).count: number
+  => selector with { component: "count" }
+
+using form;
+
+[[description = "Get form title.", blockly = "form's title"]]
+define win.title: string
+  => title
+```
+],
+  caption: [`sample.dd`，原型实现 DefDef 的一部分],
+  outline: true
+) <defdef-sample>
+
+DefDef 的设计借鉴了 C/C++、TypeScript 和 Rust。它的语法简单，目前只有三个关键字 `using` `define` 和 `with`。其中 `using` 用于表明判题类别，`define` 用于标记规则代码形式，`with` 用来标记 JSON-RPC 的请求参数格式。
+
+DefDef 的基本结构是一个个的定义，对应于一项判题后端的功能。每个定义由三部分组成：
+- 特性（Attributes，可选）：用于描述该定义的特性，如描述、可视化编辑信息等；
+- 规则代码形式：在规则代码中使用后端操纵对象的形式，如 `$("...").count`，带有类型信息；
+- JSON-RPC 请求格式：用于描述该功能对应的 JSON-RPC 请求格式。
+
+#fix_id
+
+DefDef 的规则代码形式采用“链式调用”格式，即函数调用运算符和成员访问运算符的结合；该写法自由度较高，且适用于大多数场景。比如 @defdef-sample 中的 `$(selector: string).count` 规则形式就表明规则代码中的 `$("button").count` 代码指代一个后端操纵命令，其对应的 JSON-RPC 请求方法名为 `selector`，附加参数为 `component: "count"`。
+
+GUI-OJ 的规则代码形式秉持着直观、易用的原则；如上述规则形式中的 `$` 操纵对象就来自于常用的 jQuery 库的选择器；又如 `win.title` 规则形式中的 `win` 就指代 Windows 窗口。
+
+每个规则的额外信息可以通过特性或者特性内部的子语法来描述。如 `blockly` 特性代表前端可视化编辑器的相关工具定义；其内部的 `#` 占位符子语法用来标记该工具定义的接口。
+
+此外，DefDef 可以通过预处理命令嵌入其它编程语言的信息。目前阶段，它支持 `#ts` `#endts` 预处理命令来嵌入 TypeScript 代码，以更好地生成供前端使用的智能提示信息。
+
+DefDef 语言使用 `deftools` 转译器读取。该转译器会生成每个模块所需的数据。原型设计中，DefDef 会对规则解释系统和前端生成相关数据，包括从代码形式到 JSON-RPC 请求的转换规则、智能提示（类型）信息和可视化编辑信息等。
+
+DefDef 的语义比较完备，因此还可以在如下模块中嵌入；它们尚未在本论文的原型设计中实现：
+- 提供给 RDCCS 的防御式编程检查：检查来自规则解释系统的 JSON-RPC 请求是否在 DefDef 定义中，该设定可防止来自恶意的规则编写者的攻击；
+- 提供给判题后端的单元测试模块：检查判题后端是否实现了全部 DefDef 所给定的功能。
 
 = 前端用户界面实现 <frontend>
 
 == 原型设计的前端
+
+
 
 == 依赖于 DefDef 的规则智能提示系统
 
