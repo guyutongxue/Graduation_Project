@@ -612,7 +612,9 @@
       }
 
       // Remove suffix spacing
-      h(0em, weak: true)
+      if el.func() == heading and el.level == 1 {
+        h(0em, weak: true)
+      }
     }
   }
 
