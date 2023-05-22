@@ -13,19 +13,56 @@
 #let enKeywords = ("programming design", "graphical user interface", "online programming", "online judge", "experimental teaching")
 
 #let acknowledgements = [
-  首先，我感谢邓习峰导师提供了这个选题，以及让我研究这类问题的机会。在理科为主、算法至上的北京大学教育氛围下，提出如此贴近现实环境、教育教学、工业生产的题目实在不容易。该题目也充分发挥了我所擅长的软件工程、操作系统、编译原理等知识的运用。
+  首先，我感谢邓习峰导师提供了这个选题，以及让我研究这类问题的机会。在理科为主、算法至上的北京大学教育氛围下，提出如此贴近现实环境、教育教学、工业生产的题目实在不容易。该题目也充分运用了我所擅长的软件工程、操作系统、编译原理相关的知识。
 
-  感谢舍友郭易提供的图像识别算法思路；没有他的帮助，本论文可能要花更多的时间才能完善。
+  感谢舍友#link("https://github.com/defensetongxue")[郭易]提供的图像识别算法思路；没有他的帮助，本论文可能要花更多的时间才能完善。
 
-  感谢 Node.js 和 Python 开发者提供的优秀的语言设计和开发框架。感谢以下开源第三方库的开发者：pnpm、Babel、Fastify、adm-zip、get-port、jayson、nodemon、tmp 与 tmp-promise、wait-port、Rollup、TypeScript、FlaUI、AustinHarris.JsonRpc、React、allotment、axios、Blockly、DaisyUI、Monaco Editor、RxJS、PostCSS、TailwindCSS、Vite、xmake、cpp-httplib、nlohmann_json、turbobase64、Boost、json-rpc-cxx、unique_resource、dts-bundle-generator、tsx、Peggy、rimraf、DefinitelyTyped 和 Puppeteer。本论文的实现离不开上述优秀的开源项目。
+  感谢 #link("https://nodejs.org")[Node.js] 和 #link("https://www.python.org")[Python] 开发者提供的优秀的语言设计和开发框架。感谢以下开源第三方库的开发者：
+  #link("https://pnpm.io/")[pnpm]、
+  #link("https://babe.dev/")[Babel]、
+  #link("https://www.fastify.io/")[Fastify]、
+  #link("https://github.com/cthackers/adm-zip")[adm-zip]、
+  #link("https://github.com/sindresorhus/get-port")[get-port]、
+  #link("https://jayson.tedeh.net/4.0.0/")[jayson]、
+  #link("https://nodemon.io/")[nodemon]、
+  #link("https://github.com/raszi/node-tmp")[tmp]、
+  #link("https://github.com/benjamingr/tmp-promise")[tmp-promise]、
+  #link("https://github.com/dwmkerr/wait-port")[wait-port]、
+  #link("https://rollupjs.org/")[Rollup]、
+  #link("https://www.typescriptlang.org/")[TypeScript]、
+  #link("https://github.com/FlaUI/FlaUI")[FlaUI]、
+  #link("https://github.com/Astn/JSON-RPC.NET")[AustinHarris.JsonRpc]、
+  #link("https://react.dev/")[React]、
+  #link("https://allotment.mulberryhousesoftware.com/")[allotment]、
+  #link("https://axios-http.com/")[axios]、
+  #link("https://developers.google.com/blockly/")[Blockly]、
+  #link("https://daisyui.com/")[DaisyUI]、
+  #link("https://microsoft.github.io/monaco-editor/")[Monaco Editor]、
+  #link("https://rxjs.dev/")[RxJS]、
+  #link("https://postcss.org/")[PostCSS]、
+  #link("https://tailwindcss.com/")[TailwindCSS]、
+  #link("https://vitejs.dev/")[Vite]、
+  #link("https://xmake.io/")[xmake]、
+  #link("https://github.com/yhirose/cpp-httplib")[cpp-httplib]、
+  #link("https://json.nlohmann.me/")[nlohmann_json]、
+  #link("https://github.com/powturbo/Turbo-Base64/")[Turbo-Base64]、
+  #link("https://boost.org/")[Boost]、
+  #link("https://github.com/jsonrpcx/json-rpc-cxx")[json-rpc-cxx]、
+  #link("https://github.com/okdshin/unique_resource")[okdshin/unique_resource]、
+  #link("https://github.com/timocov/dts-bundle-generator")[dts-bundle-generator]、
+  #link("https://github.com/esbuild-kit/tsx")[tsx]、
+  #link("https://peggyjs.org/")[Peggy]、
+  #link("https://github.com/isaacs/rimraf")[rimraf]、
+  #link("https://definitelytyped.github.io/")[DefinitelyTyped] 和 
+  #link("https://pptr.dev/")[Puppeteer]。本论文的实现离不开上述优秀的开源项目。
 
   感谢 Typst 项目的开发者，提供了如此易用的论文排版工具。感谢 GitHub 用户 #link("https://github.com/lucifer1004")[lucifer1004] 提供的基于 Typst 的北大学位论文模板。 
 
   感谢#link("https://www.microsoft.com/")[微软]主导开发的 #link("https://code.visualstudio.com/")[Visual Studio Code] 项目，让我能流畅舒服地完成编写代码、调试代码、编写论文等各个方面的工作。
 
-  感谢舍友赵一鸣四年的陪伴。
+  感谢舍友#link("https://github.com/zym401")[赵一鸣]四年的陪伴。
   
-  感谢 OpenAI 的 ChatGPT 和 GitHub 的 Copilot 提出一些有趣但不一定合适的回复，让我在编写代码或完成论文时多了一些灵感。
+  感谢 OpenAI 的 #link("https://chat.openai.com")[ChatGPT] 和 GitHub 的 #link("https://github.com/features/copilot/")[Copilot] 提出一些有趣但不一定合适的回复，让我在编写代码或完成论文时多了一些灵感。
 
   感谢虚拟主播#link("https://space.bilibili.com/401480763")[真白花音]，在赶稿写代码的日子里用甜美的声音和温暖的歌声陪伴了我。感谢#link("https://www.mihoyo.com/")[米哈游]开发的 #link("https://ys.mihoyo.com/main/")[《原神》]游戏，极大程度地丰富了我的休息时间，让我能每天充满精力地完成论文工作。
 ]

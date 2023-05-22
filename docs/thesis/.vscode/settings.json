@@ -4,7 +4,7 @@
     "commands": [
       {
         "match": "\\.typ$",
-        "cmd": "typst compile ${file} ${fileDirname}/${fileBasenameNoExt}.pdf"
+        "cmd": "C:\\Users\\Guyutongxue\\Downloads\\typst\\target\\release\\deps\\typst.exe compile ${file} ${fileDirname}/${fileBasenameNoExt}.pdf"
       }
     ]
   }
