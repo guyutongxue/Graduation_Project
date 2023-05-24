@@ -1,13 +1,13 @@
 #import "utils/template.typ": *
 
 #let abstract = [
-  程序设计在线评测系统（Online Judge，简称 OJ，直译“在线判题”）是一种软件系统，其通过计算机自动裁判若干用户提交的程序的正确性。现有的通用 OJ 系统中，评测系统通常是基于给定的若干组标准输入内容，并考察用户程序的标准输出是否符合期望，从而判定用户程序的正确性。但对于程序设计的初学者来说，开发更易用、更直观的图形用户界面（Graphical User Interface，简称 GUI）程序则更具有吸引力；而这些程序也是人们日常使用的软件的重要组成部分。尽管基于标准输入、标准输出的程序虽然构成了计算机软件系统的根基，但它们更面向于科班、专业的技术人员；而在如今编程技能平民化、大众化的趋势下，更需要教育、普及对 GUI 程序的开发。OJ 系统在计算机教学中发挥的作用已有显著效应，而 GUI 程序的 OJ 系统设计则尚无成型原型。本论文提出了一种图形用户界面程序 OJ 的组织方法，并实现了其原型项目。首先，该 OJ 系统根据开发 GUI 程序所使用的编程语言、构建流程和运行方式分为若干类别，对每一种类别的程序设计方法设计对应的判别方法：原型选用了 Web 程序、C\# Windows 窗体程序和 Python turtle 2D 图形程序三种基本类别。其次，设计统一的判题语法规则描述，教师、比赛组织者等用户可根据该规则描述制订具体的判题规则：原型选用了基于 JavaScript AST 的领域特定语言（DSL）描述，并提供了可视化的规则编辑界面。最后，将规则解释器、判题控制器、输入输出系统等组件结合，并提供恰当的最终用户交互界面，即可形成一个可用的图形用户界面程序设计 OJ。本论文在原型项目的基础上，同时考察了其它判题类别的判别方法设计，对用户程序编译系统、用户程序安全性保障、多端并行通信与工业场景部署问题、与现有 OJ 前端系统的结合问题进行了深入讨论。
+  程序设计在线评测系统（Online Judge，简称 OJ，直译“在线判题”）是一种软件系统，其通过计算机自动裁判若干用户提交的程序的正确性。现有的通用 OJ 系统中，评测系统通常是基于给定的若干组标准输入内容，并考察用户程序的标准输出是否符合期望，从而判定用户程序的正确性。但对于程序设计的初学者来说，开发更易用、更直观的图形用户界面（Graphical User Interface，简称 GUI）程序则更具有吸引力；而这些程序也是人们日常使用的软件的重要组成部分。尽管基于标准输入、标准输出的程序虽然构成了计算机软件系统的根基，但它们更面向于科班、专业的技术人员；而在如今编程技能平民化、大众化的趋势下，更需要教育、普及对 GUI 程序的开发。OJ 系统在计算机教学中发挥的作用已有显著效应，而 GUI 程序的 OJ 系统设计则尚无成型原型。本论文提出了一种图形用户界面程序 OJ 的组织方法，并实现了其原型项目。首先，该 OJ 系统根据开发 GUI 程序所使用的编程语言、构建流程和运行方式分为若干类别，对每一种类别的程序设计方法设计对应的判别方法：原型选用了 Web 程序、C\# Windows 窗体程序和 Python turtle 2D 图形程序三种基本类别。其次，设计统一的判题语法规则描述，教师、比赛组织者等用户可根据该规则描述制订具体的判题规则：原型选用了基于 JavaScript AST 的领域特定语言（DSL）描述，并提供了可视化的规则编辑界面。最后，将规则解释器、判题控制器、输入输出系统等组件结合，并提供恰当的最终用户交互界面，即形成一个可用的图形用户界面程序设计 OJ。本论文在原型项目的基础上，同时考察了其它判题类别的判别方法设计，对用户程序编译系统、用户程序安全性保障、多端并行通信与工业场景部署问题、与现有 OJ 前端系统的结合问题进行了深入讨论。
 ]
 
 #let keywords = ("程序设计", "图形用户界面", "在线编程", "在线评测", "实验教学")
 
 #let enAbstract = [
-  Online Judge (OJ) is a software system that automatically judges the correctness of a number of user-submitted programs. In existing general-purpose OJ systems, the evaluation system usually determines the correctness of a user's program based on a given set of standard inputs and examines whether the standard output of the user's program meets expectations. However, for beginners in programming, it is more attractive to develop easier-to-use and intuitive Graphical User Interface (GUI) programs; these programs are also an important part of the software that people use every day. Although programs based on standard input and output form the basis of computer software systems, these programs are more oriented toward technical professionals. The trend toward the popularization of programming skills has created a greater need for education and popularization of the development of GUI programs. This thesis proposes a method for organizing and prototyping a OJ system judging GUI program. First, this OJ system is divided into several categories according to the programming language used to develop GUI programs, the construction process and the operation method. For each category, corresponding discriminative methods are designed. The prototype chose three basic categories: Web programs, C\# Windows Forms programs and Python turtle 2D graphics programs. Secondly, a universal syntax of judging rule description of the judging is designed, which can be used by teachers or competition organizers. The prototype chose a domain-specific language (DSL) description based on JavaScript AST, and provided a visualized rule-editing interface. Finally, a control system is formed to combine the rule interpreter, question controller, input/output system components and an appropriate end-user interaction interface. This thesis also discussed following topics in depth: the design of the user program compilation system, the security of the user program, the issues of multi-terminal parallel communication and industrial deployment, and the integration with existing OJ front-end systems.
+  Online Judge (OJ) is a software system that automatically judges the correctness of a number of user-submitted programs. In existing general-purpose OJ systems, the evaluation system usually determines the correctness of a user's program based on a given set of standard inputs and examines whether the standard output of the user's program meets expectations. However, for beginners in programming, it is more attractive to develop easier-to-use and intuitive Graphical User Interface (GUI) programs; these programs are also an important part of the software that people use every day. Although programs based on standard input and output form the basis of computer software systems, these programs are more oriented toward technical professionals. The trend toward the popularization of programming skills has created a greater need for education and popularization of the development of GUI programs. This thesis proposes a method for organizing and prototyping a OJ system judging GUI program. First, this OJ system is divided into several categories according to the programming language used to develop GUI programs, the construction process and the operation method. For each category, corresponding discriminative methods are designed. The prototype chose three basic categories: Web programs, C\# Windows Forms programs and Python turtle 2D graphics programs. Secondly, a universal syntax of judging rule description of the judging is designed, which can be used by teachers or competition organizers. The prototype chose a domain-specific language (DSL) description based on JavaScript AST and provided a visualized rule-editing interface. Finally, a control system is formed to combine the rule interpreter, question controller, input/output system components and an appropriate end-user interaction interface. This thesis also discussed following topics in depth: the design of the user program compilation system, the security of the user program, the issues of multi-terminal parallel communication and industrial deployment, and the integration with existing OJ front-end systems.
 ]
 
 #let enKeywords = ("programming design", "graphical user interface", "online programming", "online judge", "experimental teaching")
@@ -97,7 +97,7 @@
 
 == OJ 系统简介
 
-1970 年，德克萨斯 A & M 大学组织了第一次 ACM 国际大学生编程竞赛（ICPC），并为这场赛事设置了评测系统。随后这种赛制被大范围地推广，比如国际奥林匹克信息学竞赛（IOI）等诸多著名比赛都使用这样的评测系统来检查参赛选手的编程能力和算法运用能力。这种评测系统后来就被称作“在线评测”（Online Judge），简称 OJ。@Wasik2018 
+1970 年，德克萨斯 A & M 大学组织了第一次 ACM 国际大学生编程竞赛（ICPC），并为这场赛事设置了评测系统。随后这种赛制被大范围地推广，比如国际奥林匹克信息学竞赛（IOI）等诸多著名比赛都使用这样的评测系统来检查参赛选手的编程能力和算法运用能力。这种评测系统后来被称作“在线评测”（Online Judge），简称 OJ。@Wasik2018 
 
 OJ 的历史可以追溯到 1965 年斯坦福大学提出的自动评测程序系统。@Forsythe1965 在随后的数十年内，其发展迅速，许多大学、赛事机构、社会组织、教育机构都在建设自己的 OJ 系统。北京大学于 2005 年，为了促进北京大学竞赛队伍的竞争力，也开设了自己的 OJ 平台 POJ（全称 PKU JudgeOnline，中文名“北京大学程序在线评测系统”）。@Li2005 这类 OJ 平台可以给大量用户提供训练机会和学习机会，从而高效提升学生、选手的编程能力。 POJ 被视为中国境内最大的 OJ 平台。@Wasik2018
 
@@ -160,7 +160,7 @@ GUI-OJ 系统的输出主要包括：
 
 以上输入输出部分为 GUI-OJ 软件系统的边界。若将 GUI-OJ 系统作为最终用户的后端（Backend），则与该系统边界交互的部分称为 _前端_。
 
-接下来考虑 GUI-OJ 与传统 OJ 的不同点。GUI-OJ 的用户程序具有图形界面，而不同的图形界面程序的运行环境、运行方式都有很大的不同，因此判题规则也会随之变得多样化，无法基于传统 OJ 的输入输出模板实现；因此需要如下的组件设计。
+接下来考虑 GUI-OJ 与传统 OJ 的不同点。GUI-OJ 的用户程序具有图形界面，而不同的图形界面程序的运行环境、运行方式都有较大差异，因此判题规则也会随之变得多样化，无法基于传统 OJ 的输入输出模板实现；因此需要如下的组件设计。
 
 == 判题规则描述系统
 
@@ -170,12 +170,12 @@ _判题规则描述系统_ 负责解析规则制订者提供的判题规则描�
 
 == 规则派发与通信控制系统和判题后端
 
-虽然个人计算机上的图形用户界面在物理层面上大多是基于键盘、鼠标进行输入输出交互，但是大部分图形界面程序可以提供更高层次的抽象，如按钮、文本框等等。抽象层次的不同，也决定了程序设计方法的不同和程序功能的不同；在判题逻辑上，也需要做相应的分类讨论。
+虽然个人计算机上的图形用户界面在物理层面上大多是基于键盘、鼠标进行输入输出交互，但是大部分图形界面程序可以提供更高层次的抽象，如按钮、文本框等。抽象层次的不同，也决定了程序设计方法的不同和程序功能的不同；在判题逻辑上，也需要做相应的分类讨论。
 
 因此在结构上，需要有一个单独的系统负责将判题规则划分为若干 _类别_，从而每个类别内部的判题流程可以统一处理。本文称之为 _规则派发与通信控制系统_（后文简称 RDCCS，即 Rule Dispatch and Comm. Control System），该系统同时负责处理用户程序输入和判题结果的输出。对于每一个题目类别，提供对应的 _判题后端_ 以实现相应的判题流程。
 
 原型项目使用 Node.js 作为该系统的实现框架；其实现细节将在 @rdccs 中讨论。综合考虑抽象层次和实际情况，本项目实现了三个判题后端：Web 程序、Windows 窗体程序和 Python turtle 2D 图形程序。
-- Web 程序是抽象程度最高的图形界面程序；它的图形界面由 DOM（文档对象模型）组织，可以非常方便地使用浏览器相关 API 直接操作。
+- Web 程序是抽象程度最高的图形界面程序；它的图形界面由 DOM（文档对象模型）组织，可以方便地使用浏览器相关 API 直接操作。
 - Windows 窗体程序的抽象层次与 Web 类似，可以通过焦点控制、自动化测试等框架选中其中的可操作控件；但是产生提到操作本身仍然需要键盘和鼠标的事件模拟。
 - Python turtle 2D 图形程序是最低层次的抽象，它只提供最简单的绘图功能。
 
@@ -193,7 +193,7 @@ _判题规则描述系统_ 负责解析规则制订者提供的判题规则描�
 
 Web 程序是当前互联网时代的最主流应用程序。它不仅应用在浏览器等传统 Web 环境中，也适用于桌面程序（Electron、Tauri 等）和移动程序（React Native、Flutter 等）。Web 程序通常使用 JavaScript 作为开发语言，并用 HTML 和 CSS 处理图形界面布局，但也可以使用 TypeScript、CoffeeScript、Dart 等语言开发。
 
-原型项目先假定 Web 程序只运行在浏览器中（且是现代浏览器，即符合 W3C 最近五年规范的浏览器），从而简化问题的处理。在该假设下，只需要使用一个遵循规范的、可由程序控制的浏览器，如 Chromium，就可以实现对 Web 程序的判题。在此方面，原型采用了 Puppeteer 库 @puppeteer2023 ；该库可用于控制 Chromium 浏览器的行为，如加载页面、审查元素等等。Puppeteer 库提供了一个 Node.js 的 API，因此可以直接在 Node.js 环境中使用。稍后 @rdccs 所呈现的控制系统也在 Node.js 环境中运行，因此 Web 端的判题控制会相对容易很多。
+原型项目先假定 Web 程序只运行在浏览器中（且是现代浏览器，即符合 W3C 最近五年规范的浏览器），从而简化问题的处理。在该假设下，只需要使用一个遵循规范的、可由程序控制的浏览器如 Chromium，就可以实现对 Web 程序的判题。在此方面，原型采用了 Puppeteer 库 @puppeteer2023 ；该库可用于控制 Chromium 浏览器的行为，如加载页面、审查元素等。Puppeteer 库提供了一个 Node.js 的 API，因此可以直接在 Node.js 环境中使用。稍后 @rdccs 所呈现的控制系统也在 Node.js 环境中运行，因此 Web 端的判题控制会相对容易。
 
 另一方面，判题后端还需要将 Web 程序呈现在网页上。目前阶段先假定判题后端接收到的是一系列静态网页素材，那么浏览器可以有两种方式加载这些素材：
 - 通过 HTTP 服务器加载；
@@ -232,7 +232,7 @@ Windows 窗体（Windows Form）程序，是 Windows 平台上基于窗口的最
 
 Windows 窗体程序由控件（Control）组成，每个控件都有其独立的句柄。因此，判题后端可以通过获取一个 Windows 窗体程序的控件树，根据需要选定其中控件的句柄，然后基于句柄进行操作。
 
-从 Windows 95 开始，系统便内置了可供程序操作的操作系统接口，其名为 Microsoft Active Accessibility（MSAA） @msaa2020。MSAA 为 Windows 窗体程序提供了一套标准的、可供程序访问的接口，包括控件树的获取、控件属性的获取、控件操作的执行等等。MSAA 也是早期 Windows 窗体程序的无障碍访问渠道，因此，任何一个 Windows 窗体程序都支持 MSAA （但非 Windows 窗体的程序，即“自绘窗体”，仍然使用起来有不便之处）。在随后的数十年内，该功能逐步升级为 UI Automation（UIA），以 C\# 和 C++ 的形式提供接口。 @uia2020
+从 Windows 95 开始，系统便内置了可供程序操作的操作系统接口，其名为 Microsoft Active Accessibility（MSAA） @msaa2020。MSAA 为 Windows 窗体程序提供了一套标准的、可供程序访问的接口，包括控件树的获取、控件属性的获取、控件操作的执行等。MSAA 也是早期 Windows 窗体程序的无障碍访问渠道，因此，任何一个 Windows 窗体程序都支持 MSAA （但非 Windows 窗体的程序，即“自绘窗体”，仍然使用起来有不便之处）。在随后的数十年内，该功能逐步升级为 UI Automation（UIA），以 C\# 和 C++ 的形式提供接口。 @uia2020
 
 原型项目选用 FlaUI 库调用 UIA @flaui2022， C\# 11 编程语言和 .NET 7 运行时，以最大化开发效率和目标运行效率。
 
@@ -242,9 +242,9 @@ Windows 窗体程序由控件（Control）组成，每个控件都有其独立�
 ) <fig_structure_form>
 
 不同于 DOM，Windows 窗体控件树没有一个合适的控件选择语法。因此原型项目提供了如下选择方式：
-- 基于文本的选择：给定按钮文本、标签文本或文本框的文本，然后查找所有空间中符合文本或包含文本的控件。
+- 基于文本的选择：给定按钮文本、标签文本或文本框的文本，然后查找所有控件中符合文本或包含文本的控件。
 - 基于 `automationId` 的选择：在 UIA 中，每个元素拥有其独立标识 `automationId`；在未经优化的 C\# Windows 窗体程序中，该名称等价于控件的名称（`Name` 属性）。因此，若规则制订者限制用户程序的编写方法，则可以通过 `automationId` 来选择某一特定控件。但是，对于没有限制的程序，这不是一个合适的手段。
-- 基于文本及其周边空间的查找来选择：在窗体程序中，一个常见的模式为“标签+文本框”/* （如 @img_???） */；即在对标签进行基于文本的严格查找后，划定其坐标周围的范围，来查找其附近文本框。这种方式通用性相比前两种更弱，但是在大多数场合更常用。
+- 基于文本及其周边控件的查找来选择：在窗体程序中，一个常见的模式为“标签+文本框”/* （如 @img_???） */；即在对标签进行基于文本的严格查找后，划定其坐标周围的范围，来查找其附近文本框。这种方式通用性相比前两种更弱，但是在大多数场合更常用。
 
 #fix_id
 
@@ -259,7 +259,7 @@ Windows 窗体程序由控件（Control）组成，每个控件都有其独立�
 及如下属性的读取：
 - 窗体标题；
 - 控件文本；
-- 空间的启用性。
+- 控件的启用性。
 
 以上功能基本覆盖了简单的 Windows 窗体程序的测试需要。
 
@@ -276,7 +276,7 @@ Python 是当前最流行的编程语言，也是非专业计算机学习者最�
 
 #fix_id
 
-对于第一个问题，原型项目选择了 Python 3.11 并创建虚拟环境以免本机其它依赖库的干扰。对于第二个问题，可以使用打桩技术（Interposition）来限制 `turtle` 标准库的行为；即通过 `importlib` 控制导入库的行为，从而将 `turtle` 标准库的导入重定向到一个 GUI-OJ 系统内的、受限制的“伪” `turtle` 库即可。
+对于第一个问题，原型项目选择了 Python 3.11 并创建虚拟环境以免本机其它依赖库的干扰。对于第二个问题，可以使用打桩技术（Interposition）来限制 `turtle` 标准库的行为；即通过 `importlib` 控制导入库的行为，将 `turtle` 标准库的导入重定向到一个 GUI-OJ 系统内的、受限制的“伪” `turtle` 库。
 
 对于第三个问题，在本论文提出的设计思路中，将使用一个专门针对教学用 2D 绘图的图像比对算法，将用户程序产生的图像与标准图像进行比对，得到相似率，并以某个阈值作为判定标准。该算法将在 @rtlib 中展开描述。
 
@@ -307,7 +307,7 @@ Python 是当前最流行的编程语言，也是非专业计算机学习者最�
 
 对于 Electron 或 Tauri 等基于 Web 界面的程序，可以直接基于 Web 程序判题后端，并进行适合性调整：如直接启动程序而非额外的 HTTP 服务器；使用 Puppeteer 时将 Chromium 指定为 Electron 内的 Chromium 或系统的 WebView 等。
 
-非 Windows 的 GUI 程序的处理是有困难的。非 Windows 系统上，GUI 程序的实现多种多样：既可以直接使用 Wayland 或 X @wayland2018；也可以使用 GTK、Qt 等跨平台的 GUI 库。这些程序通常需要针对性地设计判题后端，没有很好的统一处理方法。本项目对非 Windows 的 GUI 程序暂时不做考虑。
+非 Windows 的 GUI 程序的处理是有困难的。非 Windows 系统上，GUI 程序的实现多种多样：既可以直接使用 Wayland 或 X @wayland2018；也可以使用 GTK、Qt 等跨平台的 GUI 库。这些程序通常需要针对性地设计判题后端，没有较好的统一处理方法。本项目对非 Windows 的 GUI 程序暂时不做考虑。
 
 = 判题规则实现 <transpiler>
 
@@ -315,7 +315,7 @@ Python 是当前最流行的编程语言，也是非专业计算机学习者最�
 
 传统 OJ 通过给定若干组测试输入输出样例来判定用户程序的正确性。但是 GUI 程序并不适用于文本形式的标准输入输出。因此，GUI-OJ 需要设计一种新的判题规则描述方式。
 
-非传统的 OJ 如基于自定义规则的 AutoLab，使用了规约式的设计方法：要求规则制订者提供一个程序（或脚本），对于给定的用户程序，输出其得分。@autolab2023 这种方式的优点是灵活性高，可以适应各种各样的题目类型，但不适合应用于 GUI-OJ：规则制订者需要极高的编程能力，且必须对 GUI 程序十分熟悉，以给出各种细节的判定规则。
+非传统的 OJ 如基于自定义规则的 AutoLab，使用了规约式的设计方法：要求规则制订者提供一个程序（或脚本），对于给定的用户程序，输出其得分。@autolab2023 这种方式的优点是灵活性高，可以适应各种各样的题目类型，但不适合应用于 GUI-OJ：规则制订者需要极高的编程能力，且必须对 GUI 程序足够熟悉，以给出各种细节的判定规则。
 
 #figure(
   image("img/rule_concept.png"),
@@ -352,7 +352,7 @@ test("case 0", (page) => {
 
 == 基于全新 DSL 的设计
 
-因为现有语言本身的语法特性限制了规则的编写，可以考虑自行设计一种领域特定语言，以实现更加简洁的规则描述方式。一种可行的方案如 @code_dsl_rule 所示。
+因为现有语言本身的语法特性限制了规则的编写，可以考虑自行设计一种领域特定语言，以实现更简洁的规则描述方式。一种可行的方案如 @code_dsl_rule 所示。
 
 #codeblock([
 ```
@@ -366,13 +366,13 @@ test {
   outline: true
 ) <code_dsl_rule>
 
-由于 DSL 的结构是完全自定义的，因此可以引入更多的关键字或语法形式。比如，语言可以定义 `assert` 关键字来代替原先复杂的 `expect` 函数；直接用 `==` 等比较运算符作为测试步骤，用 `$` 符号来引入选择器等等。这种方式的优点在于，一定程度上减轻了规则编写者的学习成本和编写成本，同时也可以更加灵活地定义规则。但是，其缺点在于 GUI-OJ 开发者需要编写一个完整的语言解析器，以将 DSL 解释或者转换为某种可执行的代码形式。解析器的编写成本可能会很高，且难以保证其正确性或通用性。出于成本的考量，原型项目中没有使用完整的 DSL，但可以考虑在之后的版本引入。
+由于 DSL 的结构是完全自定义的，因此可以引入更多的关键字或语法形式。比如，语言可以定义 `assert` 关键字来代替原先复杂的 `expect` 函数；直接用 `==` 等比较运算符作为测试步骤，用 `$` 符号来引入选择器等。这种方式的优点在于，一定程度上减轻了规则编写者的学习成本和编写成本，同时也可以更灵活地定义规则。但是，其缺点在于 GUI-OJ 开发者需要编写一个完整的语言解析器，以将 DSL 解释或者转换为某种可执行的代码形式。解析器的编写成本可能会很高，且难以保证其正确性或通用性。出于成本的考量，原型项目中没有使用完整的 DSL，但可以考虑在之后的版本引入。
 
 == 基于已有 AST 的 DSL 设计
 
 考虑到 DSL 的编写成本，本文考虑使用已有的编程语言的抽象语法树（Abstract Syntax Tree, AST）来实现 DSL 的解析。这样做可以通过直接使用已有的编译器前端来解析 DSL 而无需自行编写解析器，从而减少开发成本。在得到 AST 后，再对其进行树的遍历算法，进行代码生成或规则执行等操作。
 
-本原型实现使用了 JavaScript AST，因为 JavaScript 具有统一的 AST 格式 ESTree @estree2022，且有众多的解析器支持（如 Acorn、Babel、ESLint、SWC 等等），生态颇为成熟。原型实现使用了 Babel 作为解析器，并以 Babel 插件的形式给出具体的解析方法，最终产生可执行的 JavaScript 代码。一个具体的规则代码示例如 @code_ast_rule 所示。
+本原型实现使用了 JavaScript AST，因为 JavaScript 具有统一的 AST 格式 ESTree @estree2022，且有众多的解析器支持（如 Acorn、Babel、ESLint、SWC 等），生态颇为成熟。原型实现使用了 Babel 作为解析器，并以 Babel 插件的形式给出具体的解析方法，最终产生可执行的 JavaScript 代码。一个具体的规则代码示例如 @code_ast_rule 所示。
 
 #codeblock([
 ```js
@@ -429,7 +429,7 @@ test {
 
 #fix_id
 
-随后，该转换后代码即可直接由 RDCCS 解释执行。
+随后，该转换后代码可直接由 RDCCS 解释执行。
 
 #figure(
   image("img/structure_transpiler.png"),
@@ -492,9 +492,9 @@ GUI-OJ 软件系统选择使用 _运行时库_（Runtime Library）概念来解�
 
 下文将重点阐述图像比对功能。因为 GUI-OJ 的图像比对的目标是判别用户 2D 图形程序所产生的图像是否接近于标准图像；它与计算机视觉、人工智能领域所述的图像比对目标有一定差距。在 2D 图形程序中，没有明确的具名目标（如人物、车辆、水果等），取而代之的是构造简单、轮廓分明的几何图形（如正方形、圆等）。因此，基于通用的物品识别算法难以正常工作。
 
-其次，传统图像相似度/差异度算法如 MSE 或 SSIM，则是针对图片整体的色彩或特征，而不是针对图像中的特定物体。2D 图形程序中的图像可能由多个图形构成的，因此整体的色彩或特征并不能反映出图像中的物体的差异。例如，题目标准图像由若干色彩各异的几何图形得到，而学生程序的图形位置、色彩、形状均有较大差异时，MSE 或 SSIM 在整体上得到的性质是趋同的。很显然这种程序在判题上应当不予通过。
+其次，传统图像相似度/差异度算法如 MSE 或 SSIM，则是针对图片整体的色彩或特征，而不是针对图像中的特定物体。2D 图形程序中的图像可能由多个图形构成的，因此整体的色彩或特征并不能反映出图像中的物体的差异。例如，题目标准图像由若干色彩各异的几何图形得到，而学生程序的图形位置、色彩、形状均有较大差异时，MSE 或 SSIM 在整体上得到的性质是趋同的；而这种程序在判题上不应当予以通过。
 
-最后考虑平凡的算法，即使用逐像素比对的简单算法。但这也有困难：学生可能提交的程序有轻微色差，或者位置上有小程度偏移，或者旋转角度不合适；但这些在教学领域上是可以被接受的误差。逐像素比对对于上述差异接受程度很低，因此不适用。
+最后考虑平凡的算法，即使用逐像素比对的简单算法。此时，若学生提交的程序有轻微色差，或者位置上有小程度偏移、旋转角度不合适；这些差异在教学领域上或许是可以被接受的，但逐像素比对会给出较低或极低的相似度结果，故并不适用。
 
 因此综上所述，本文针对 GUI-OJ 中所需的图像比对需求，设计了一种特殊的、专用的算法。
 
@@ -563,6 +563,8 @@ $ op("Diff") (bold(A), bold(B)) = (1 - d_N) dot.op (w_S f(d_S) + w_I f(d_I) + w_
 
 其中 $w_S$、$w_I$、$w_R$ 和 $w_B$ 为权重参数，在原型中取值分别为 $0.3$、$0.3$、$0.2$ 和 $0.2$。$f$ 为非线性调整函数；当图像比较相似时 $d_S$ 和 $d_I$ 差异过小，不适合判题。$f(x)$ 在原型中取值为 $x^6$。
 
+#v(5em) // or table break in the middle, bad
+
 == 图像比对算法效果示例
 
 #figure(
@@ -596,7 +598,7 @@ $ op("Diff") (bold(A), bold(B)) = (1 - d_N) dot.op (w_S f(d_S) + w_I f(d_I) + w_
 
 运行时库是为了补足规则描述系统采用的 DSL 的不足而设计的，故它被设计为嵌入规则描述系统。
 
-在原型实现的 DSL 中，引入了 JavaScript 的 _ImportDeclaration_，即导入声明；若该声明来自某个特定的模块标识符（在原型中为 `graduate`），则将其解释为对运行时库中实体的导入。实现上，只需在 Babel 转译过程中将该标识符翻译为运行时库 JavaScript 模块的路径即可。
+在原型实现的 DSL 中，引入了 JavaScript 的 _ImportDeclaration_，即导入声明；若该声明来自某个特定的模块标识符（在原型中为 `graduate`），则将其解释为对运行时库中实体的导入。实现上，需要在 Babel 转译过程中将该标识符翻译为运行时库 JavaScript 模块的路径。
 
 对于如图像相似度算法等非 JS 实现的程序，则通过 Node.js `child_process` 模块启动 Python 解释器执行。这会导致响应速度降低及性能瓶颈，但目前系统的功能较为简单，因而暂时忽略此问题。后续可考虑改为基于 C 接口的 FFI 调用。
 
@@ -616,7 +618,7 @@ GUI-OJ 与传统 OJ 的最大不同点即在于不同判题后端提供功能各
 
 上述四个组件都或多或少需要用到判题功能的信息，若分开管理它们，则难以同步、更新迭代。因此 DefDef 提供了这样的管理方法：编写一份 DefDef 源码，通过 DefDef 转译器生成上述各个模块所需要的格式的信息，从而实现统一管理。
 
-DefDef 使用解析表达文法（Parsing Expression Grammar，PEG）作为文法格式。它相比传统的上下文无关文法（Context Free Grammar，CFG）更加简洁，且可以直接转换为递归下降解析器。出于篇幅的原因，此处不列出完整的 DefDef 文法定义；但可以从一个 DefDef 的示例来了解它的基本结构。
+DefDef 使用解析表达文法（Parsing Expression Grammar，PEG）作为文法格式。它相比传统的上下文无关文法（Context Free Grammar，CFG）更简洁，且可以直接转换为递归下降解析器。出于篇幅的原因，此处不列出完整的 DefDef 文法定义；但可以从一个 DefDef 的示例来了解它的基本结构。
 
 #codeblock([
 
@@ -647,9 +649,9 @@ DefDef 的基本结构是若干定义，对应于一项判题后端的功能。�
 
 #fix_id
 
-DefDef 的规则代码形式采用“链式调用”格式，即函数调用运算符和成员访问运算符的结合；该写法自由度较高，且适用于大多数场景。比如 @code_defdef_sample 中的 `$(selector: string).count` 规则形式就表明规则代码中的 `$("button").count` 代码指代一个后端操纵命令，其对应的 JSON-RPC 请求方法名为 `selector`，附加参数为 `component: "count"`。
+DefDef 的规则代码形式采用“链式调用”格式，即函数调用运算符和成员访问运算符的结合；该写法自由度较高，且适用于大多数场景。比如 @code_defdef_sample 中的 `$(selector: string).count` 规则形式表明规则代码中的 `$("button").count` 代码指代一个后端操纵命令，其对应的 JSON-RPC 请求方法名为 `selector`，附加参数为 `component: "count"`。
 
-GUI-OJ 的规则代码形式秉持着直观、易用的原则；如上述规则形式中的 `$` 操纵对象就来自于常用的 jQuery 库的选择器；又如 `win.title` 规则形式中的 `win` 就指代 Windows 窗口。
+GUI-OJ 的规则代码形式秉持着直观、易用的原则；如上述规则形式中的 `$` 操纵对象来自于常用的 jQuery 库的选择器；又如 `win.title` 规则形式中的 `win` 则指代 Windows 窗口。
 
 每个规则的额外信息可以通过特性或者特性内部的子语法来描述。如 `blockly` 特性代表前端可视化编辑器的相关工具定义；其内部的 `#` 占位符子语法用来标记该工具定义的接口。
 
@@ -708,7 +710,7 @@ DefDef 的语义比较完备，因此还可以在如下模块中嵌入；它们�
 
 == 规则可视化编辑器
 
-GUI-OJ 的设计目标包含让规则的制订更加轻松易用。因此，原型项目增设了可视化编辑器的模块，提供基于拖拽、点击等交互方式的规则编辑功能，如 @fig_frontend_blockly 所示。
+GUI-OJ 的设计目标包含让规则能更容易地制订。因此，原型项目增设了可视化编辑器的模块，提供基于拖拽、点击等交互方式的规则编辑功能，如 @fig_frontend_blockly 所示。
 
 #figure(
   image("img/frontend_blockly.png", width: 70%),
@@ -721,7 +723,7 @@ Google 主导的 Blockly 项目提供可视化编程的框架，该项目被广�
 == 完整的 GUI-OJ 系统前端概述
 
 参考现有的 OJ 系统 @Li2005，完整的 GUI-OJ 系统应当类似地包含如下功能：
-- *用户注册与登录*：用户可以注册账号并登录；账号应当具有权限区分，如网站管理员、管理员、教师、学生甚至助教；
+- *用户注册与登录*：用户可以注册账号并登录；账号应当具有权限区分，如网站管理员、管理员、教师、学生、助教；
 - *用户信息编辑*：用户可以编辑个人信息，如用户名、密码、邮箱等；
 - *题目列表*：用户可以查看题目列表，选择需要解答的题目；教师可以增加题目（包含规则描述）；
 - *题目详情*：用户可以查看题目的详细信息，包括题目描述、输入输出格式等；
@@ -731,14 +733,14 @@ Google 主导的 Blockly 项目提供可视化编程的框架，该项目被广�
 
 #fix_id
 
-为了实现上述功能，除了一个前端 Web 程序外，通常还需要一个更加复杂的 Web 后端，处理来自用户的复杂功能请求。上述用户数据、题目数据、用户代码和判题结果等数据，也需要额外的数据库存储。在这种描述下，Web 前端、Web 后端、数据库共同构成了 GUI-OJ 系统的前端。但上述对 GUI-OJ 核心系统的讨论，包括系统边界等问题，在此复杂情形下仍然适用。
+为了实现上述功能，除了一个前端 Web 程序外，通常还需要一个更复杂的 Web 后端，处理来自用户的复杂功能请求。上述用户数据、题目数据、用户代码和判题结果等数据，也需要额外的数据库存储。在这种描述下，Web 前端、Web 后端、数据库共同构成了 GUI-OJ 系统的前端。但上述对 GUI-OJ 核心系统的讨论，包括系统边界等问题，在此复杂情形下仍然适用。
 
 = 用户程序安全性 <security>
 
 == 通用 OJ 系统的安全功能考察
 
-OJ 系统会运行用户代码或用户程序，这就需要防止用户程序对系统造成破坏。可能的破坏途径有：
-- 程序试图读取或删改无关文件，包括系统文件、系统配置等等；
+OJ 系统会运行用户代码或用户程序。在运行用户程序时，其可能通过如下途径试图破坏软件系统或操作系统：
+- 程序试图读取或删改无关文件，包括系统文件、系统配置等；
 - 程序试图无节制地申请内存，导致系统内存耗尽；
 - 程序试图无节制地抢占 CPU，导致系统无法响应；
 - 程序试图关机或重启系统；
@@ -772,17 +774,17 @@ OJ 系统可以选择其中一种或多种安全措施，以防止用户程序�
 
 对于时空限制等客观因素，可以设计一个专用的外部程序，监控用户进程的运行时间、内存或 CPU 用量，在达到临界值时予以终止。该程序的设计本身并不复杂，但是这涉及到更多的 RDCCS 跨进程通信问题——判题后端与监控程序的并发问题也需要得到妥善解决。
 
-其次，原型项目对用户程序的可访问系统调用没有做限制。在这一方面，GUI-OJ 与传统 OJ 的解决方法不具有共通性。传统 OJ 可以使用 `seccomp` 白名单，以限制绝大多数越权尝试；因为传统 OJ 所执行的 C/C++ 程序非常接近操作系统底层，合法程序对操作系统调用的数量是极其有限的。但是图形用户界面程序天然需要调用各种窗口系统的接口甚至底层绘图设备的接口，这使得白名单限制是不现实的。另一方面，如 @categories 讨论，本文所述的图形界面程序全部在 Windows 上运行，而 Windows 没有类似 `seccomp` 的机制。但可考虑第三方软件如 Sandboxie @sandboxie2023，并使用黑名单方式限制用户程序的系统调用。
+其次，原型项目对用户程序的可访问系统调用没有做限制。在这一方面，GUI-OJ 与传统 OJ 的解决方法不具有共通性。传统 OJ 可以使用 `seccomp` 白名单，以限制绝大多数越权尝试；因为传统 OJ 所执行的 C/C++ 程序接近操作系统底层，合法程序对操作系统调用数量较少，可以直接限制。但是图形用户界面程序需要调用各种窗口系统的接口或底层绘图设备的接口，这使得白名单限制系统调用是不现实的。另一方面，如 @categories 讨论，本文所述的图形界面程序全部在 Windows 上运行，而 Windows 没有类似 `seccomp` 的机制。但可考虑第三方软件如 Sandboxie @sandboxie2023，并使用黑名单方式限制用户程序的系统调用。
 
 再次，考察用户权限系统上的安全性措施。在 Windows 上，这似乎是可行的：软件可以利用 Windows 用户权限系统与 NTFS 文件权限系统共同限制用户程序的操作。但类似地，跨用户的操作增加了 RDCCS 的设计复杂度。
 
-最后，考虑使用虚拟化技术如 Windows 沙盒、虚拟机工作站等机制。但是，跨虚拟机的进程控制是非常困难的，这要求项目构建时对 RDCCS 做更谨慎的设计——此部分将同系统部署于 @deployment 讨论。
+最后，考虑使用虚拟化技术如 Windows 沙盒、虚拟机工作站等机制。但是，跨虚拟机的进程控制是较为困难的，这要求项目构建时对 RDCCS 做更谨慎的设计——此部分将同系统部署于 @deployment 讨论。
 
 = 系统部署 <deployment>
 
 == 通用 OJ 系统的部署方案考察
 
-直接从源码构建并进行本地部署，是最简单的部署方案；原型实现也采用了这种方案。但它的可移植性和可扩展性都很差，本文不再进行更多讨论。
+直接从源码构建并进行本地部署，是最简单的部署方案；原型实现也采用了这种方案。但它的可移植性和可扩展性都较差，本文不再进行更多讨论。
 
 对于一般的 OJ 系统，通常将数据库、Web 后端和判题后端部署到若干容器（如 Docker）中，并使用容器组织解决方案（如 Docker Compose）等进行部署。这种部署方案易于实现和应用，但相比直接本地部署，容器组织对硬件有一定要求，并一定程度上增加了开发的复杂度。
 
