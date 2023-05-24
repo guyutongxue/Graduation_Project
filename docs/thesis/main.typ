@@ -71,7 +71,7 @@
   author: "谷雨",
   studentId: "1900012983",
   thesisName: "本科生毕业论文",
-  header: "图形用户程序 OJ 技术研究",
+  header: "图形用户界面程序 OJ 技术研究",
   title: "图形用户界面程序 OJ 技术研究",
   enTitle: "Graphical User Interface Program OJ Technology Research",
   school: "信息科学技术学院",
