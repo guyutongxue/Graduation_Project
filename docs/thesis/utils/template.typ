@@ -766,10 +766,15 @@
         _（包含对论文的性质、难度、分量、综合训练等是否符合培养目标的目的等评价）_
 
         #place(
-          bottom + right,
-          dx: -3em,
-          [导师签名： #h(8em) \ \ \ #h(2em) 年 #h(2em) 月 #h(2em)  日]
+          dy: 0.5em,
+          image("../img/review.jpg", width: 100%, height: 90%, fit: "stretch")
         )
+
+        // #place(
+        //   bottom + right,
+        //   dx: -3em,
+        //   [导师签名： #h(8em) \ \ \ #h(2em) 年 #h(2em) 月 #h(2em)  日]
+        // )
       ]
     )
   ))
@@ -878,17 +883,21 @@
 
       #v(1em)
 
-      #align(right)[
-        论文作者签名：
-        #h(5em) \
-        日期：
-        #h(2em)
-        年
-        #h(2em)
-        月
-        #h(2em)
-        日
-      ]
+      #align(right,
+        image("../img/sign1.jpg", width: 40%, height: 10%, fit: "stretch")
+      )
+
+      // #align(right)[
+      //   论文作者签名：
+      //   #h(5em) \
+      //   日期：
+      //   #h(2em)
+      //   年
+      //   #h(2em)
+      //   月
+      //   #h(2em)
+      //   日
+      // ]
 
       #v(100pt)
 
@@ -906,20 +915,27 @@
 
       // #align(center)[（保密论文在解密后遵守此规定）]
 
-      #v(1em)
-      #align(right)[
-        论文作者签名：
-        #h(5em)
-        导师签名：
-        #h(5em) \
-        日期：
-        #h(2em)
-        年
-        #h(2em)
-        月
-        #h(2em)
-        日
-      ]
+      #place(
+        right + top,
+        dx: 4em,
+        dy: 47em,
+        image("../img/sign2.png", width: 78%, height: 12%, fit: "stretch")
+      )
+
+      // #v(1em)
+      // #align(right)[
+      //   论文作者签名：
+      //   #h(5em)
+      //   导师签名：
+      //   #h(5em) \
+      //   日期：
+      //   #h(2em)
+      //   年
+      //   #h(2em)
+      //   月
+      //   #h(2em)
+      //   日
+      // ]
     ]
   // }
 }
