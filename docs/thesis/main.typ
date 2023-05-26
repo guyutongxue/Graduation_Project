@@ -77,7 +77,7 @@
   school: "信息科学技术学院",
   major: "计算机科学与技术（科学方向）",
   supervisor: "邓习峰",
-  svDept: "信息科学技术学院",
+  svDept: "信息科学技术学院（教学所）",
   svTitle: "讲师",
   date: "二〇二三年五月",
   abstract: abstract,

@@ -744,7 +744,7 @@
       columns: (auto, auto, auto, 10em, auto, 1fr),
       align: horizon,
       inset: 0.7em,
-      [学生姓名], author,[本科院系], school, rowspanx(2)[论文成绩 \ （等级制）], rowspanx(2)[],
+      [学生姓名], author,[本科院系], school, rowspanx(2)[论文成绩 \ （等级制）], rowspanx(2)[优],
       [学生学号], studentId, [本科专业], major,
       [导师姓名], supervisor,[导师单位/ \ 所在学院], svDept, [导师职称], svTitle,
     ),
